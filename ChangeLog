@@ -1,3 +1,9 @@
+2004-07-12  Christian Reis    <kiko@async.com.br>
+
+	* NEWS: add news for PyGTK 0.6.12.
+
+	* pygtk.spec, configure.in: update version number.
+
 2004-02-28  Christian Reis    <kiko@async.com.br>
 
 	* gtk.py: Fix for bug 112395: Clean up __getattr__ and add
@@ -37,7 +43,7 @@
 
 2002-08-23  James Henstridge  <james@daa.com.au>
 
-	* NEWS: add news items.
+	* NEWS: add news items for PyGTK 0.6.11.
 
 	* configure.in: update version number.
 

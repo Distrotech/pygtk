@@ -1,3 +1,12 @@
+pygtk-0.6.12:  12-July-2004
+    - Clean up __getattr__ handling.
+    - Fix typo in GtkScrolledWindow.__getattr__.
+    - Fix crasher bug in GtkWidget.emit().
+    - Implement GtkCList.set_focus_row().
+    - Wrap GtkRadioButton.group().
+    - Catch GladeXML errors and raise exception.
+    - Avoid pygtk.py breakage in os.listdir.
+
 pygtk-0.6.11:  23-August-2002
 	- Fix up libtool patch for older binutils'.
 	- a few bug fixes in some GtkWidget methods.
