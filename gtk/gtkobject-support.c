@@ -103,9 +103,11 @@ pygtk_register_wrapper(PyObject *self)
     gtk_object_sink(obj);
     gtk_object_set_data(obj, pygtk_wrapper_key, self);
 
+#if 1
     /*
     ((PyGtk_Object *)self)->inst_dict = PyDict_New();
     */
+#endif
 }
 
 PyObject *
@@ -158,8 +160,10 @@ PyGtk_New(GtkObject *obj)
     gtk_object_ref(obj);
     /* save the wrapper pointer so we can access it later */
     gtk_object_set_data(obj, pygtk_wrapper_key, self);
+#if 1
     /* set up the class dictionary */
     self->inst_dict = PyDict_New();
+#endif
     return (PyObject *)self;
 }
 
@@ -168,7 +172,9 @@ pygtk_dealloc(PyGtk_Object *self)
 {
     GtkObject *obj = self->obj;
 
-    if (obj) {
+    /* this bit of code has been handled in pygtk_subclass_dealloc ... */
+    if (obj && !(((PyExtensionClass *)self->ob_type)->class_flags &
+		 EXTENSIONCLASS_PYSUBCLASS_FLAG)) {
 	/* save reference to python wrapper if there are still
 	 * references to the gtk object in such a way that it will be
 	 * freed when the gtk object is destroyed, so is the python
@@ -184,7 +190,11 @@ pygtk_dealloc(PyGtk_Object *self)
 	if (!self->hasref) /* don't unref the gtk object if it owns us */
 	    gtk_object_unref(obj);
     }
-    if (self->inst_dict)
+    /* subclass_dealloc (ExtensionClass.c) does this for us for python
+     * subclasses */
+    if (self->inst_dict &&
+	!(((PyExtensionClass *)self->ob_type)->class_flags &
+	  EXTENSIONCLASS_PYSUBCLASS_FLAG))
 	Py_DECREF(self->inst_dict);
     PyMem_DEL(self);
 }
@@ -1190,6 +1200,52 @@ pygtk_flag_get_value(GtkType flag_type, PyObject *obj, int *val)
 
 /* ------------------- Base GtkObject methods ------------------- */
 
+static destructor real_subclass_dealloc = NULL;
+
+static void
+pygtk_subclass_dealloc(PyGtk_Object *self)
+{
+    GtkObject *obj = self->obj;
+
+    if (obj) {
+	/* save reference to python wrapper if there are still
+	 * references to the gtk object in such a way that it will be
+	 * freed when the gtk object is destroyed, so is the python
+	 * wrapper, but if a python wrapper can be */
+	if (obj->ref_count > 1) {
+	    Py_INCREF(self); /* grab a reference on the wrapper */
+	    self->hasref = TRUE;
+	    gtk_object_set_data_full(obj, pygtk_ownedref_key,
+				     self, pygtk_destroy_notify);
+	    gtk_object_unref(obj);
+	    return;
+	}
+	if (!self->hasref) /* don't unref the gtk object if it owns us */
+	    gtk_object_unref(obj);
+    }
+    if (real_subclass_dealloc)
+	(* real_subclass_dealloc)((PyObject *)self);
+}
+
+/* more hackery to stop segfaults caused by multi deallocs on a subclass
+ * (which happens quite regularly in pygtk) */
+static PyObject *
+pygtk__class_init__(PyObject *something, PyObject *args)
+{
+    PyExtensionClass *subclass;
+
+    if (!PyArg_ParseTuple(args, "O:GtkObject.__class_init__", &subclass))
+	return NULL;
+    g_message("__class_init__ called for %s", subclass->tp_name);
+    if ((subclass->class_flags & EXTENSIONCLASS_PYSUBCLASS_FLAG) &&
+	subclass->tp_dealloc != (destructor)pygtk_subclass_dealloc) {
+	real_subclass_dealloc = subclass->tp_dealloc;
+	subclass->tp_dealloc = (destructor)pygtk_subclass_dealloc;
+    }
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static PyObject *
 _wrap_gtk_signal_connect(PyGtk_Object *self, PyObject *args)
 {
@@ -1521,6 +1577,7 @@ _wrap_gtk_object_get_data(PyGtk_Object *self, PyObject *args)
 }
 
 static PyMethodDef base_object_methods[] = {
+    { "__class_init__", (PyCFunction)pygtk__class_init__, METH_VARARGS|METH_CLASS_METHOD },
     { "connect", (PyCFunction)_wrap_gtk_signal_connect, METH_VARARGS },
     { "connect_after", (PyCFunction)_wrap_gtk_signal_connect_after, METH_VARARGS },
     { "connect_object", (PyCFunction)_wrap_gtk_signal_connect_object, METH_VARARGS },

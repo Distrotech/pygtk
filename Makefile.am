@@ -2,9 +2,9 @@
 # require automake-1.4a
 AUTOMAKE_OPTIONS = 1.4a
 
-SUBDIRS = gtk generate
+SUBDIRS = codegen gtk
 
-INCLUDES = $(PYTHON_INCLUDES) $(PYTHON_CFLAGS)
+INCLUDES = $(PYTHON_INCLUDES)
 
 pyexecdir = $(PYTHON_SITE_EXEC)
 pyexec_LTLIBRARIES = ExtensionClass.la

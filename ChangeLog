@@ -1,3 +1,20 @@
+2000-03-31  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtk.override (_wrap_gtk_label_get): an override for gtk_label_get
+
+	* codegen/codegen.py, gtk/pygtk.h, gtk/gtkobject-support.c: reenabled
+	the wrapper instance dictionary, as the __class_init__ thing seemed
+	to have fixed the related bugs.
+
+	* gtk/gtkobject-support.c (pygtk__class_init__): use a __class_init__
+	method to modify the dealloc methods of python subclasses to handle
+	the evil wrapper rescue code correctly -- that is, not segfault if
+	the dealloc method is called more than once.
+	(pygtk_subclass_dealloc): wrapper for real subclass dealloc routine
+	that handles evil wrapper rescue.
+	(pygtk_dealloc): don't do the evil wrapper rescue stuff here if this
+	is a python subclass, as it is handled in pygtk_subclass_dealloc.
+
 2000-03-29  James Henstridge  <james@daa.com.au>
 
 	* gtk/gtk.defs (gtk_clist_new_with_titles): set clist constructor.

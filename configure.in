@@ -8,7 +8,14 @@ AM_DISABLE_STATIC
 AC_PROG_LIBTOOL
 
 AM_PATH_PYTHON(module)
-PYTHON_INCLUDES="-I${PYTHON_PREFIX}/include/python${PYTHON_VERSION} -I${PYTHON_EXEC_PREFIX}/include/python${PYTHON_VERSION}"
+
+dnl stuff for python extension modules ...
+py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
+py_exec_prefix=`$PYTHON -c "import sys; print sys.exec_prefix"`
+PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
+if test "$py_prefix" != "$py_exec_prefix"; then
+  PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
+fi
 AC_SUBST(PYTHON_INCLUDES)
 
 AM_CHECK_PYMOD(thread,,extra_mods=gthread,extra_mods=)
@@ -30,6 +37,6 @@ CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
 AC_CHECK_HEADER(arrayobject.h, AC_DEFINE(HAVE_NUMPY))
 CPPFLAGS="$save_CPPFLAGS"
 
-AC_OUTPUT(Makefile gtk/Makefile generate/Makefile pyglade/Makefile)
+AC_OUTPUT(Makefile codegen/Makefile gtk/Makefile)
 
 

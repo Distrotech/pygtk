@@ -1218,3 +1218,19 @@ _wrap_gtk_radio_menu_item_new(PyGtk_Object *self, PyObject *args)
     Py_INCREF(Py_None);
     return Py_None;
 }
+%%
+override gtk_label_get
+static PyObject *
+_wrap_gtk_label_get(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, ":GtkLabel.get"))
+	return NULL;
+    gtk_label_get(GTK_LABEL(self->obj), &text);
+    if (text)
+	return PyString_FromString(text);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
