@@ -2483,13 +2483,13 @@ subclass_coerce(PyObject **self, PyObject **v)
     { 
       if (UnboundEMethod_Check(m))
 	{
-	  UNLESS_ASSIGN(m,PyObject_CallFunction(m,"OO",*self,v)) return -1;
+	  UNLESS_ASSIGN(m,PyObject_CallFunction(m,"OO",*self,*v)) return -1;
 	}
       UNLESS_ASSIGN(m,PyObject_CallFunction(m,"O",*v)) return -1;
       if (m==Py_None) r=-1;
       else
 	{
-	  PyArg_ParseTuple(m,"O",v);
+	  PyArg_ParseTuple(m,"OO",self,v);
 	  Py_INCREF(*self);
 	  Py_INCREF(*v);
 	  r=0;
