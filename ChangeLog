@@ -1,4 +1,21 @@
+2000-06-22  James Henstridge  <james@daa.com.au>
+
+	* gtk/libglade.override: add initialisation code to import GtkData
+	base class.
+	Add signal connection implementations.
+
+	* codegen/codegen.py (write_source): fix up handling of registering
+	subclasses when base class is not defined in this module.  Some help
+	from the .override file will be needed.
+
 2000-06-21  James Henstridge  <james@daa.com.au>
+
+	* gtk/Makefile.am ($(srcdir)/libglade.c): read in gtk.defs for
+	definitions before parsing libglade.defs.
+
+	* codegen/codegen.py (__main__): allow reading of another defs
+	file to read in its definitions without generating source code for
+	it.
 
 	* gtk/libglade.override, gtk/libglade.defs, gtk/libglademodule.c:
 	start of libglade module.

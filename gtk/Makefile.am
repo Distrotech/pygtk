@@ -49,7 +49,7 @@ $(srcdir)/gtk.c: $(srcdir)/gtk.defs $(srcdir)/gdk.defs \
 $(srcdir)/libglade.c: $(srcdir)/libglade.defs $(srcdir)/libglade.override
 	-chmod a+w $(srcdir)
 	cd $(srcdir) \
-	&& $(PYTHON) ../codegen/codegen.py -o libglade.override -p libglade libglade.defs > gen-libglade.c \
+	&& $(PYTHON) ../codegen/codegen.py -r gtk.defs -o libglade.override -p libglade libglade.defs > gen-libglade.c \
 	&& cp gen-libglade.c libglade.c \
 	&& rm -f gen-libglade.c
 

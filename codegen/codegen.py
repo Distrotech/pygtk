@@ -364,12 +364,10 @@ def write_source(parser, overrides, prefix, fp=sys.stdout):
     fp.write('    ExtensionClassImported;\n')
     fp.write(overrides.get_init() + '\n')
     for obj in parser.objects:
-        for parent in parser.objects:
-            if (parent.name, parent.module) == obj.parent:
-                fp.write('    pygtk_register_class(d, "' +
-                         obj.c_name + '", &Py' + obj.c_name + '_Type, &Py' +
-                         parent.c_name + '_Type);\n')
-                break
+        if obj.parent != (None, None):
+            fp.write('    pygtk_register_class(d, "' + obj.c_name + '", &Py' +
+                     obj.c_name + '_Type, &Py' + obj.parent[1] +
+                     obj.parent[0] + '_Type);\n')
         else:
             fp.write('    pygtk_register_class(d, "' + obj.c_name +
                      '", &Py' + obj.c_name + '_Type, NULL);\n')
@@ -387,12 +385,18 @@ def register_types(parser):
 if __name__ == '__main__':
     o = override.Overrides(None)
     prefix = 'pygtk'
-    opts, args = getopt.getopt(sys.argv[1:], "o:p:", ["override=", "prefix="])
+    opts, args = getopt.getopt(sys.argv[1:], "o:p:r:",
+                               ["override=", "prefix=", "register="])
     for opt, arg in opts:
         if opt in ('-o', '--override'):
             o = override.Overrides(open(arg))
         elif opt in ('-p', '--prefix'):
             prefix = arg
+        elif opt in ('-r', '--register'):
+            p = parser.DefsParser(arg)
+            p.startParsing()
+            register_types(p)
+            del p
     if len(args) < 1:
         sys.stderr.write(
             'usage: codegen.py [-o overridesfile] [-p prefix] defsfile\n')

@@ -20,7 +20,7 @@
   (c-name glade_xml_new)
   (return-type GladeXML*)
   (parameter (type-and-name const-char* fname))
-  (parameter (type-and-name const-char* root))
+  (parameter (type-and-name const-char* root) (null-ok) (default "NULL"))
 )
 
 (function glade_xml_new_with_domain
@@ -28,17 +28,17 @@
   (is-constructor-of GladeXML)
   (return-type GladeXML*)
   (parameter (type-and-name const-char* fname))
-  (parameter (type-and-name const-char* root))
-  (parameter (type-and-name const-char* domain))
+  (parameter (type-and-name const-char* root) (null-ok) (default "NULL"))
+  (parameter (type-and-name const-char* domain) (null-ok) (default "NULL"))
 )
 
-(function glade_xml_new_from_memory
+(function xml_new_from_memory
   (c-name glade_xml_new_from_memory)
   (return-type GladeXML*)
   (parameter (type-and-name char* buffer))
   (parameter (type-and-name int size))
-  (parameter (type-and-name const-char* root))
-  (parameter (type-and-name const-char* domain))
+  (parameter (type-and-name const-char* root) (null-ok))
+  (parameter (type-and-name const-char* domain) (null-ok))
 )
 
 (method construct
@@ -118,10 +118,21 @@
   (parameter (type-and-name const-gchar* filename))
 )
 
-(function glade_get_widget_tree
+(function get_widget_name
+  (c-name glade_get_widget_name)
+  (return-type const-gchar*)
+  (parameter (type-and-name GtkWidget* widget))
+)
+
+(function get_widget_long_name
+  (c-name glade_get_widget_long_name)
+  (return-type const-gchar*)
+  (parameter (type-and-name GtkWidget* widget))
+)
+
+(function get_widget_tree
   (c-name glade_get_widget_tree)
   (return-type GladeXML*)
   (parameter (type-and-name GtkWidget* widget))
 )
-
 
