@@ -5,6 +5,9 @@
 	(pyg_register_interface): same here.
 	(initgobject): set the ob_type member of PyGInterface_Type and
 	PyGBoxed_Type.
+	(pygobject__gobject_init__): add __gobject_init__ method, that
+	just calls pygobject_init.
+	(pygobject_methods): readd __gobject_init__ method.
 
 2001-09-21  James Henstridge  <james@daa.com.au>
 
