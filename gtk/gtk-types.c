@@ -3,6 +3,9 @@
 #include "pygtk-private.h"
 #include <structmember.h>
 
+/* these aren't ExtensionClass's */
+#undef Py_FindMethod
+
 PyObject *
 PyGtkAccelGroup_New(GtkAccelGroup *obj)
 {

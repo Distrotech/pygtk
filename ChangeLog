@@ -1,3 +1,8 @@
+2000-05-20  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtk-types.c: undef Py_FindMethod, so we don't end up using the
+	overloaded extensionclass version here.
+
 2000-05-12  James Henstridge  <james@daa.com.au>
 
 	* gtk/__init__.py (__all__): add imlib to module list.
