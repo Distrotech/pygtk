@@ -1,5 +1,17 @@
 2001-09-23  James Henstridge  <james@daa.com.au>
 
+	* gtk/__init__.py: don't import ExtensionClass.
+
+	* gobjectmodule.c (object_gc_free): new function to free an GC
+	managed object.
+	(PyGObject_Type): use object_gc_free for the tp_free slot.
+
+	* codegen/codegen.py (write_class): don't write getattr routine.
+	This is a temporary hack to see if things work.
+
+	* gobjectmodule.c (pygobject_dealloc): handle case of destruction
+	when self->obj == NULL.
+
 	* gtk/gtk.override (_wrap_gtk_clist_new_with_titles): return an
 	int.
 	(_wrap_gtk_tree_view_get_path_at_pos): same here.

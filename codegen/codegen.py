@@ -461,7 +461,8 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
         'classname': objobj.name,
         'initfunc': initfunc
     }
-    dict['getattr'] = write_getattr(parser, objobj, castmacro, overrides, fp)
+    #dict['getattr'] = write_getattr(parser, objobj, castmacro, overrides, fp)
+    dict['getattr'] = '0'
     dict['methods'] = '_Py' + dict['class'] + '_methods'
     fp.write(typetmpl % dict)
 
