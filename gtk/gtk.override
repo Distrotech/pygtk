@@ -633,28 +633,32 @@ _wrap_gtk_clist_get_selection_info(PyGObject *self, PyObject *args,
 }
 %%
 override-attr GtkCList.selection
-guint row;
-GList *selection;
-PyObject *py_int, *ret = PyList_New(0);
+static PyObject *
+_wrap_gtk_clist__get_selection(PyGObject *self, void *closure)
+{
+    guint row;
+    GList *selection;
+    PyObject *py_int, *ret = PyList_New(0);
 
-if (ret == NULL)
-    return NULL;
+    if (ret == NULL)
+	return NULL;
 
-for (selection = GTK_CLIST(self->obj)->selection; selection != NULL;
-     selection = selection->next) {
-    row = GPOINTER_TO_UINT(selection->data);
+    for (selection = GTK_CLIST(self->obj)->selection; selection != NULL;
+	 selection = selection->next) {
+	row = GPOINTER_TO_UINT(selection->data);
 
-    py_int = PyInt_FromLong(row);
+	py_int = PyInt_FromLong(row);
 
-    if (!py_int) {
-      Py_DECREF(ret);
-      return NULL;
+	if (!py_int) {
+	    Py_DECREF(ret);
+	    return NULL;
+	}
+
+	PyList_Append(ret, py_int);
+	Py_DECREF(py_int);
     }
-
-    PyList_Append(ret, py_int);
-    Py_DECREF(py_int);
+    return ret;
 }
-return ret;
 %%
 override gtk_combo_set_popdown_strings kwargs
 static PyObject *
@@ -2147,23 +2151,27 @@ ignore gtk_ctree_construct
 ignore gtk_ctree_new
 %%
 override-attr GtkCTree.selection
-GList *selection;
-GtkCTreeNode *node;
-PyObject *ret, *py_node;
-if ((ret = PyList_New(0)) == NULL)
-    return NULL;
+static PyObject *
+_wrap_gtk_ctree__get_selection(PyGObject *self, void *closure)
+{
+    GList *selection;
+    GtkCTreeNode *node;
+    PyObject *ret, *py_node;
+    if ((ret = PyList_New(0)) == NULL)
+	return NULL;
 
-for (selection = GTK_CLIST(self->obj)->selection; selection != NULL;
-     selection = selection->next) {
-    node = selection->data;
-    if ((py_node = PyGtkCTreeNode_New(node)) == NULL) {
-        Py_DECREF(ret);
-        return NULL;
+    for (selection = GTK_CLIST(self->obj)->selection; selection != NULL;
+	 selection = selection->next) {
+	node = selection->data;
+	if ((py_node = PyGtkCTreeNode_New(node)) == NULL) {
+	    Py_DECREF(ret);
+	    return NULL;
+	}
+	PyList_Append(ret, py_node);
+	Py_DECREF(py_node);
     }
-    PyList_Append(ret, py_node);
-    Py_DECREF(py_node);
+    return ret;
 }
-return ret;
 %%
 override gtk_ctree_new_with_titles kwargs
 static int

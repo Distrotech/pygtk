@@ -48,17 +48,12 @@ consttmpl = 'static int\n' + \
 
 methdeftmpl = '    { "%(name)s", (PyCFunction)%(cname)s, %(flags)s },\n'
 
-getattrtmpl = 'static PyObject *\n' + \
-              '%(getattr)s(PyGObject *self, char *attr)\n' + \
-              '{\n' + \
-              '%(attrchecks)s' + \
-              '    PyErr_SetString(PyExc_AttributeError, attr);\n' + \
-              '    return NULL;\n' + \
-              '}\n\n'
-attrchecktmpl = '    if (!strcmp(attr, "%(attr)s")) {\n' + \
-                '%(varlist)s' + \
-                '%(code)s\n' + \
-                '    }\n'
+gettertmpl = 'static PyObject *\n' + \
+             '%(funcname)s(PyGObject *self, void *closure)\n' + \
+             '{\n' + \
+             '%(varlist)s' + \
+             '%(code)s\n' + \
+             '}\n\n'
 
 noconstructor = 'static int\n' + \
                 'pygobject_no_constructor(PyObject *self, PyObject *args, PyObject *kwargs)\n' +\
@@ -79,7 +74,7 @@ typetmpl = 'PyTypeObject Py%(class)s_Type = {\n' + \
 	   '    /* methods */\n' + \
 	   '    (destructor)0,			/* tp_dealloc */\n' + \
 	   '    (printfunc)0,			/* tp_print */\n' + \
-	   '    (getattrfunc)%(getattr)s,	/* tp_getattr */\n' + \
+	   '    (getattrfunc)0,			/* tp_getattr */\n' + \
 	   '    (setattrfunc)0,			/* tp_setattr */\n' + \
 	   '    (cmpfunc)0,			/* tp_compare */\n' + \
 	   '    (reprfunc)0,			/* tp_repr */\n' + \
@@ -102,7 +97,7 @@ typetmpl = 'PyTypeObject Py%(class)s_Type = {\n' + \
            '    (iternextfunc)0,		/* tp_iternext */\n' + \
 	   '    %(methods)s,			/* tp_methods */\n' + \
            '    0,				/* tp_members */\n' + \
-           '    0,				/* tp_getset */\n' + \
+           '    %(getsets)s,			/* tp_getset */\n' + \
            '    NULL,				/* tp_base */\n' + \
            '    NULL,				/* tp_dict */\n' + \
            '    (descrgetfunc)0,		/* tp_descr_get */\n' + \
@@ -188,6 +183,10 @@ boxedgetattrtmpl = 'static PyObject *\n' + \
                    '    PyErr_SetString(PyExc_AttributeError, attr);\n' + \
                    '    return NULL;\n' + \
                    '}\n\n'
+attrchecktmpl = '    if (!strcmp(attr, "%(attr)s")) {\n' + \
+                '%(varlist)s' + \
+                '%(code)s\n' + \
+                '    }\n'
 
 boxedtmpl = 'PyTypeObject Py%(typename)s_Type = {\n' + \
             '    PyObject_HEAD_INIT(NULL)\n' + \
@@ -359,45 +358,47 @@ def write_constructor(objname, castmacro, funcobj, fp=sys.stdout):
     dict['arglist']   = string.join(arglist, ', ')
     fp.write(consttmpl % dict)
 
-def write_getattr(parser, objobj, castmacro, overrides, fp=sys.stdout):
-    funcname = '_wrap_' + string.lower(castmacro) + '_getattr'
+def write_getsets(parser, objobj, castmacro, overrides, fp=sys.stdout):
+    getsets_name = string.lower(castmacro) + '_getsets'
+    funcprefix = '_wrap_' + string.lower(castmacro) + '__get_'
 
-    if overrides.is_overriden(funcname[6:]):
-        fp.write(overrides.override(funcname[6:]))
-        fp.write('\n\n')
-        return funcname
-    
     # no overrides for the whole function.  If no fields, don't write a func
     if not objobj.fields:
         return '0'
-    attrchecks = ''
+    getsets = []
     for ftype, fname in objobj.fields:
+        funcname = funcprefix + fname
         attrname = objobj.c_name + '.' + fname
         if overrides.attr_is_overriden(attrname):
             code = overrides.attr_override(attrname)
-            code = '        ' + string.replace(code, '\n', '\n        ')
-            attrchecks = attrchecks + attrchecktmpl % { 'attr': fixname(fname),
-                                                        'varlist': '',
-                                                        'code': code }
+            fp.write(code)
+            getsets.append('    { "%s", (getter)%s, (setter)0 },\n' %
+                           (fixname(fname), funcname))
             continue
         try:
             varlist = argtypes.VarList()
             handler = argtypes.matcher.get(ftype)
             code = handler.write_return(ftype, varlist) % \
                    {'func': castmacro + '(self->obj)->' + fname}
-            if code:
-                # indent code ...
-                code = '    ' + string.replace(code, '\n', '\n    ')
-            attrchecks = attrchecks + attrchecktmpl % { 'attr': fixname(fname),
-                                                        'varlist': varlist,
-                                                        'code': code }
+            fp.write(gettertmpl % { 'funcname': funcname,
+                                    'attr': fname,
+                                    'varlist': varlist,
+                                    'code': code })
+            getsets.append('    { "%s", (getter)%s, (setter)0 },\n' %
+                           (fixname(fname), funcname))
         except:
             sys.stderr.write("couldn't write check for " + objobj.c_name +
                              '.' + fname + '\n')
 	    #traceback.print_exc()
-    fp.write(getattrtmpl % {'getattr':    funcname,
-                            'attrchecks': attrchecks })
-    return funcname
+    if not getsets:
+        return '0'
+    fp.write('static struct getsetlist %s[] = {\n' % getsets_name)
+    for getset in getsets:
+        fp.write(getset)
+    fp.write('    { NULL, (getter)0, (setter)0 },\n')
+    fp.write('};\n\n')
+    
+    return getsets_name
 
 def write_class(parser, objobj, overrides, fp=sys.stdout):
     fp.write('\n/* ----------- ' + objobj.c_name + ' ----------- */\n\n')
@@ -461,8 +462,7 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
         'classname': objobj.name,
         'initfunc': initfunc
     }
-    #dict['getattr'] = write_getattr(parser, objobj, castmacro, overrides, fp)
-    dict['getattr'] = '0'
+    dict['getsets'] = write_getsets(parser, objobj, castmacro, overrides, fp)
     dict['methods'] = '_Py' + dict['class'] + '_methods'
     fp.write(typetmpl % dict)
 

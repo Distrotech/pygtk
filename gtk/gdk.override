@@ -817,29 +817,37 @@ _wrap_gdk_event_getattr(PyObject *self, char *attr)
 }
 %%
 override-attr GdkDevice.axes
-GdkDevice *device = GDK_DEVICE(self->obj);
-PyObject *ret;
-gint i;
+static PyObject *
+_wrap_gdk_device__get_axes(PyGObject *self, void *closure)
+{
+    GdkDevice *device = GDK_DEVICE(self->obj);
+    PyObject *ret;
+    gint i;
 
-ret = PyTuple_New(device->num_axes);
-for (i = 0; i < device->num_axes; i++)
-    PyTuple_SetItem(ret, i, Py_BuildValue("(idd)",
-					  device->axes[i].use,
-					  device->axes[i].min,
-					  device->axes[i].max));
-return ret;
+    ret = PyTuple_New(device->num_axes);
+    for (i = 0; i < device->num_axes; i++)
+	PyTuple_SetItem(ret, i, Py_BuildValue("(idd)",
+					      device->axes[i].use,
+					      device->axes[i].min,
+					      device->axes[i].max));
+    return ret;
+}
 %%
 override-attr GdkDevice.keys
-GdkDevice *device = GDK_DEVICE(self->obj);
-PyObject *ret;
-gint i;
+static PyObject *
+_wrap_gdk_device__get_keys(PyGObject *self, void *closure)
+{
+    GdkDevice *device = GDK_DEVICE(self->obj);
+    PyObject *ret;
+    gint i;
 
-ret = PyTuple_New(device->num_keys);
-for (i = 0; i < device->num_keys; i++)
-    PyTuple_SetItem(ret, i, Py_BuildValue("(ii)",
-					  device->keys[i].keyval,
-					  device->keys[i].modifiers));
-return ret;
+    ret = PyTuple_New(device->num_keys);
+    for (i = 0; i < device->num_keys; i++)
+	PyTuple_SetItem(ret, i, Py_BuildValue("(ii)",
+					      device->keys[i].keyval,
+					      device->keys[i].modifiers));
+    return ret;
+}
 %%
 override gdk_device_get_state kwargs
 static PyObject *
@@ -977,19 +985,23 @@ _wrap_gdk_drag_find_window(PyGObject *self, PyObject *args, PyObject *kwargs)
 }
 %%
 override-attr GdkDragContext.targets
-PyObject *atom, *ret = PyList_New(0);
-GList *tmp;
-if (ret == NULL)
-    return NULL;
-for (tmp = GDK_DRAG_CONTEXT(self->obj)->targets; tmp; tmp = tmp->next) {
-    if ((atom = PyGdkAtom_New(GPOINTER_TO_INT(tmp->data))) == NULL) {
-	Py_DECREF(ret);
+static PyObject *
+_wrap_gdk_drag_context__get_targets(PyGObject *self, void *closure)
+{
+    PyObject *atom, *ret = PyList_New(0);
+    GList *tmp;
+    if (ret == NULL)
 	return NULL;
+    for (tmp = GDK_DRAG_CONTEXT(self->obj)->targets; tmp; tmp = tmp->next) {
+	if ((atom = PyGdkAtom_New(GPOINTER_TO_INT(tmp->data))) == NULL) {
+	    Py_DECREF(ret);
+	    return NULL;
+	}
+	PyList_Append(ret, atom);
+	Py_DECREF(atom);
     }
-    PyList_Append(ret, atom);
-    Py_DECREF(atom);
+    return ret;
 }
-return ret;
 %%
 override gdk_gc_new_with_values kwargs
 static PyObject *

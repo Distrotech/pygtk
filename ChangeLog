@@ -1,3 +1,22 @@
+2001-09-25  James Henstridge  <james@daa.com.au>
+
+	* gtk/gdk.override (_wrap_gdk_device__get_axes): change to getter.
+	(_wrap_gdk_device__get_keys): turn into a getter.
+	(_wrap_gdk_drag_context__get_targets): same here.
+
+	* gtk/gtk.override (_wrap_gtk_clist__get_selection): turn into a
+	getter.
+	(_wrap_gtk_ctree__get_selection): turn into a getter.
+
+	* codegen/codegen.py (write_getsets): rename to write_getsets, and
+	don't allow overriding the whole routine, as it is implemented as
+	a number of smaller routines now.
+	(gettertmpl): rename from getattrtmpl.  Refactor for handling
+	single attribute.
+	(write_getsets): finish conversion over to using getsets.
+	(write_class): call write_getsets instead.
+	(typetmpl): substitute %(getsets)s rather than %(getattr)s.
+
 2001-09-23  James Henstridge  <james@daa.com.au>
 
 	* gtk/__init__.py: don't import ExtensionClass.
