@@ -1,7 +1,7 @@
 %define py_prefix /usr
 # py_ver should only be 3 characters (1.5.1 == 1.5)
 %define py_ver 1.5
-%define ver 0.6.4
+%define ver 0.7.0
 
 # you may want to remove some of the sub packages depending on what you
 # have installed on your system when building this package.
@@ -53,15 +53,14 @@ rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %files
-%{py_prefix}/lib/python%{py_ver}/site-packages/gtk.py*
-%{py_prefix}/lib/python%{py_ver}/site-packages/Gtkinter.py*
 %{py_prefix}/lib/python%{py_ver}/site-packages/GtkExtra.py*
-%{py_prefix}/lib/python%{py_ver}/site-packages/GTK.py*
-%{py_prefix}/lib/python%{py_ver}/site-packages/GDK.py*
+%{py_prefix}/lib/python%{py_ver}/site-packages/__init__.py*
+%{py_prefix}/lib/python%{py_ver}/site-packages/gtk/GTK.py*
+%{py_prefix}/lib/python%{py_ver}/site-packages/gtk/GDK.py*
 %{py_prefix}/lib/python%{py_ver}/site-packages/GdkImlib.py*
 %{py_prefix}/lib/python%{py_ver}/site-packages/pyglade/*.py*
 
-%{py_prefix}/lib/python%{py_ver}/site-packages/_gtkmodule.so
+%{py_prefix}/lib/python%{py_ver}/site-packages/gtk/_gtkmodule.*
 %{py_prefix}/lib/python%{py_ver}/site-packages/_gdkimlibmodule.so
 
 %{py_prefix}/include/pygtk

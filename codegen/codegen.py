@@ -47,6 +47,13 @@ consttmpl = 'static PyObject *\n' + \
 
 methdeftmpl = '    { "%(name)s", (PyCFunction)%(cname)s, %(flags)s },\n'
 
+gettypetmpl = 'static PyObject *\n' + \
+              '_wrap_%(uclass)s_get_type(PyObject *self, PyObject *args)\n' + \
+              '{\n' + \
+              '    if (!PyArg_ParseTuple(args, ":%(class)s.get_type"))\n' + \
+              '        return NULL;\n' + \
+              '    return PyInt_FromLong(%(uclass)s_get_type());\n' + \
+              '}\n\n'
 getattrtmpl = 'static PyObject *\n' + \
               '%(getattr)s(PyGtk_Object *self, char *attr)\n' + \
               '{\n' + \
@@ -62,7 +69,7 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
 	   '    0,				/* ob_size */\n' + \
 	   '    "%(class)s",			/* tp_name */\n' + \
-	   '    sizeof(PyGtk_Object),     	/* tp_basicsize */\n' + \
+	   '    sizeof(PyGtk_Object),		/* tp_basicsize */\n' + \
 	   '    0,				/* tp_itemsize */\n' + \
 	   '    /* methods */\n' + \
 	   '    (destructor)pygtk_dealloc,	/* tp_dealloc */\n' + \
@@ -238,6 +245,14 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
                        { 'name':  '__init__',
                          'cname': 'pygtk_no_constructor',
                          'flags': 'METH_VARARGS'})
+    # do the get_type routine as class method ...
+    uclass = string.lower(argtypes._to_upper_str(objobj.c_name)[1:])
+    fp.write(gettypetmpl % { 'class':  objobj.c_name,
+                             'uclass': uclass })
+    methods.append(methdeftmpl %
+                   { 'name':  'get_type',
+                     'cname': '_wrap_' + uclass + '_get_type',
+                     'flags': 'METH_VARARGS|METH_CLASS_METHOD'})
     for meth in parser.find_methods(objobj):
         if overrides.is_ignored(meth.c_name):
             continue
@@ -253,7 +268,7 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
 	except:
 	    sys.stderr.write('Could not write method ' + objobj.c_name +
 			     '.' + meth.name + '\n')
-	    #traceback.print_exc()
+            #traceback.print_exc()
 
     # write the PyMethodDef structure
     methods.append('    { NULL, NULL, 0 }\n')

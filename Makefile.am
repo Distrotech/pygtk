@@ -1,7 +1,12 @@
-SUBDIRS = gtk generate pyglade
+
+# require automake-1.4a
+AUTOMAKE_OPTIONS = 1.4a
+
+SUBDIRS = gtk generate
 
 INCLUDES = $(PYTHON_INCLUDES) $(PYTHON_CFLAGS)
 
+pyexecdir = $(PYTHON_SITE_EXEC)
 pyexec_LTLIBRARIES = ExtensionClass.la
 
 ExtensionClass_la_LDFLAGS = -module -avoid-version

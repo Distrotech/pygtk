@@ -1,3 +1,12 @@
+2000-03-29  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtk.defs (gtk_clist_new_with_titles): set clist constructor.
+
+	* gtk/gtk.override: add clist overrides.
+
+	* configure.in, Makefile.am, gtk/Makefile.am: updated to use
+	automake-1.4a.
+
 2000-03-28  James Henstridge  <james@daa.com.au>
 
 	* gtk/gtk.override (_wrap_gtk_radio_menu_item_new): fixed bug in

@@ -103,7 +103,9 @@ pygtk_register_wrapper(PyObject *self)
     gtk_object_sink(obj);
     gtk_object_set_data(obj, pygtk_wrapper_key, self);
 
+    /*
     ((PyGtk_Object *)self)->inst_dict = PyDict_New();
+    */
 }
 
 PyObject *
@@ -145,9 +147,13 @@ PyGtk_New(GtkObject *obj)
     while ((tp = g_hash_table_lookup(class_hash, gtk_type_name(type))) == NULL)
 	type = gtk_type_parent(type);
 
-    self = PyObject_NEW(PyGtk_Object, tp);
+    /* can't use PyObject_NEW, as we want to create a slightly larger struct */
+    self = malloc(sizeof(PyGtk_Object));
     if (self == NULL)
-	return NULL;
+	return PyErr_NoMemory();
+    self->ob_type = tp;
+    _Py_NewReference((PyObject *)self);
+
     self->obj = obj;
     gtk_object_ref(obj);
     /* save the wrapper pointer so we can access it later */
@@ -195,7 +201,7 @@ pygtk_getattr(PyGtk_Object *self, char *attr)
 int
 pygtk_setattr(PyGtk_Object *self, char *attr, PyObject *value)
 {
-    PyDict_SetItemString(self->inst_dict, attr, value);
+    PyDict_SetItemString(INSTANCE_DICT(self), attr, value);
     return 0;
 }
 

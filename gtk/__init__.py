@@ -9,6 +9,12 @@ from GTK import *
 import GDK
 from _gtk import *
 
+# old names compatibility ...
+mainloop = main
+def mainquit(*args):
+    main_quit()
+mainiteration = main_iteration
+
 # for importing ...
 __all__ = ['_gtk', 'GTK', 'GDK' ]
 

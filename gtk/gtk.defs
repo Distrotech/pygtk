@@ -2553,12 +2553,14 @@
 
 (function gtk_clist_new
   (c-name gtk_clist_new)
+  (is-constructor-of GtkCList)
   (return-type GtkWidget*)
   (parameter (type-and-name gint columns))
 )
 
 (function gtk_clist_new_with_titles
   (c-name gtk_clist_new_with_titles)
+  (is-constructor-of GtkCList)
   (return-type GtkWidget*)
   (parameter (type-and-name gint columns))
   (parameter (type-and-name gchar*[] titles))
@@ -5035,7 +5037,7 @@
   (return-type GtkItemFactory*)
   (parameter (type-and-name GtkType container_type))
   (parameter (type-and-name const-gchar* path))
-  (parameter (type-and-name GtkAccelGroup* accel_group))
+  (parameter (type-and-name GtkAccelGroup* accel_group) (null-ok))
 )
 
 (method construct
@@ -10045,7 +10047,7 @@
   (c-name gtk_vbox_new)
   (is-constructor-of GtkVBox)
   (return-type GtkWidget*)
-  (parameter (type-and-name gboolean homogeneous) (defualt "FALSE"))
+  (parameter (type-and-name gboolean homogeneous) (default "FALSE"))
   (parameter (type-and-name gint spacing) (default "0"))
 )
 

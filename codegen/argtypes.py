@@ -273,7 +273,7 @@ class FlagsArg(ArgType):
 	    varlist.add(self.flagname, pname)
 	varlist.add('PyObject', '*py_' + pname + ' = NULL')
 	parselist.append('&py_' + pname)
-	extracode.append(self.enum % {'typecode':self.typecode, 'name':pname})
+	extracode.append(self.flag % {'typecode':self.typecode, 'name':pname})
 	arglist.append(pname)
 	return 'O'
     def write_return(self, ptype, varlist):
@@ -364,11 +364,11 @@ class BoxedArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
 		    extracode, arglist):
 	if pnull:
-	    varlist.add(ptype, '*' + pname)
+            varlist.add(ptype[:-1], '*' + pname)
 	    varlist.add('PyObject', '*py_' + pname + ' = Py_None')
 	    parselist.append('&py_' + pname)
 	    extracode.append(self.null % {'name':pname, 'get':self.getter,
-					  'type':ptype})
+                                          'type':ptype[:-1]})
 	    arglist.append(pname)
 	    return 'O'
 	else:
@@ -384,6 +384,10 @@ class BoxedArg(ArgType):
 	       '        return ' + self.new + '(ret);\n' + \
 	       '    Py_INCREF(Py_None);\n' + \
 	       '    return Py_None;'
+
+class AtomArg(IntArg):
+    def write_return(self, ptype, varlist):
+        return '    return PyGdkAtom_New(%(func)s);'
 
 class ArgMatcher:
     def __init__(self):
@@ -440,6 +444,8 @@ matcher.register('glong', arg)
 matcher.register('gulong', arg)
 matcher.register('gboolean', arg)
 
+matcher.register('guint8', arg)
+matcher.register('gint8', arg)
 matcher.register('guint16', arg)
 matcher.register('gint16', arg)
 matcher.register('guint32', arg)
@@ -480,11 +486,10 @@ matcher.register_boxed('GdkDragContext', 'PyGdkDragContext_Type',
 		       'PyGdkDragContext_Get', 'PyGdkDragContext_New')
 matcher.register_boxed('GtkSelectionData', 'PyGtkSelectionData_Type',
 		       'PyGtkSelectionData_Get', 'PyGtkSelectionData_New')
-matcher.register_boxed('GdkAtom', 'PyGdkAtom_Type',
-		       'PyGdkAtom_Get', 'PyGdkAtom_New')
 matcher.register_boxed('GdkCursor', 'PyGdkCursor_Type',
 		       'PyGdkCursor_Get', 'PyGdkCursor_New')
 matcher.register_boxed('GtkCTreeNode', 'PyGtkCTreeNode_Type',
 		       'PyGtkCTreeNode_Get', 'PyGtkCTreeNode_New')
+matcher.register('GdkAtom', AtomArg())
 
 del arg
