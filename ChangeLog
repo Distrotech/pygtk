@@ -1,3 +1,12 @@
+2000-03-25  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtk.defs: first cut at defs file.  I am still cleaning it up
+	a bit and adding the information that the defs generator could not
+	work out.
+
+	* codegen/codegen.py: added support for overrides file.
+	also removed some of the traceback printing code.
+
 2000-03-23  James Henstridge  <james@daa.com.au>
 
 	* codegen/override.py: simple module for parsing a file containing

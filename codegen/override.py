@@ -10,6 +10,7 @@ class Overrides:
 	def __init__(self, fp=sys.stdin):
 		self.ignores = {}
 		self.overrides = {}
+		if fp == None: return
 		# read all the components of the file ...
 		bufs = map(string.strip, string.split(fp.read(), '%%'))
 		if buf == ['']: return
@@ -25,6 +26,7 @@ class Overrides:
 		words = string.split(line)
 		if words[0] == 'ignore':
 			for func in words[1:]: self.ignores[func] = 1
+			for func in string.split(rest): self.ignores[func] = 1
 		elif words[0] == 'override':
 			func = words[1]
 			self.overrides[func] = rest

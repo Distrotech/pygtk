@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- Mode: Python; py-indent-offset: 4 -*-
 import sys, string
-import parser, argtypes
+import parser, argtypes, override
 
 import traceback
 
@@ -174,7 +174,7 @@ def write_constructor(objname, funcobj, fp=sys.stdout):
     dict['arglist']   = string.join(arglist, ', ')
     fp.write(consttmpl % dict)
 
-def write_class(parser, objobj, fp=sys.stdout):
+def write_class(parser, objobj, overrides, fp=sys.stdout):
     fp.write('\n/* ----------- ' + objobj.c_name + ' ----------- */\n\n')
     constructor = parser.find_constructor(objobj)
     methods = []
@@ -188,17 +188,23 @@ def write_class(parser, objobj, fp=sys.stdout):
 	except:
 	    sys.stderr.write('Could not write constructor for ' +
 			     objobj.c_name + '\n')
-	    traceback.print_exc()
+	    #traceback.print_exc()
     for meth in parser.find_methods(objobj):
+        if overrides.is_ignored(meth.c_name):
+            continue
 	try:
-	    write_method(objobj.c_name, meth, fp)
+            if overrides.is_overriden(meth.c_name):
+                fp.write(overrides.override(meth.c_name))
+                fp.write('\n\n')
+            else:
+                write_method(objobj.c_name, meth, fp)
 	    methods.append(methdeftmpl % { 'name':  meth.name,
 					   'cname': '_wrap_' + meth.c_name,
 					   'flags': 'METH_VARARGS'})
 	except:
 	    sys.stderr.write('Could not write method ' + objobj.c_name +
 			     '.' + meth.name + '\n')
-	    traceback.print_exc()
+	    #traceback.print_exc()
 
     # write the PyMethodDef structure
     methods.append('    { NULL, NULL, 0 }\n')
@@ -215,18 +221,24 @@ def write_class(parser, objobj, fp=sys.stdout):
         dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
     fp.write(typetmpl % dict)
 
-def write_functions(parser, fp=sys.stdout):
+def write_functions(parser, overrides, fp=sys.stdout):
     fp.write('\n/* ----------- functions ----------- */\n\n')
     functions = []
     for func in parser.find_functions():
+        if overrides.is_ignored(func.c_name):
+            continue
 	try:
-	    write_function(func, fp)
+            if overrides.is_overriden(func.c_name):
+                fp.write(overrides.override(func.c_name))
+                fp.write('\n\n')
+            else:
+                write_function(func, fp)
 	    functions.append(methdeftmpl % { 'name':  func.name,
                                              'cname': '_wrap_' + func.c_name,
                                              'flags': 'METH_VARARGS'})
 	except:
 	    sys.stderr.write('Could not write function ' + func.name + '\n')
-	    traceback.print_exc()
+	    #traceback.print_exc()
     # write the PyMethodDef structure
     functions.append('    { NULL, NULL, 0 }\n')
     fp.write('PyMethodDef gtk_functions[] = {\n')
@@ -234,7 +246,7 @@ def write_functions(parser, fp=sys.stdout):
     fp.write('};\n\n')
 
 
-def write_source(parser, fp=sys.stdout):
+def write_source(parser, overrides, fp=sys.stdout):
     fp.write('/* -*- Mode: C; c-basic-offset: 4 -*- */\n\n')
     fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n#include "pygtk-private.h"\n\n')
     fp.write('/* ---------- forward type declarations ---------- */\n')
@@ -242,10 +254,10 @@ def write_source(parser, fp=sys.stdout):
         fp.write('PyExtensionClass Py' + obj.c_name + '_Type;\n')
     fp.write('\n')
     for obj in parser.objects:
-        write_class(parser, obj, fp)
+        write_class(parser, obj, overrides, fp)
         fp.write('\n')
 
-    write_functions(parser, fp)
+    write_functions(parser, overrides, fp)
 
     fp.write('/* intialise stuff extension classes */\n')
     fp.write('void\nregister_classes(PyObject *d)\n{\n')
@@ -275,9 +287,13 @@ def register_types(parser):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        sys.stderr.write('usage: codegen.py defsfile\n')
+        sys.stderr.write('usage: codegen.py defsfile [overridesfile]\n')
         sys.exit(1)
+    if len(sys.argv) > 2:
+        o = override.Overrides(open(sys.argv[2], 'r'))
+    else:
+        o = override.Overrides(None)
     p = parser.DefsParser(sys.argv[1])
     p.startParsing()
     register_types(p)
-    write_source(p)
+    write_source(p, o)
