@@ -1,5 +1,19 @@
 2001-09-22  James Henstridge  <james@daa.com.au>
 
+	* pango.override: s/PyExtensionClass/PyTypeObject/
+
+	* codegen/codegen.py (consttmpl): constructor template returns an
+	int.
+	(noconstructor): return int rather than PyObject.
+	(typetmpl): change def to be a PyTypeObject, with extra fields.
+	(interfacetypetmpl): same here.
+	(boxedconsttmpl): return int rather than pyobject.
+	(boxedtmpl): change def to PyTypeObject.
+	(write_class): put the constructor in the right place.
+	(write_boxed): put the constructor in the right place.
+	(write_source): don't include ExtensionClass.h, forward declare
+	type objects as PyTypeObjects, rather than PyExtensionClasses.
+
 	* gobjectmodule.c (pygobject_register_class): set type->ob_type.
 	(pyg_register_boxed): same here.
 	(pyg_register_interface): same here.

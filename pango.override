@@ -5,7 +5,7 @@ headers
 #include <pygobject.h>
 #include <pango/pango.h>
 
-static PyExtensionClass *_PyGObject_Type;
+static PyTypeObject *_PyGObject_Type;
 #define PyGObject_Type (*_PyGObject_Type)
 
 %%
@@ -16,8 +16,8 @@ init
     if (pygobject != NULL) {
         PyObject *module_dict = PyModule_GetDict(pygobject);
 
-        _PyGObject_Type = (PyExtensionClass *)PyDict_GetItemString(module_dict,
-                                                                   "GObject");
+        _PyGObject_Type = (PyTypeObject *)PyDict_GetItemString(module_dict,
+							       "GObject");
     } else {
         Py_FatalError("could not import gobject");
         return;

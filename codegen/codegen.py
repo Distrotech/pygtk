@@ -29,22 +29,21 @@ methtmpl = 'static PyObject *\n' + \
 	   '}\n\n'
 methcalltmpl = '%(cname)s(%(cast)s(self->obj)%(arglist)s)'
 
-consttmpl = 'static PyObject *\n' + \
+consttmpl = 'static int\n' + \
 	    '_wrap_%(cname)s(PyGObject *self, PyObject *args, PyObject *kwargs)\n' + \
 	    '{\n' + \
 	    '%(varlist)s' + \
 	    '    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "%(typecodes)s:%(class)s.__init__"%(parselist)s))\n' + \
-	    '        return NULL;\n' + \
+	    '        return -1;\n' + \
 	    '%(extracode)s\n' + \
 	    '    self->obj = (GObject *)%(cname)s(%(arglist)s);\n' + \
 	    '    if (!self->obj) {\n' + \
 	    '        PyErr_SetString(PyExc_RuntimeError, "could not create %(class)s object");\n' + \
-	    '        return NULL;\n' + \
+	    '        return -1;\n' + \
 	    '    }\n' + \
             '%(gtkobjectsink)s' + \
 	    '    pygobject_register_wrapper((PyObject *)self);\n' + \
-	    '    Py_INCREF(Py_None);\n' + \
-	    '    return Py_None;\n' + \
+            '    return 0;\n' + \
 	    '}\n\n'
 
 methdeftmpl = '    { "%(name)s", (PyCFunction)%(cname)s, %(flags)s },\n'
@@ -61,17 +60,17 @@ attrchecktmpl = '    if (!strcmp(attr, "%(attr)s")) {\n' + \
                 '%(code)s\n' + \
                 '    }\n'
 
-noconstructor = 'static PyObject *\n' + \
-                'pygobject_no_constructor(PyObject *self, PyObject *args)\n' +\
+noconstructor = 'static int\n' + \
+                'pygobject_no_constructor(PyObject *self, PyObject *args, PyObject *kwargs)\n' +\
                 '{\n' + \
                 '    gchar buf[512];\n' + \
                 '\n' + \
                 '    g_snprintf(buf, sizeof(buf), "%s is an abstract widget", self->ob_type->tp_name);\n' + \
                 '    PyErr_SetString(PyExc_NotImplementedError, buf);\n' + \
-                '    return NULL;\n' + \
+                '    return -1;\n' + \
                 '}\n\n'
 
-typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
+typetmpl = 'PyTypeObject Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
 	   '    0,				/* ob_size */\n' + \
 	   '    "%(classname)s",		/* tp_name */\n' + \
@@ -92,18 +91,31 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
            '    (reprfunc)0,			/* tp_str */\n' + \
 	   '    (getattrofunc)0,		/* tp_getattro */\n' + \
 	   '    (setattrofunc)0,		/* tp_setattro */\n' + \
-	   '    /* Space for future expansion */\n' + \
-	   '    0L, 0L,\n' + \
+           '    0,				/* tp_as_buffer */\n' + \
+           '    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */\n' + \
 	   '    NULL, /* Documentation string */\n' + \
-	   '    %(methods)s,\n' + \
-           '    EXTENSIONCLASS_INSTDICT_FLAG,\n' + \
+           '    (traverseproc)0,		/* tp_traverse */\n' + \
+           '    (inquiry)0,			/* tp_clear */\n' + \
+           '    (richcmpfunc)0,			/* tp_richcompare */\n' + \
+           '    offsetof(PyGObject, weakreflist), /* tp_weaklistoffset */\n' +\
+           '    (getiterfunc)0,			/* tp_iter */\n' + \
+           '    (iternextfunc)0,		/* tp_iternext */\n' + \
+	   '    %(methods)s,			/* tp_methods */\n' + \
+           '    0,				/* tp_members */\n' + \
+           '    0,				/* tp_getset */\n' + \
+           '    NULL,				/* tp_base */\n' + \
+           '    NULL,				/* tp_dict */\n' + \
+           '    (descrgetfunc)0,		/* tp_descr_get */\n' + \
+           '    (descrsetfunc)0,		/* tp_descr_set */\n' + \
+           '    offsetof(PyGObject, inst_dict),	/* tp_dictoffset */\n' + \
+           '    (initproc)%(initfunc)s,		/* tp_init */\n' + \
 	   '};\n\n'
 
-interfacetypetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
+interfacetypetmpl = 'PyTypeObject Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
 	   '    0,				/* ob_size */\n' + \
 	   '    "%(classname)s",		/* tp_name */\n' + \
-	   '    sizeof(PyPureMixinObject),	/* tp_basicsize */\n' + \
+	   '    sizeof(PyObject),		/* tp_basicsize */\n' + \
 	   '    0,				/* tp_itemsize */\n' + \
 	   '    /* methods */\n' + \
 	   '    (destructor)0,			/* tp_dealloc */\n' + \
@@ -120,11 +132,24 @@ interfacetypetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
            '    (reprfunc)0,			/* tp_str */\n' + \
 	   '    (getattrofunc)0,		/* tp_getattro */\n' + \
 	   '    (setattrofunc)0,		/* tp_setattro */\n' + \
-	   '    /* Space for future expansion */\n' + \
-	   '    0L, 0L,\n' + \
+           '    0,				/* tp_as_buffer */\n' + \
+           '    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */\n' + \
 	   '    NULL, /* Documentation string */\n' + \
-	   '    %(methods)s,\n' + \
-           '    0,\n' + \
+           '    (traverseproc)0,		/* tp_traverse */\n' + \
+           '    (inquiry)0,			/* tp_clear */\n' + \
+           '    (richcmpfunc)0,			/* tp_richcompare */\n' + \
+           '    0,				/* tp_weaklistoffset */\n' +\
+           '    (getiterfunc)0,			/* tp_iter */\n' + \
+           '    (iternextfunc)0,		/* tp_iternext */\n' + \
+	   '    %(methods)s,			/* tp_methods */\n' + \
+           '    0,				/* tp_members */\n' + \
+           '    0,				/* tp_getset */\n' + \
+           '    NULL,				/* tp_base */\n' + \
+           '    NULL,				/* tp_dict */\n' + \
+           '    (descrgetfunc)0,		/* tp_descr_get */\n' + \
+           '    (descrsetfunc)0,		/* tp_descr_set */\n' + \
+           '    0,				/* tp_dictoffset */\n' + \
+           '    (initproc)0,			/* tp_init */\n' + \
 	   '};\n\n'
 
 boxedmethtmpl = 'static PyObject *\n' + \
@@ -138,23 +163,22 @@ boxedmethtmpl = 'static PyObject *\n' + \
                 '}\n\n'
 boxedmethcalltmpl = '%(cname)s(pyg_boxed_get(self, %(typename)s)%(arglist)s)'
 
-boxedconsttmpl = 'static PyObject *\n' + \
+boxedconsttmpl = 'static int\n' + \
                  '_wrap_%(cname)s(PyGBoxed *self, PyObject *args, PyObject *kwargs)\n' + \
                  '{\n' + \
                  '%(varlist)s' + \
                  '    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "%(typecodes)s:%(typename)s.__init__"%(parselist)s))\n' + \
-                 '        return NULL;\n' + \
+                 '        return -1;\n' + \
                  '%(extracode)s\n' + \
                  '    self->gtype = %(typecode)s;\n' + \
                  '    self->free_on_dealloc = FALSE;\n' + \
                  '    self->boxed = %(cname)s(%(arglist)s);\n' + \
                  '    if (!self->boxed) {\n' + \
                  '        PyErr_SetString(PyExc_RuntimeError, "could not create %(typename)s object");\n' + \
-                 '        return NULL;\n' + \
+                 '        return -1;\n' + \
                  '    }\n' + \
                  '    self->free_on_dealloc = TRUE;\n' + \
-                 '    Py_INCREF(Py_None);\n' + \
-                 '    return Py_None;\n' + \
+                 '    return 0;\n' + \
                  '}\n\n'
 
 boxedgetattrtmpl = 'static PyObject *\n' + \
@@ -165,7 +189,7 @@ boxedgetattrtmpl = 'static PyObject *\n' + \
                    '    return NULL;\n' + \
                    '}\n\n'
 
-boxedtmpl = 'PyExtensionClass Py%(typename)s_Type = {\n' + \
+boxedtmpl = 'PyTypeObject Py%(typename)s_Type = {\n' + \
             '    PyObject_HEAD_INIT(NULL)\n' + \
             '    0,				/* ob_size */\n' + \
             '    "%(typename)s",			/* tp_name */\n' + \
@@ -186,11 +210,24 @@ boxedtmpl = 'PyExtensionClass Py%(typename)s_Type = {\n' + \
             '    (reprfunc)0,			/* tp_str */\n' + \
             '    (getattrofunc)0,		/* tp_getattro */\n' + \
             '    (setattrofunc)0,		/* tp_setattro */\n' + \
-            '    /* Space for future expansion */\n' + \
-            '    0L, 0L,\n' + \
+            '    0,				/* tp_as_buffer */\n' + \
+            '    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */\n' +\
             '    NULL, /* Documentation string */\n' + \
-            '    %(methods)s,\n' + \
-            '    0,\n' + \
+            '    (traverseproc)0,		/* tp_traverse */\n' + \
+            '    (inquiry)0,			/* tp_clear */\n' + \
+            '    (richcmpfunc)0,		/* tp_richcompare */\n' + \
+            '    0,				/* tp_weaklistoffset */\n' +\
+            '    (getiterfunc)0,			/* tp_iter */\n' + \
+            '    (iternextfunc)0,		/* tp_iternext */\n' + \
+            '    %(methods)s,			/* tp_methods */\n' + \
+            '    0,				/* tp_members */\n' + \
+            '    0,				/* tp_getset */\n' + \
+            '    NULL,				/* tp_base */\n' + \
+            '    NULL,				/* tp_dict */\n' + \
+            '    (descrgetfunc)0,		/* tp_descr_get */\n' + \
+            '    (descrsetfunc)0,		/* tp_descr_set */\n' + \
+            '    0,				/* tp_dictoffset */\n' + \
+            '    (initproc)%(initfunc)s,	/* tp_init */\n' + \
             '};\n\n'
 
 def fixname(name):
@@ -366,21 +403,15 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
     constructor = parser.find_constructor(objobj, overrides)
     methods = []
     castmacro = string.replace(objobj.typecode, '_TYPE_', '_', 1)
+    initfunc = '0'
     if constructor:
 	try:
-            methtype = 'METH_VARARGS'
             if overrides.is_overriden(constructor.c_name):
                 fp.write(overrides.override(constructor.c_name))
                 fp.write('\n\n')
-                if overrides.wants_kwargs(constructor.c_name):
-                    methtype = methtype + '|METH_KEYWORDS'
             else:
                 write_constructor(objobj.c_name, castmacro, constructor, fp)
-                methtype = methtype + '|METH_KEYWORDS'
-	    methods.append(methdeftmpl %
-			   { 'name':  '__init__',
-			     'cname': '_wrap_' + constructor.c_name,
-			     'flags': methtype})
+            initfunc = '_wrap_' + constructor.c_name
 	except:
 	    sys.stderr.write('Could not write constructor for ' +
 			     objobj.c_name + '\n')
@@ -389,19 +420,13 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
             if not hasattr(overrides, 'no_constructor_written'):
                 fp.write(noconstructor)
                 overrides.no_constructor_written = 1
-            methods.append(methdeftmpl %
-                           { 'name':  '__init__',
-                             'cname': 'pygobject_no_constructor',
-                             'flags': 'METH_VARARGS'})
+            initfunc = 'pygobject_no_constructor'
     else:
         # this is a hack ...
         if not hasattr(overrides, 'no_constructor_written'):
             fp.write(noconstructor)
             overrides.no_constructor_written = 1
-        methods.append(methdeftmpl %
-                       { 'name':  '__init__',
-                         'cname': 'pygobject_no_constructor',
-                         'flags': 'METH_VARARGS'})
+        initfunc = 'pygobject_no_constructor'
     for meth in parser.find_methods(objobj):
         if overrides.is_ignored(meth.c_name):
             continue
@@ -430,9 +455,13 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
     fp.write('};\n\n')
 
     # write the type template
-    dict = { 'class': objobj.c_name, 'classname': objobj.name }
+    dict = {
+        'class': objobj.c_name,
+        'classname': objobj.name,
+        'initfunc': initfunc
+    }
     dict['getattr'] = write_getattr(parser, objobj, castmacro, overrides, fp)
-    dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
+    dict['methods'] = '_Py' + dict['class'] + '_methods'
     fp.write(typetmpl % dict)
 
 def write_interface(parser, interface, overrides, fp=sys.stdout):
@@ -469,7 +498,7 @@ def write_interface(parser, interface, overrides, fp=sys.stdout):
     # write the type template
     dict = { 'class': interface.c_name, 'classname': interface.name,
              'getattr': '0' }
-    dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
+    dict['methods'] = '_Py' + dict['class'] + '_methods'
     fp.write(interfacetypetmpl % dict)
 
 ## boxed types ...
@@ -597,22 +626,16 @@ def write_boxed(parser, boxedobj, overrides, fp=sys.stdout):
     fp.write('\n/* ----------- ' + boxedobj.c_name + ' ----------- */\n\n')
     constructor = parser.find_constructor(boxedobj, overrides)
     methods = []
+    initfunc = '0'
     if constructor:
 	try:
-            methtype = 'METH_VARARGS'
             if overrides.is_overriden(constructor.c_name):
                 fp.write(overrides.override(constructor.c_name))
                 fp.write('\n\n')
-                if overrides.wants_kwargs(constructor.c_name):
-                    methtype = methtype + '|METH_KEYWORDS'
             else:
                 write_boxed_constructor(boxedobj.c_name, boxedobj.typecode,
                                         constructor, fp)
-                methtype = methtype + '|METH_KEYWORDS'
-	    methods.append(methdeftmpl %
-			   { 'name':  '__init__',
-			     'cname': '_wrap_' + constructor.c_name,
-			     'flags': methtype})
+            initfunc = '_wrap_' + constructor.c_name
 	except:
 	    sys.stderr.write('Could not write constructor for ' +
 			     boxedobj.c_name + '\n')
@@ -645,9 +668,9 @@ def write_boxed(parser, boxedobj, overrides, fp=sys.stdout):
     fp.write('};\n\n')
 
     # write the type template
-    dict = { 'typename': boxedobj.c_name }
+    dict = { 'typename': boxedobj.c_name, 'initfunc': initfunc }
     dict['getattr'] = write_boxed_getattr(parser, boxedobj, overrides, fp)
-    dict['methods'] = 'METHOD_CHAIN(_Py' + dict['typename'] + '_methods)'
+    dict['methods'] = '_Py' + dict['typename'] + '_methods'
     fp.write(boxedtmpl % dict)
 
 
@@ -695,16 +718,16 @@ def write_enums(parser, prefix, fp=sys.stdout):
 
 def write_source(parser, overrides, prefix, fp=sys.stdout):
     fp.write('/* -*- Mode: C; c-basic-offset: 4 -*- */\n\n')
-    fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n\n')
+    fp.write('#include <Python.h>\n\n\n')
     fp.write(overrides.get_headers())
     fp.write('\n\n')
     fp.write('/* ---------- forward type declarations ---------- */\n')
     for obj in parser.boxes:
-        fp.write('PyExtensionClass Py' + obj.c_name + '_Type;\n')
+        fp.write('PyTypeObject Py' + obj.c_name + '_Type;\n')
     for obj in parser.objects:
-        fp.write('PyExtensionClass Py' + obj.c_name + '_Type;\n')
+        fp.write('PyTypeObject Py' + obj.c_name + '_Type;\n')
     for interface in parser.interfaces:
-        fp.write('PyExtensionClass Py' + interface.c_name + '_Type;\n')
+        fp.write('PyTypeObject Py' + interface.c_name + '_Type;\n')
     fp.write('\n')
     for boxed in parser.boxes:
         write_boxed(parser, boxed, overrides, fp)
@@ -722,7 +745,6 @@ def write_source(parser, overrides, prefix, fp=sys.stdout):
 
     fp.write('/* intialise stuff extension classes */\n')
     fp.write('void\n' + prefix + '_register_classes(PyObject *d)\n{\n')
-    fp.write('    ExtensionClassImported;\n')
     fp.write(overrides.get_init() + '\n')
 
     for boxed in parser.boxes:
