@@ -27,6 +27,14 @@ class DefsParser(IncludeParser):
 	odef = apply(ObjectDef, args)
 	self.objects.append(odef)
 	self.c_name[odef.c_name] = odef
+    def enum(self, *args):
+        edef = apply(EnumDef, args)
+        self.enums.append(edef)
+        self.c_name[edef.c_name] = edef
+    def flags(self, *args):
+        fdef = apply(FlagsDef, args)
+        self.enums.append(fdef)
+        self.c_name[fdef.c_name] = fdef
     def function(self, *args):
 	fdef = apply(FunctionDef, args)
 	self.functions.append(fdef)
@@ -48,6 +56,6 @@ class DefsParser(IncludeParser):
 	for obj in self.objects:
 	    obj.write_defs(fp)
 	for enum in self.enums:
-	    obj.write_defs(fp)
+	    enum.write_defs(fp)
 	for func in self.functions:
 	    func.write_defs(fp)

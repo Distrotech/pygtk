@@ -3,6 +3,7 @@
 #define _PYGTK_H_
 
 #include <Python.h>
+#include <ExtensionClass.h>
 #include <gtk/gtk.h>
 
 struct _PyGtk_FunctionStruct {
@@ -164,23 +165,23 @@ typedef struct {
  * or not.  A similar source level interface should be provided in both
  * instances. */
 #ifdef _INSIDE_PYGTK_
-staticforward PyTypeObject PyGtk_Type;
-staticforward PyTypeObject PyGtkAccelGroup_Type;
-staticforward PyTypeObject PyGtkStyle_Type;
-staticforward PyTypeObject PyGdkFont_Type;
-staticforward PyTypeObject PyGdkColor_Type;
-staticforward PyTypeObject PyGdkEvent_Type;
-staticforward PyTypeObject PyGdkWindow_Type;
-staticforward PyTypeObject PyGdkGC_Type;
-staticforward PyTypeObject PyGdkColormap_Type;
-staticforward PyTypeObject PyGdkDragContext_Type;
-staticforward PyTypeObject PyGtkSelectionData_Type;
-staticforward PyTypeObject PyGdkAtom_Type;
-staticforward PyTypeObject PyGdkCursor_Type;
-staticforward PyTypeObject PyGtkCTreeNode_Type;
+extern PyExtensionClass PyGtkObject_Type;
+extern PyTypeObject PyGtkAccelGroup_Type;
+extern PyTypeObject PyGtkStyle_Type;
+extern PyTypeObject PyGdkFont_Type;
+extern PyTypeObject PyGdkColor_Type;
+extern PyTypeObject PyGdkEvent_Type;
+extern PyTypeObject PyGdkWindow_Type;
+extern PyTypeObject PyGdkGC_Type;
+extern PyTypeObject PyGdkColormap_Type;
+extern PyTypeObject PyGdkDragContext_Type;
+extern PyTypeObject PyGtkSelectionData_Type;
+extern PyTypeObject PyGdkAtom_Type;
+extern PyTypeObject PyGdkCursor_Type;
+extern PyTypeObject PyGtkCTreeNode_Type;
 
 /* check the type of a PyObject */
-#define PyGtk_Check(v) ((v)->ob_type == &PyGtk_Type)
+#define PyGtk_Check(v) (ExtensionClassSubclassInstanceCheck(v,&PyGtkObject_Type))
 #define PyGtkAccelGroup_Check(v) ((v)->ob_type == &PyGtkAccelGroup_Type)
 #define PyGtkStyle_Check(v) ((v)->ob_type == &PyGtkStyle_Type)
 #define PyGdkFont_Check(v) ((v)->ob_type == &PyGdkFont_Type)

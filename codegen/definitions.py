@@ -11,9 +11,6 @@ class Definition:
     def write_defs(self, fp=sys.stdout):
 	"""write out this definition in defs file format"""
 	raise RuntimeError, "this is an abstract class"
-    def write_python_bindings(self, fp=sys.stdout):
-	"""write bindings code for this function"""
-	raise RuntimeError, "this is an abstract class"
 
 class ObjectDef(Definition):
     def __init__(self, name, *args):
@@ -57,7 +54,45 @@ class ObjectDef(Definition):
 	for (ftype, fname) in self.fields:
 	    fp.write('  (field (type-and-name ' + ftype + ' ' + fname + '))\n')
 	fp.write(')\n\n')
-    # def write_python_bindings
+
+class EnumDef(Definition):
+    def __init__(self, name, *args):
+	self.deftype = 'enum'
+	self.name = name
+	self.in_module = None
+	self.c_name = None
+	self.values = []
+	for arg in args:
+	    if type(arg) != type(()) or len(arg) < 2:
+		continue
+	    if arg[0] == 'in-module':
+		self.in_module = arg[1]
+	    elif arg[0] == 'c-name':
+		self.c_name = arg[1]
+	    elif arg[0] == 'value':
+		vname = None
+		vcname = None
+		for parg in arg[1:]:
+		    if parg[0] == 'name':
+			vname = parg[1]
+		    elif parg[0] == 'c-name':
+			vcname = parg[1]
+		self.values.append((vname, vcname))
+    def merge(self, old):
+	pass
+    def write_defs(self, fp=sys.stdout):
+	fp.write('(' + self.deftype + ' ' + self.name + '\n')
+	if self.in_module:
+	    fp.write('  (in-module ' + self.in_module + ')\n')
+	fp.write('  (c-name ' + self.c_name + ')\n')
+	for name, val in self.values:
+	    fp.write('  (value (name ' + name + ') (c-name ' + val + '))\n')
+	fp.write(')\n\n')
+
+class FlagsDef(EnumDef):
+    def __init__(self, *args):
+	apply(EnumDef.__init__, (self,) + args)
+	self.deftype = 'flags'
 
 class MethodDef(Definition):
     def __init__(self, name, *args):
@@ -117,7 +152,6 @@ class MethodDef(Definition):
 	    if pnull: fp.write(' (null-ok)')
 	    fp.write(')\n')
 	fp.write(')\n\n')
-    # def write_python_bindings
 
 class FunctionDef(Definition):
     def __init__(self, name, *args):
@@ -153,7 +187,6 @@ class FunctionDef(Definition):
 			pnull = 1
 		self.params.append((ptype, pname, pdflt, pnull))
     _method_write_defs = MethodDef.__dict__['write_defs']
-    #_method_write_python_bindings = MethodDef.write_python_bindings
     def merge(self, old):
 	# here we merge extra parameter flags accross to the new object.
 	for i in range(len(self.params)):
@@ -168,7 +201,6 @@ class FunctionDef(Definition):
 	    self.name = old.name
 	    # transmogrify from function into method ...
 	    self.write_defs = self._method_write_defs
-	    #self.write_python_bindings = self._method_write_python_bindings
 	    self.of_object = old.of_object
 	    del self.params[0]
     def write_defs(self, fp=sys.stdout):
@@ -187,5 +219,4 @@ class FunctionDef(Definition):
 	    if pnull: fp.write(' (null-ok)')
 	    fp.write(')\n')
 	fp.write(')\n\n')
-    # def write_python_bindings
 
