@@ -1,3 +1,14 @@
+2000-06-24  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtkobject-support.c (pygtk_lookup_class): moved this bit of
+	code here, so it can be used in other functions in this file.
+	(pygtk_arg_from_pyobject): perform stricter type checking here.
+	(pygtk_ret_from_pyobject): and here.
+
+	* gtk/pygtk.h (pygtk_register_{class,wrapper}): add define here.
+	Without it, addon modules were using symbols from _gtkmodule's
+	namespace.
+
 2000-06-23  James Henstridge  <james@daa.com.au>
 
 	* gtk/gtkgl.defs (use_gdk_font): fix up a few extra function names.

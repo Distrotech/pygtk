@@ -136,6 +136,19 @@ pygtk_no_constructor(PyObject *self, PyObject *args)
     return NULL;
 }
 
+static PyExtensionClass *
+pygtk_lookup_class(GtkType type)
+{
+    PyExtensionClass *ec;
+
+    /* find the python type for this object.  If not found, use parent. */
+    while ((ec = g_hash_table_lookup(class_hash, gtk_type_name(type))) == NULL
+	   && type != 0)
+	type = gtk_type_parent(type);
+    g_assert(ec != NULL);
+    return ec;
+}
+
 PyObject *
 PyGtk_New(GtkObject *obj)
 {
@@ -160,10 +173,7 @@ PyGtk_New(GtkObject *obj)
 	return (PyObject *)self;
     }
 
-    type = GTK_OBJECT_TYPE(obj);
-    /* find the python type for this object.  If not found, use parent. */
-    while ((tp = g_hash_table_lookup(class_hash, gtk_type_name(type))) == NULL)
-	type = gtk_type_parent(type);
+    tp = (PyTypeObject *)pygtk_lookup_class(GTK_OBJECT_TYPE(obj));
 
     /* can't use PyObject_NEW, as we want to create a slightly larger struct */
     self = malloc(sizeof(PyGtk_Object));
@@ -287,6 +297,7 @@ int
 pygtk_arg_from_pyobject(GtkArg *arg, PyObject *obj)
 {
     PyObject *tmp;
+
     switch (GTK_FUNDAMENTAL_TYPE(arg->type)) {
     case GTK_TYPE_NONE:
     case GTK_TYPE_INVALID:
@@ -383,7 +394,7 @@ pygtk_arg_from_pyobject(GtkArg *arg, PyObject *obj)
 	Py_DECREF(tmp);
 	break;
     case GTK_TYPE_OBJECT:
-	if (PyGtk_Check(obj, &PyGtkObject_Type))
+	if (PyGtk_Check(obj, pygtk_lookup_class(arg->type)))
 	    GTK_VALUE_OBJECT(*arg) = PyGtk_Get(obj);
 	else
 	    return -1;
@@ -704,7 +715,7 @@ pygtk_ret_from_pyobject(GtkArg *ret, PyObject *py_ret)
 	}
 	break;
     case GTK_TYPE_OBJECT:
-	if (PyGtk_Check(py_ret, &PyGtkObject_Type))
+	if (PyGtk_Check(py_ret, pygtk_lookup_class(ret->type)))
 	    *GTK_RETLOC_OBJECT(*ret) = PyGtk_Get(py_ret);
 	else
 	    *GTK_RETLOC_OBJECT(*ret) = NULL;
