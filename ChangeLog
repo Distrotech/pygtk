@@ -1,5 +1,32 @@
 2000-03-26  James Henstridge  <james@daa.com.au>
 
+	* codegen/codegen.py (typetmpl): set the EXTENSIONCLASS_INSTDICT_FLAG
+	so that GtkObject wrappers have an instance dictionary -- that is,
+	you can set attributes on them.
+
+	* gtk/gtkobject-support.c (pygtk_register_wrapper, PyGtk_New): set the
+	inst_dict when creating a new wrapper.
+	(pygtk_dealloc): destroy the inst_dict with the wrapper.
+	(pygtk_setattr): set attributes in the inst_dict.
+
+	* gtk/pygtk.h: add ownedref and inst_dict members to PyGtk_Object
+	structure.  Inst_dict must be the last if any more changes are
+	required to the structure.
+
+	* gtk/gtkobject-support.c (pygtk_dealloc): fix up dealloc so that
+	it won't segfault if self->obj == NULL.
+
+	* codegen/codegen.py (write_class): use pygtk_no_constructor for
+	widgets without their own constructor.
+
+	* gtk/gtkobject-support.c (pygtk_register_wrapper): make sure we
+	have a reference to the object.
+	(PyGtk_New, pygtk_dealloc): try out the wrapper saving code, so that
+	we always present the same wrapper object to the python program,
+	even if all references to it are lost in python.
+	(pygtk_no_constructor): new function for use as a constructor for
+	widgets which should not be directly created.
+
 	* gtk/gtk.defs: updated defs file.  Added gdk constant definitions
 	and added is-constructor-of lines to lots of constructor functions.
 	Will have to write custom routines for most _new and _new_with_label

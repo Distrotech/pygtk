@@ -71,7 +71,8 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    /* Space for future expansion */\n' + \
 	   '    0L, 0L,\n' + \
 	   '    NULL, /* Documentation string */\n' + \
-	   '    %(methods)s\n' + \
+	   '    %(methods)s,\n' + \
+           '    EXTENSIONCLASS_INSTDICT_FLAG,\n' + \
 	   '};\n\n'
 
 def write_function(funcobj, fp=sys.stdout):
@@ -189,6 +190,15 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
 	    sys.stderr.write('Could not write constructor for ' +
 			     objobj.c_name + '\n')
 	    #traceback.print_exc()
+            methods.append(methdeftmpl %
+                           { 'name':  '__init__',
+                             'cname': 'pygtk_no_constructor',
+                             'flags': 'METH_VARARGS'})
+    else:
+        methods.append(methdeftmpl %
+                       { 'name':  '__init__',
+                         'cname': 'pygtk_no_constructor',
+                         'flags': 'METH_VARARGS'})
     for meth in parser.find_methods(objobj):
         if overrides.is_ignored(meth.c_name):
             continue

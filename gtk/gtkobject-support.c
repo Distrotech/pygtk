@@ -83,10 +83,7 @@ pygtk_destroy_notify(gpointer user_data)
 static GHashTable *class_hash = NULL;
 
 static const char *pygtk_wrapper_key = "pygtk::wrapper";
-/*
-  static const char *pygtk_hasref_key = "pygtk::hasref";
-  static const char *pygtk_ownedref_key = "pygtk::ownedref"
-*/
+static const char *pygtk_ownedref_key = "pygtk::ownedref";
 
 void
 pygtk_register_class(const gchar *class_name, PyExtensionClass *ec)
@@ -102,7 +99,21 @@ pygtk_register_wrapper(PyObject *self)
 {
     GtkObject *obj = ((PyGtk_Object *)self)->obj;
 
+    gtk_object_ref(obj);
+    gtk_object_sink(obj);
     gtk_object_set_data(obj, pygtk_wrapper_key, self);
+
+    ((PyGtk_Object *)self)->inst_dict = PyDict_New();
+}
+
+PyObject *
+pygtk_no_constructor(PyObject *self, PyObject *args)
+{
+    gchar buf[512];
+
+    g_snprintf(buf, sizeof(buf), "%s is an abstract widget", self->ob_type->tp_name);
+    PyErr_SetString(PyExc_NotImplementedError, buf);
+    return NULL;
 }
 
 PyObject *
@@ -119,6 +130,12 @@ PyGtk_New(GtkObject *obj)
 
     /* we already have a wrapper for this object -- return it. */
     if ((self = (PyGtk_Object *)gtk_object_get_data(obj, pygtk_wrapper_key))) {
+	/* if the gtk object currently owns the wrapper reference ... */
+	if (self->hasref) {
+	    self->hasref = FALSE;
+	    gtk_object_remove_no_notify(obj, pygtk_ownedref_key);
+	    gtk_object_ref(obj);
+	}
 	Py_INCREF(self);
 	return (PyObject *)self;
     }
@@ -135,6 +152,8 @@ PyGtk_New(GtkObject *obj)
     gtk_object_ref(obj);
     /* save the wrapper pointer so we can access it later */
     gtk_object_set_data(obj, pygtk_wrapper_key, self);
+    /* set up the class dictionary */
+    self->inst_dict = PyDict_New();
     return (PyObject *)self;
 }
 
@@ -143,10 +162,24 @@ pygtk_dealloc(PyGtk_Object *self)
 {
     GtkObject *obj = self->obj;
 
-    /* look at implementing something here to catch deletion so the reference
-     * can be saved in the GtkObject  for later use. */
-
-    gtk_object_unref(obj);
+    if (obj) {
+	/* save reference to python wrapper if there are still
+	 * references to the gtk object in such a way that it will be
+	 * freed when the gtk object is destroyed, so is the python
+	 * wrapper, but if a python wrapper can be */
+	if (obj->ref_count > 1) {
+	    Py_INCREF(self); /* grab a reference on the wrapper */
+	    self->hasref = TRUE;
+	    gtk_object_set_data_full(obj, pygtk_ownedref_key,
+				     self, pygtk_destroy_notify);
+	    gtk_object_unref(obj);
+	    return;
+	}
+	if (!self->hasref) /* don't unref the gtk object if it owns us */
+	    gtk_object_unref(obj);
+    }
+    if (self->inst_dict)
+	Py_DECREF(self->inst_dict);
     PyMem_DEL(self);
 }
 
@@ -162,7 +195,8 @@ pygtk_getattr(PyGtk_Object *self, char *attr)
 int
 pygtk_setattr(PyGtk_Object *self, char *attr, PyObject *value)
 {
-    return -1;
+    PyDict_SetItemString(self->inst_dict, attr, value);
+    return 0;
 }
 
 int

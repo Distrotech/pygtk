@@ -74,8 +74,10 @@ struct _PyGtk_FunctionStruct {
 
 /* structure definitions for the various object types in PyGTK */
 typedef struct {
-  PyObject_HEAD
-  GtkObject *obj;
+    PyObject_HEAD
+    GtkObject *obj;
+    gboolean hasref;      /* the GtkObject owns this reference */
+    PyObject *inst_dict; /* must be last ... */
 } PyGtk_Object;
 
 typedef struct {
