@@ -31,5 +31,5 @@ $(srcdir)/gtk.c: $(srcdir)/gtk.defs $(srcdir)/gdk.defs \
 dist-hook:
 	-rm -f $(distdir)/gtk.c
 
-EXTRA_DIST = gtk.defs gtk-extrafuncs.defs gtk.override
+EXTRA_DIST = gtk.defs gtk-extrafuncs.defs gdk.defs gtk.override
 
