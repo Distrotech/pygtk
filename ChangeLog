@@ -1,3 +1,7 @@
+2004-12-10  John Ehresman  <jpe@wingide.com>
+
+	* gobject/pygobject.h: Change PY_HEXVERSION to PY_VERSION_HEX
+
 2004-11-15  John Finlay  <finlay@moeraki.com>
 
 	* gobject/pygflags.c (pyg_flags_repr): Print long int value if enum
