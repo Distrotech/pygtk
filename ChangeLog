@@ -1,3 +1,8 @@
+2002-11-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* pygtk.py (_get_available_versions): If the directory doesn't
+	exist skip it. If not, it breaks when doing os.listdir.
+
 2002-11-27  Christian Reis    <kiko@async.com.br>
 	
 	* gtkmodule.c: check return value of GtkArgs_FromSequence() and
