@@ -1,3 +1,11 @@
+2001-09-21  James Henstridge  <james@daa.com.au>
+
+	* pygobject.h: don't include ExtensionClass.h
+
+	* configure.in (AM_PATH_PYTHON): require python 2.2.
+
+	* Makefile.am: remove ExtensionClass.
+
 2001-09-20  James Henstridge  <james@daa.com.au>
 
 	* pango.defs (FontMetrics): uncomment this now it has a boxed type.
