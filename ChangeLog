@@ -1,8 +1,10 @@
-2004-03-11  Gustavo J. A. M. Carneiro  <gustavo@users.sourceforge.net>
+2004-03-20  Gustavo J. A. M. Carneiro  <gustavo@users.sourceforge.net>
 
-	* examples/pygtk-demo/demos/itemfactory.py (main): Add
-	expand=False to packing of menubar in window, so that it doesn't
-	stretch with the window.
+	* gtk/gdk.override (_wrap_gdk_atom_intern): Override; return
+	Py_None if gdk_atom_intern returns GDK_NONE.  Fixes #137093
+	"gtk.gdk.atom_intern always creates an atom".
+	(headers): Add protype for have_numpy() to avoid later
+	implicit declaration warning.
 
 2004-03-11  Gustavo J. A. M. Carneiro  <gustavo@users.sourceforge.net>
 
