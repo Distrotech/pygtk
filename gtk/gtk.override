@@ -8,7 +8,6 @@ ignore-glob
   gtk_signal_connect*
   gtk_signal_add_emission_hook*
   gtk_signal_new*
-  gtk_signal_emit*
   gtk_draw_*
   gtk_paint_*
   gtk_init_add_*
@@ -56,6 +55,10 @@ ignore
   gtk_signal_name
   gtk_signal_remove_emission_hook
   gtk_signal_query
+  gtk_signal_emit
+  gtk_signal_emit_by_name
+  gtk_signal_emitv
+  gtk_signal_emitv_by_name
   gtk_quit_remove_by_data
   gtk_idle_remove_by_data
   gtk_object_weakref
@@ -1367,5 +1370,402 @@ _wrap_gtk_label_get(PyGtk_Object *self, PyObject *args)
 	return PyString_FromString(text);
     Py_INCREF(Py_None);
     return Py_None;
+}
+%%
+ignore gtk_ctree_new
+%%
+override gtk_ctree_new_with_titles kwargs
+static PyObject*
+_wrap_gtk_ctree_new_with_titles(PyGtk_Object *self, PyObject *args,
+				PyObject *kwargs)
+{
+    static char *kwlist[] = { "columns", "tree_column", "titles", NULL };
+    int columns, tree_column;
+    PyObject *py_titles = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii|O:GtkCTree.__init__",
+				     kwlist, &columns, &tree_column,
+				     &py_titles))
+	return NULL;
+    if (py_titles) {
+	gchar **titles;
+	gint i;
+
+	if (!PySequence_Check(py_titles)) {
+	    PyErr_SetString(PyExc_TypeError, "titles must be a sequence");
+	    return NULL;
+	}
+	if (PySequence_Length(py_titles) < columns) {
+	    PyErr_SetString(PyExc_TypeError, "titles too short");
+	    return NULL;
+	}
+	titles = g_new(gchar *, columns);
+	for (i = 0; i < columns; i++) {
+	    PyObject *item = PySequence_GetItem(py_titles, i);
+
+	    Py_DECREF(item);
+	    if (!PyString_Check(item)) {
+		PyErr_SetString(PyExc_TypeError, "sequence item not a string");
+		g_free(titles);
+		return NULL;
+	    }
+	    titles[i] = PyString_AsString(item);
+	}
+	self->obj = (GtkObject *)gtk_ctree_new_with_titles(columns,
+						tree_column, titles);
+	g_free(titles);
+    } else
+	self->obj = (GtkObject *)gtk_ctree_new(columns, tree_column);
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError,"could not create GtkCTree object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_ctree_insert_node kwargs
+static PyObject *
+_wrap_gtk_ctree_insert_node(PyGtk_Object *self, PyObject *args,
+			    PyObject *kwargs)
+{
+    static char *kwlist[] = { "parent", "sibling", "text", "spacing",
+			      "pixmap_closed", "mask_closed", "pixmap_opened",
+			      "mask_opened", "is_leaf", "expanded", NULL };
+    PyObject *py_parent, *py_sibling, *py_text;
+    PyObject *py_pixmap_closed, *py_mask_closed;
+    PyObject *py_pixmap_opened, *py_mask_opened;
+    GtkCTreeNode *parent = NULL, *sibling = NULL, *ret;
+    gchar **text = NULL;
+    GdkPixmap *pixmap_closed = NULL, *pixmap_opened = NULL;
+    GdkBitmap *mask_closed = NULL, *mask_opened = NULL;
+    gint spacing, is_leaf, expanded, columns, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOOiOOOOii:GtkCTree.insert_node", kwlist,
+				     &py_parent, &py_sibling, &py_text,
+				     &spacing, &py_pixmap_closed,
+				     &py_mask_closed, &py_pixmap_opened,
+				     &py_mask_opened, &is_leaf, &expanded))
+	return NULL;
+    if (PyGtkCTreeNode_Check(py_parent))
+	parent = PyGtkCTreeNode_Get(py_parent);
+    else if (py_parent != Py_None) {
+	PyErr_SetString(PyExc_TypeError, "parent must be a CTreeNode or None");
+	return NULL;
+    }
+    if (PyGtkCTreeNode_Check(py_sibling))
+	sibling = PyGtkCTreeNode_Get(py_sibling);
+    else if (py_sibling != Py_None) {
+	PyErr_SetString(PyExc_TypeError,"sibling must be a CTreeNode or None");
+	return NULL;
+    }
+    if (PyGdkWindow_Check(py_pixmap_closed))
+	pixmap_closed = PyGdkWindow_Get(py_pixmap_closed);
+    else if (py_pixmap_closed != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"pixmap_closed must be a GdkPixmap or None");
+	return NULL;
+    }
+    if (PyGdkWindow_Check(py_mask_closed))
+	mask_closed = PyGdkWindow_Get(py_mask_closed);
+    else if (py_mask_closed != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"mask_closed must be a GdkBitmap or None");
+	return NULL;
+    }
+    if (PyGdkWindow_Check(py_pixmap_opened))
+	pixmap_opened = PyGdkWindow_Get(py_pixmap_opened);
+    else if (py_pixmap_opened != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"pixmap_opened must be a GdkPixmap or None");
+	return NULL;
+    }
+    if (PyGdkWindow_Check(py_mask_opened))
+	mask_opened = PyGdkWindow_Get(py_mask_opened);
+    else if (py_mask_opened != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"mask_opened must be a GdkBitmap or None");
+	return NULL;
+    }
+    if (!PySequence_Check(py_text)) {
+	PyErr_SetString(PyExc_TypeError, "text must be a sequence");
+	return NULL;
+    }
+    columns = GTK_CLIST(self->obj)->columns;
+    if (PySequence_Length(py_text) < columns) {
+	PyErr_SetString(PyExc_TypeError, "text is too short");
+	return NULL;
+    }
+    text = g_new(gchar *, columns);
+    for (i = 0; i < columns; i++) {
+	PyObject *item = PySequence_GetItem(py_text, i);
+
+	Py_DECREF(item);
+	if (!PyString_Check(item)) {
+	    PyErr_SetString(PyExc_TypeError,"text sequence item not a string");
+	    g_free(text);
+	    return NULL;
+	}
+	text[i] = PyString_AsString(item);
+    }
+    ret = gtk_ctree_insert_node(GTK_CTREE(self->obj), parent, sibling, text,
+				spacing, pixmap_closed, mask_closed,
+				pixmap_opened, mask_opened, is_leaf, expanded);
+    g_free(text);
+    return PyGtkCTreeNode_New(ret);
+}
+%%
+override gtk_ctree_find_by_row_data kwargs
+static PyObject *
+_wrap_gtk_ctree_find_by_row_data(PyGtk_Object *self, PyObject *args,
+				 PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", "data", NULL };
+    PyObject *py_node, *data;
+    GtkCTreeNode *node = NULL, *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OO:GtkCTree.find_by_row_data", kwlist,
+				     &py_node, &data))
+	return NULL;
+    if (PyGtkCTreeNode_Check(py_node))
+	node = PyGtkCTreeNode_Get(py_node);
+    else if (py_node != Py_None) {
+	PyErr_SetString(PyExc_TypeError, "node must be a CTreeNode or None");
+	return NULL;
+    }
+    ret = gtk_ctree_find_by_row_data(GTK_CTREE(self->obj), node, data);
+    if (ret)
+	return PyGtkCTreeNode_New(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_ctree_find_all_by_row_data kwargs
+static PyObject *
+_wrap_gtk_ctree_find_all_by_row_data(PyGtk_Object *self, PyObject *args,
+				     PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", "data", NULL };
+    PyObject *py_node, *data, *list;
+    GtkCTreeNode *node = NULL;
+    GList *ret, *tmp;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OO:GtkCTree.find_all_by_row_data",kwlist,
+				     &py_node, &data))
+	return NULL;
+    if (PyGtkCTreeNode_Check(py_node))
+	node = PyGtkCTreeNode_Get(py_node);
+    else if (py_node != Py_None) {
+	PyErr_SetString(PyExc_TypeError, "node must be a CTreeNode or None");
+	return NULL;
+    }
+    ret = gtk_ctree_find_all_by_row_data(GTK_CTREE(self->obj), node, data);
+    if ((list = PyList_New(0)) == NULL)
+	return NULL;
+    for (tmp = ret; tmp != NULL; tmp = tmp->next) {
+	PyObject *item = PyGtkCTreeNode_New((GtkCTreeNode *)tmp->data);
+
+	if (item == NULL) {
+	    Py_DECREF(list);
+	    return NULL;
+	}
+	PyList_Append(list, item);
+	Py_DECREF(item);
+    }
+    g_list_free(ret);
+    return list;
+}
+%%
+override gtk_ctree_node_get_text kwargs
+static PyObject *
+_wrap_gtk_ctree_node_get_text(PyGtk_Object *self, PyObject *args,
+			      PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", "column", NULL };
+    PyObject *node;
+    int column;
+    char *text = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!i:GtkCTree.node_get_text", kwlist,
+				     &PyGtkCTreeNode_Type, &node, &column))
+	return NULL;
+    if (!gtk_ctree_node_get_text(GTK_CTREE(self->obj),
+				 PyGtkCTreeNode_Get(node), column, &text)) {
+	PyErr_SetString(PyExc_ValueError, "can't get text value");
+	return NULL;
+    }
+    return PyString_FromString(text);
+}
+%%
+override gtk_ctree_node_get_pixmap kwargs
+static PyObject *
+_wrap_gtk_ctree_node_get_pixmap(PyGtk_Object *self, PyObject *args,
+				PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", "column", NULL };
+    PyObject *node, *py_pixmap, *py_mask;
+    int column;
+    GdkPixmap *pixmap = NULL;
+    GdkBitmap *mask = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!i:GtkCTree.node_get_pixmap", kwlist,
+				     &PyGtkCTreeNode_Type, &node, &column))
+	return NULL;
+    if (!gtk_ctree_node_get_pixmap(GTK_CTREE(self->obj),
+				   PyGtkCTreeNode_Get(node), column,
+				   &pixmap, &mask)) {
+	PyErr_SetString(PyExc_ValueError, "can't get pixmap value");
+	return NULL;
+    }
+    if (pixmap)
+	py_pixmap = PyGdkWindow_New(pixmap);
+    else {
+	Py_INCREF(Py_None);
+	py_pixmap = Py_None;
+    }
+    if (mask)
+	py_mask = PyGdkWindow_New(mask);
+    else {
+	Py_INCREF(Py_None);
+	py_mask = Py_None;
+    }
+    return Py_BuildValue("(NN)", py_pixmap, py_mask);
+}
+%%
+override gtk_ctree_node_get_pixtext kwargs
+static PyObject *
+_wrap_gtk_ctree_node_get_pixtext(PyGtk_Object *self, PyObject *args,
+				 PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", "column", NULL };
+    PyObject *node, *py_pixmap, *py_mask;
+    int column;
+    gchar *text = NULL;
+    guint8 spacing;
+    GdkPixmap *pixmap = NULL;
+    GdkBitmap *mask = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!i:GtkCTree.node_get_pixtext", kwlist,
+				     &PyGtkCTreeNode_Type, &node, &column))
+	return NULL;
+    if (!gtk_ctree_node_get_pixtext(GTK_CTREE(self->obj),
+				   PyGtkCTreeNode_Get(node), column,
+				   &text, &spacing, &pixmap, &mask)) {
+	PyErr_SetString(PyExc_ValueError, "can't get pixtext value");
+	return NULL;
+    }
+    if (pixmap)
+	py_pixmap = PyGdkWindow_New(pixmap);
+    else {
+	Py_INCREF(Py_None);
+	py_pixmap = Py_None;
+    }
+    if (mask)
+	py_mask = PyGdkWindow_New(mask);
+    else {
+	Py_INCREF(Py_None);
+	py_mask = Py_None;
+    }
+    return Py_BuildValue("(siNN)", text, (int)spacing, py_pixmap, py_mask);
+}
+%%
+override gtk_ctree_get_node_info kwargs
+static PyObject *
+_wrap_gtk_ctree_get_node_info(PyGtk_Object *self, PyObject *args,
+			      PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", NULL };
+    PyObject *node;
+    PyObject *py_pixmap_closed, *py_mask_closed;
+    PyObject *py_pixmap_opened, *py_mask_opened;
+    gchar *text;
+    guint8 spacing;
+    GdkPixmap *pixmap_closed, *pixmap_opened;
+    GdkBitmap *mask_closed, *mask_opened;
+    gboolean is_leaf, expanded;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!:GtkCTree.get_node_info",
+				     kwlist, &PyGtkCTreeNode_Type, &node))
+	return NULL;
+    if (!gtk_ctree_get_node_info(GTK_CTREE(self->obj),PyGtkCTreeNode_Get(node),
+				 &text, &spacing, &pixmap_closed, &mask_closed,
+				 &pixmap_opened, &mask_opened,
+				 &is_leaf, &expanded)) {
+	PyErr_SetString(PyExc_ValueError, "can't get node info");
+	return NULL;
+    }
+    if (pixmap_closed)
+	py_pixmap_closed = PyGdkWindow_New(pixmap_closed);
+    else {
+	Py_INCREF(Py_None);
+	py_pixmap_closed = Py_None;
+    }
+    if (mask_closed)
+	py_mask_closed = PyGdkWindow_New(mask_closed);
+    else {
+	Py_INCREF(Py_None);
+	py_mask_closed = Py_None;
+    }
+    if (pixmap_opened)
+	py_pixmap_opened = PyGdkWindow_New(pixmap_opened);
+    else {
+	Py_INCREF(Py_None);
+	py_pixmap_opened = Py_None;
+    }
+    if (mask_opened)
+	py_mask_opened = PyGdkWindow_New(mask_opened);
+    else {
+	Py_INCREF(Py_None);
+	py_mask_opened = Py_None;
+    }
+    return Py_BuildValue("(siNNNNii)", text, (int)spacing,
+			 py_pixmap_closed, py_mask_closed,
+			 py_pixmap_opened, py_mask_opened,
+			 (int)is_leaf, (int)expanded);
+}
+%%
+override gtk_ctree_node_set_row_data kwargs
+static PyObject *
+_wrap_gtk_ctree_node_set_row_data(PyGtk_Object *self, PyObject *args,
+				  PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", "data", NULL };
+    PyObject *node, *data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!O:GtkCTree.set_row_data", kwlist,
+				     &PyGtkCTreeNode_Type, &node, &data))
+	return NULL;
+    Py_INCREF(data);
+    gtk_ctree_node_set_row_data_full(GTK_CTREE(self->obj),
+				     PyGtkCTreeNode_Get(node), data,
+				     (GtkDestroyNotify)pygtk_destroy_notify);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_ctree_node_get_row_data kwargs
+static PyObject *
+_wrap_gtk_ctree_node_get_row_data(PyGtk_Object *self, PyObject *args,
+				  PyObject *kwargs)
+{
+    static char *kwlist[] = { "node", NULL };
+    PyObject *node, *data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!:GtkCTree.get_row_data",
+				     kwlist, &PyGtkCTreeNode_Type, &node))
+	return NULL;
+    data = gtk_ctree_node_get_row_data(GTK_CTREE(self->obj),
+				       PyGtkCTreeNode_Get(node));
+    if (!data) data = Py_None;
+    Py_INCREF(data);
+    return data;
 }
 

@@ -2995,6 +2995,7 @@
 
 (function gtk_ctree_new_with_titles
   (c-name gtk_ctree_new_with_titles)
+  (is-constructor-of GtkCTree)
   (return-type GtkWidget*)
   (parameter (type-and-name gint columns))
   (parameter (type-and-name gint tree_column))
@@ -3003,6 +3004,7 @@
 
 (function gtk_ctree_new
   (c-name gtk_ctree_new)
+  (is-constructor-of GtkCTree)
   (return-type GtkWidget*)
   (parameter (type-and-name gint columns))
   (parameter (type-and-name gint tree_column))
@@ -3182,8 +3184,8 @@
   (c-name gtk_ctree_move)
   (return-type none)
   (parameter (type-and-name GtkCTreeNode* node))
-  (parameter (type-and-name GtkCTreeNode* new_parent))
-  (parameter (type-and-name GtkCTreeNode* new_sibling))
+  (parameter (type-and-name GtkCTreeNode* new_parent) (null-ok))
+  (parameter (type-and-name GtkCTreeNode* new_sibling) (null-ok))
 )
 
 (method expand
@@ -3272,14 +3274,6 @@
   (parameter (type-and-name GtkCTreeNode* node))
 )
 
-(method real_select_recursive
-  (of-object CTree (Gtk))
-  (c-name gtk_ctree_real_select_recursive)
-  (return-type none)
-  (parameter (type-and-name GtkCTreeNode* node))
-  (parameter (type-and-name gint state))
-)
-
 (method node_set_text
   (of-object CTree (Gtk))
   (c-name gtk_ctree_node_set_text)
@@ -3296,7 +3290,7 @@
   (parameter (type-and-name GtkCTreeNode* node))
   (parameter (type-and-name gint column))
   (parameter (type-and-name GdkPixmap* pixmap))
-  (parameter (type-and-name GdkBitmap* mask))
+  (parameter (type-and-name GdkBitmap* mask) (null-ok))
 )
 
 (method node_set_pixtext
@@ -3308,7 +3302,7 @@
   (parameter (type-and-name const-gchar* text))
   (parameter (type-and-name guint8 spacing))
   (parameter (type-and-name GdkPixmap* pixmap))
-  (parameter (type-and-name GdkBitmap* mask))
+  (parameter (type-and-name GdkBitmap* mask) (null-ok))
 )
 
 (method set_node_info
@@ -3318,10 +3312,10 @@
   (parameter (type-and-name GtkCTreeNode* node))
   (parameter (type-and-name const-gchar* text))
   (parameter (type-and-name guint8 spacing))
-  (parameter (type-and-name GdkPixmap* pixmap_closed))
-  (parameter (type-and-name GdkBitmap* mask_closed))
-  (parameter (type-and-name GdkPixmap* pixmap_opened))
-  (parameter (type-and-name GdkBitmap* mask_opened))
+  (parameter (type-and-name GdkPixmap* pixmap_closed) (null-ok))
+  (parameter (type-and-name GdkBitmap* mask_closed) (null-ok))
+  (parameter (type-and-name GdkPixmap* pixmap_opened) (null-ok))
+  (parameter (type-and-name GdkBitmap* mask_opened) (null-ok))
   (parameter (type-and-name gboolean is_leaf))
   (parameter (type-and-name gboolean expanded))
 )

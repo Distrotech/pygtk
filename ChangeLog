@@ -1,3 +1,18 @@
+2000-05-08  James Henstridge  <james@daa.com.au>
+
+	* codegen/argtypes.py (BoxedArg.__init__): some fixes for GdkPixmap
+	and GdkBitmap.
+
+	* gtk/gtk.override (_wrap_gtk_ctree_get_node_info): add override
+	implementations for some ctree methods.
+
+2000-05-07  James Henstridge  <james@daa.com.au>
+
+	* examples/ide/gtkcons.py: fix so it works with new pygtk.
+
+	* gtk/gtk.override: move gtk_signal_emit functions from glob ignores
+	so that gtk_signal_emit_stop* is not blocked.
+
 2000-05-06  James Henstridge  <james@daa.com.au>
 
 	* gtk/gdk.defs: filled in gdk.defs a bit more.

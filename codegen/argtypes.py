@@ -352,15 +352,16 @@ class ObjectArg(ArgType):
 
 class BoxedArg(ArgType):
     # haven't done support for default args.  Is it needed?
-    null = '    if (Py%(type)s_Check(py_%(name)s))\n' + \
+    null = '    if (%(check)s(py_%(name)s))\n' + \
 	   '        %(name)s = %(get)s(py_%(name)s);\n' + \
 	   '    else if (py_%(name)s != Py_None) {\n' + \
 	   '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s");\n' + \
 	   '        return NULL;\n' + \
 	   '    }\n'
-    def __init__(self, pytype, getter, new):
+    def __init__(self, ptype, pytype, getter, new):
 	self.pytype = pytype
 	self.getter = getter
+        self.checker = 'Py' + ptype + '_Check'
 	self.new = new
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
 		    extracode, arglist):
@@ -368,8 +369,10 @@ class BoxedArg(ArgType):
             varlist.add(ptype[:-1], '*' + pname + ' = NULL')
 	    varlist.add('PyObject', '*py_' + pname + ' = Py_None')
 	    parselist.append('&py_' + pname)
-	    extracode.append(self.null % {'name':pname, 'get':self.getter,
-                                          'type':ptype[:-1]})
+	    extracode.append(self.null % {'name':  pname,
+                                          'get':   self.getter,
+                                          'check': self.checker,
+                                          'type':  ptype[:-1]})
 	    arglist.append(pname)
 	    return 'O'
 	else:
@@ -405,7 +408,7 @@ class ArgMatcher:
         self.register(ptype, oa)  # in case I forget the * in the .defs
 	self.register(ptype+'*', oa)
     def register_boxed(self, ptype, pytype, getter, new):
-	self.register(ptype+'*', BoxedArg(pytype, getter, new))
+	self.register(ptype+'*', BoxedArg(ptype, pytype, getter, new))
 
     def get(self, ptype):
 	return self.argtypes[ptype]

@@ -297,7 +297,7 @@ class Console(GtkVBox):
 				traceback.print_exc()
 		self.prompt.set_text(sys.ps1)
 		self.prompt.queue_draw()
-		adj = self.text.get_vadjustment()
+		adj = self.text.vadj
 		adj.set_value(adj.upper - adj.page_size)
 		sys.stdout, self.stdout = self.stdout, sys.stdout
 		sys.stderr, self.stderr = self.stderr, sys.stderr
