@@ -1,3 +1,8 @@
+2005-03-14  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* gobject/pygparamspec.c (pyg_param_spec_getattr): in case the enum
+	is not registered, set enum_class or flag_class to None
+
 2005-02-23  Cedric Gustin  <cedric.gustin@swing.be>
 
 	* gobject/pygtype.c (add_property_docs): Use G_CONST_RETURN with a
