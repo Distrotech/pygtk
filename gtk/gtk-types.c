@@ -1417,7 +1417,7 @@ PyGdkWindow_PropertyChange(PyGdkWindow_Object *self, PyObject *args)
 	    }
 	    nelements = PySequence_Length(pdata);
 	    data16 = g_new(guint16, nelements);
-	    data = (guchar *)data;
+	    data = (guchar *)data16;
 	    for (i = 0; i < nelements; i++) {
 		PyObject *item = PySequence_GetItem(pdata, i);
 		Py_DECREF(item);
@@ -1445,7 +1445,7 @@ PyGdkWindow_PropertyChange(PyGdkWindow_Object *self, PyObject *args)
 	    }
 	    nelements = PySequence_Length(pdata);
 	    data32 = g_new(guint32, nelements);
-	    data = (guchar *)data;
+	    data = (guchar *)data32;
 	    for (i = 0; i < nelements; i++) {
 		PyObject *item = PySequence_GetItem(pdata, i);
 		Py_DECREF(item);
