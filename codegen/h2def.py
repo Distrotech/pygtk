@@ -194,7 +194,12 @@ def write_func(fp, name, ret, args):
                 else:
                     fp.write('  (return-type none)\n')
                 for arg in args[1:]:
-                    fp.write('  (parameter (type-and-name ' + arg + '))\n')
+                    if arg == '...':
+                        fp.write('  (varargs t)\n')
+                    elif arg == 'void':
+                        pass
+                    else:
+                        fp.write('  (parameter (type-and-name ' + arg + '))\n')
                 fp.write(')\n\n')
                 return
     # it is either a constructor or normal function
@@ -207,7 +212,12 @@ def write_func(fp, name, ret, args):
     else:
         fp.write('  (return-type none)\n')
     for arg in args:
-        fp.write('  (parameter (type-and-name ' + arg + '))\n')
+        if arg == '...':
+            fp.write('  (varargs t)\n')
+        elif arg == 'void':
+            pass
+        else:
+            fp.write('  (parameter (type-and-name ' + arg + '))\n')
     fp.write(')\n\n')
 
 def write_def(input,output=None):
