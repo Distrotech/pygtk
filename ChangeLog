@@ -1,5 +1,14 @@
 2001-09-21  James Henstridge  <james@daa.com.au>
 
+	* gobjectmodule.c (pygobject_register_class): convert to use
+	PyTypeObjects instead of ExtensionClass.
+	(pygobject_new): don't need to set inst_dict.  Python takes care
+	of that for us.
+	(pyg_register_boxed): convert to 2.2.
+	(pyg_boxed_new): convert to 2.2.
+	(pyg_value_from_pyobject): get rid of ExtensionClass calls.
+	(pygobject_init): convert to 2.2.
+
 	* pygobject.h: don't include ExtensionClass.h
 
 	* configure.in (AM_PATH_PYTHON): require python 2.2.
