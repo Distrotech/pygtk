@@ -1372,6 +1372,15 @@ _wrap_gtk_label_get(PyGtk_Object *self, PyObject *args)
     return Py_None;
 }
 %%
+ignore gtk_ctree_construct
+  gtk_ctree_insert_gnode
+  gtk_ctree_export_to_gnode
+  gtk_ctree_post_recursive
+  gtk_ctree_post_recursive_to_depth
+  gtk_ctree_pre_recursive
+  gtk_ctree_pre_recursive_to_depth
+  gtk_ctree_find_node_ptr
+%%
 ignore gtk_ctree_new
 %%
 override gtk_ctree_new_with_titles kwargs
@@ -1516,6 +1525,8 @@ _wrap_gtk_ctree_insert_node(PyGtk_Object *self, PyObject *args,
     g_free(text);
     return PyGtkCTreeNode_New(ret);
 }
+%%
+ignore gtk_ctree_find_by_row_data_custom gtk_ctree_find_all_by_row_data_custom
 %%
 override gtk_ctree_find_by_row_data kwargs
 static PyObject *
@@ -1731,6 +1742,8 @@ _wrap_gtk_ctree_get_node_info(PyGtk_Object *self, PyObject *args,
 			 (int)is_leaf, (int)expanded);
 }
 %%
+ignore gtk_ctree_node_set_row_data_full
+%%
 override gtk_ctree_node_set_row_data kwargs
 static PyObject *
 _wrap_gtk_ctree_node_set_row_data(PyGtk_Object *self, PyObject *args,
@@ -1740,7 +1753,7 @@ _wrap_gtk_ctree_node_set_row_data(PyGtk_Object *self, PyObject *args,
     PyObject *node, *data;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-				     "O!O:GtkCTree.set_row_data", kwlist,
+				     "O!O:GtkCTree.node_set_row_data", kwlist,
 				     &PyGtkCTreeNode_Type, &node, &data))
 	return NULL;
     Py_INCREF(data);
@@ -1759,8 +1772,9 @@ _wrap_gtk_ctree_node_get_row_data(PyGtk_Object *self, PyObject *args,
     static char *kwlist[] = { "node", NULL };
     PyObject *node, *data;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!:GtkCTree.get_row_data",
-				     kwlist, &PyGtkCTreeNode_Type, &node))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!:GtkCTree.node_get_row_data", kwlist,
+				     &PyGtkCTreeNode_Type, &node))
 	return NULL;
     data = gtk_ctree_node_get_row_data(GTK_CTREE(self->obj),
 				       PyGtkCTreeNode_Get(node));
@@ -1768,4 +1782,899 @@ _wrap_gtk_ctree_node_get_row_data(PyGtk_Object *self, PyObject *args,
     Py_INCREF(data);
     return data;
 }
+%%
+ignore gtk_tree_remove_items
+%%
+override gtk_toolbar_append_item kwargs
+static PyObject *
+_wrap_gtk_toolbar_append_item(PyGtk_Object *self, PyObject *args,
+			      PyObject *kwargs)
+{
+    static char *kwlist[] = { "text", "tooltip_text", "tooltip_private_text",
+			      "icon", "callback", "user_data", NULL };
+    char *text, *tooltip_text, *tooltip_private_text;
+    PyObject *py_icon, *callback, *param;
+    GtkWidget *icon = NULL, *ret;
 
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "zzzOOO:GtkToolbar.append_item", kwlist,
+				     &text, &tooltip_text,
+				     &tooltip_private_text, &py_icon,
+				     &callback, &param))
+	return NULL;
+    if (!PyGtk_Check(py_icon))
+	icon = GTK_WIDGET(PyGtk_Get(py_icon));
+    else if (py_icon != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"forth argument must be a GtkWidget or None");
+	return NULL;
+    }
+    ret = gtk_toolbar_append_item(GTK_TOOLBAR(self->obj), text, tooltip_text,
+				  tooltip_private_text, icon, NULL, NULL);
+    if (ret && PyCallable_Check(callback)) {
+	param = Py_BuildValue("(OO)", callback, param);
+	gtk_signal_connect_full(GTK_OBJECT(ret), "clicked", NULL,
+				(GtkCallbackMarshal)pygtk_callback_marshal,
+				param, pygtk_destroy_notify, FALSE, FALSE);
+    }
+    return PyGtk_New((GtkObject *)ret);
+}
+%%
+override gtk_toolbar_prepend_item kwargs
+static PyObject *
+_wrap_gtk_toolbar_prepend_item(PyGtk_Object *self, PyObject *args,
+			       PyObject *kwargs)
+{
+    static char *kwlist[] = { "text", "tooltip_text", "tooltip_private_text",
+			      "icon", "callback", "user_data", NULL };
+    char *text, *tooltip_text, *tooltip_private_text;
+    PyObject *py_icon, *callback, *param;
+    GtkWidget *icon = NULL, *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "zzzOOO:GtkToolbar.prepend_item", kwlist,
+				     &text, &tooltip_text,
+				     &tooltip_private_text, &py_icon,
+				     &callback, &param))
+	return NULL;
+    if (!PyGtk_Check(py_icon))
+	icon = GTK_WIDGET(PyGtk_Get(py_icon));
+    else if (py_icon != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"forth argument must be a GtkWidget or None");
+	return NULL;
+    }
+    ret = gtk_toolbar_prepend_item(GTK_TOOLBAR(self->obj), text, tooltip_text,
+				  tooltip_private_text, icon, NULL, NULL);
+    if (ret && PyCallable_Check(callback)) {
+	param = Py_BuildValue("(OO)", callback, param);
+	gtk_signal_connect_full(GTK_OBJECT(ret), "clicked", NULL,
+				(GtkCallbackMarshal)pygtk_callback_marshal,
+				param, pygtk_destroy_notify, FALSE, FALSE);
+    }
+    return PyGtk_New((GtkObject *)ret);
+}
+%%
+override gtk_toolbar_insert_item kwargs
+static PyObject *
+_wrap_gtk_toolbar_insert_item(PyGtk_Object *self, PyObject *args,
+			      PyObject *kwargs)
+{
+    static char *kwlist[] = { "text", "tooltip_text", "tooltip_private_text",
+			      "icon", "callback", "user_data", "position",
+			      NULL };
+    char *text, *tooltip_text, *tooltip_private_text;
+    PyObject *py_icon, *callback, *param;
+    GtkWidget *icon = NULL, *ret;
+    int position;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "zzzOOOi:GtkToolbar.insert_item", kwlist,
+				     &text, &tooltip_text,
+				     &tooltip_private_text, &py_icon,
+				     &callback, &param, &position))
+	return NULL;
+    if (!PyGtk_Check(py_icon))
+	icon = GTK_WIDGET(PyGtk_Get(py_icon));
+    else if (py_icon != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"forth argument must be a GtkWidget or None");
+	return NULL;
+    }
+    ret = gtk_toolbar_insert_item(GTK_TOOLBAR(self->obj), text, tooltip_text,
+				  tooltip_private_text, icon, NULL, NULL,
+				  position);
+    if (ret && PyCallable_Check(callback)) {
+	param = Py_BuildValue("(OO)", callback, param);
+	gtk_signal_connect_full(GTK_OBJECT(ret), "clicked", NULL,
+				(GtkCallbackMarshal)pygtk_callback_marshal,
+				param, pygtk_destroy_notify, FALSE, FALSE);
+    }
+    return PyGtk_New((GtkObject *)ret);
+}
+%%
+override gtk_toolbar_append_element kwargs
+static PyObject *
+_wrap_gtk_toolbar_append_element(PyGtk_Object *self, PyObject *args,
+				 PyObject *kwargs)
+{
+    static char *kwlist[] = { "type", "widget", "text", "tooltip_text",
+			      "tooltip_private_text", "icon", "callback",
+			      "user_data", NULL };
+    char *text, *tooltip_text, *tooltip_private_text;
+    PyObject *py_type, *py_widget, *py_icon, *callback, *param;
+    GtkWidget *widget = NULL, *icon = NULL, *ret;
+    GtkToolbarChildType type;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOzzzOOO:GtkToolbar.append_element",
+				     kwlist,
+				     &py_type, &py_widget,
+				     &text, &tooltip_text,
+				     &tooltip_private_text, &py_icon,
+				     &callback, &param))
+	return NULL;
+    if (pygtk_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,
+			     py_type, (gint *)type))
+	return NULL;
+    if (!PyGtk_Check(py_widget))
+	widget = GTK_WIDGET(PyGtk_Get(py_widget));
+    else if (py_widget != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"second argument must be a GtkWidget or None");
+	return NULL;
+    }
+    if (!PyGtk_Check(py_icon))
+	icon = GTK_WIDGET(PyGtk_Get(py_icon));
+    else if (py_icon != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"sixth argument must be a GtkWidget or None");
+	return NULL;
+    }
+    ret = gtk_toolbar_append_element(GTK_TOOLBAR(self->obj), type, widget,
+				     text, tooltip_text, tooltip_private_text,
+				     icon, NULL, NULL);
+    if (ret && PyCallable_Check(callback) &&
+	(type == GTK_TOOLBAR_CHILD_BUTTON ||
+	 type == GTK_TOOLBAR_CHILD_TOGGLEBUTTON ||
+	 type == GTK_TOOLBAR_CHILD_RADIOBUTTON)) {
+	param = Py_BuildValue("(OO)", callback, param);
+	gtk_signal_connect_full(GTK_OBJECT(ret), "clicked", NULL,
+				(GtkCallbackMarshal)pygtk_callback_marshal,
+				param, pygtk_destroy_notify, FALSE, FALSE);
+    }
+    return PyGtk_New((GtkObject *)ret);
+}
+%%
+override gtk_toolbar_prepend_element kwargs
+static PyObject *
+_wrap_gtk_toolbar_prepend_element(PyGtk_Object *self, PyObject *args,
+				  PyObject *kwargs)
+{
+    static char *kwlist[] = { "type", "widget", "text", "tooltip_text",
+			      "tooltip_private_text", "icon", "callback",
+			      "user_data", NULL };
+    char *text, *tooltip_text, *tooltip_private_text;
+    PyObject *py_type, *py_widget, *py_icon, *callback, *param;
+    GtkWidget *widget = NULL, *icon = NULL, *ret;
+    GtkToolbarChildType type;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOzzzOOO:GtkToolbar.prepend_element",
+				     kwlist,
+				     &py_type, &py_widget,
+				     &text, &tooltip_text,
+				     &tooltip_private_text, &py_icon,
+				     &callback, &param))
+	return NULL;
+    if (pygtk_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,
+			     py_type, (gint *)type))
+	return NULL;
+    if (!PyGtk_Check(py_widget))
+	widget = GTK_WIDGET(PyGtk_Get(py_widget));
+    else if (py_widget != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"second argument must be a GtkWidget or None");
+	return NULL;
+    }
+    if (!PyGtk_Check(py_icon))
+	icon = GTK_WIDGET(PyGtk_Get(py_icon));
+    else if (py_icon != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"sixth argument must be a GtkWidget or None");
+	return NULL;
+    }
+    ret = gtk_toolbar_prepend_element(GTK_TOOLBAR(self->obj), type, widget,
+				      text, tooltip_text, tooltip_private_text,
+				      icon, NULL, NULL);
+    if (ret && PyCallable_Check(callback) &&
+	(type == GTK_TOOLBAR_CHILD_BUTTON ||
+	 type == GTK_TOOLBAR_CHILD_TOGGLEBUTTON ||
+	 type == GTK_TOOLBAR_CHILD_RADIOBUTTON)) {
+	param = Py_BuildValue("(OO)", callback, param);
+	gtk_signal_connect_full(GTK_OBJECT(ret), "clicked", NULL,
+				(GtkCallbackMarshal)pygtk_callback_marshal,
+				param, pygtk_destroy_notify, FALSE, FALSE);
+    }
+    return PyGtk_New((GtkObject *)ret);
+}
+%%
+override gtk_toolbar_insert_element kwargs
+static PyObject *
+_wrap_gtk_toolbar_insert_element(PyGtk_Object *self, PyObject *args,
+				 PyObject *kwargs)
+{
+    static char *kwlist[] = { "type", "widget", "text", "tooltip_text",
+			      "tooltip_private_text", "icon", "callback",
+			      "user_data", "position", NULL };
+    char *text, *tooltip_text, *tooltip_private_text;
+    PyObject *py_type, *py_widget, *py_icon, *callback, *param;
+    GtkWidget *widget = NULL, *icon = NULL, *ret;
+    GtkToolbarChildType type;
+    int position;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOzzzOOOi:GtkToolbar.insert_element",
+				     kwlist,
+				     &py_type, &py_widget,
+				     &text, &tooltip_text,
+				     &tooltip_private_text, &py_icon,
+				     &callback, &param, &position))
+	return NULL;
+    if (pygtk_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,
+			     py_type, (gint *)type))
+	return NULL;
+    if (!PyGtk_Check(py_widget))
+	widget = GTK_WIDGET(PyGtk_Get(py_widget));
+    else if (py_widget != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"second argument must be a GtkWidget or None");
+	return NULL;
+    }
+    if (!PyGtk_Check(py_icon))
+	icon = GTK_WIDGET(PyGtk_Get(py_icon));
+    else if (py_icon != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"sixth argument must be a GtkWidget or None");
+	return NULL;
+    }
+    ret = gtk_toolbar_insert_element(GTK_TOOLBAR(self->obj), type, widget,
+				     text, tooltip_text, tooltip_private_text,
+				     icon, NULL, NULL, position);
+    if (ret && PyCallable_Check(callback) &&
+	(type == GTK_TOOLBAR_CHILD_BUTTON ||
+	 type == GTK_TOOLBAR_CHILD_TOGGLEBUTTON ||
+	 type == GTK_TOOLBAR_CHILD_RADIOBUTTON)) {
+	param = Py_BuildValue("(OO)", callback, param);
+	gtk_signal_connect_full(GTK_OBJECT(ret), "clicked", NULL,
+				(GtkCallbackMarshal)pygtk_callback_marshal,
+				param, pygtk_destroy_notify, FALSE, FALSE);
+    }
+    return PyGtk_New((GtkObject *)ret);
+}
+%%
+override gtk_notebook_query_tab_label_packing kwargs
+static PyObject *
+_wrap_gtk_notebook_query_tab_label_packing(PyGtk_Object *self, PyObject *args,
+					   PyObject *kwargs)
+{
+    static char *kwlist[] = { "child", NULL };
+    PyObject *child;
+    gboolean expand, fill;
+    GtkPackType pack_type;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O:GtkNotebook.query_tab_label_packing",
+				     kwlist, &child))
+	return NULL;
+    if (!PyGtk_Check(child)) {
+	PyErr_SetString(PyExc_TypeError, "child must be a GtkWidget");
+	return NULL;
+    }
+    gtk_notebook_query_tab_label_packing(GTK_NOTEBOOK(self->obj),
+					 GTK_WIDGET(PyGtk_Get(child)),
+					 &expand, &fill, &pack_type);
+    return Py_BuildValue("(iii)", expand, fill, pack_type);
+}
+%%
+override gtk_list_insert_items kwargs
+static PyObject *
+_wrap_gtk_list_insert_items(PyGtk_Object *self, PyObject *args,
+			    PyObject *kwargs)
+{
+    static char *kwlist[] = { "items", "position", NULL };
+    PyObject *py_items;
+    GList *items = NULL;
+    int position, len, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!i:GtkList.insert_items",
+				     kwlist, &PyList_Type, &py_items,
+				     &position))
+	return NULL;
+    len = PyList_Size(py_items);
+    for (i = 0; i < len; i++) {
+	PyObject *item = PyList_GetItem(py_items, i);
+	if (!PyGtk_Check(item)) {
+	    PyErr_SetString(PyExc_TypeError, "list item not a GtkObject");
+	    g_list_free(items);
+	    return NULL;
+	}
+	items = g_list_append(items, PyGtk_Get(item));
+    }
+    gtk_list_insert_items(GTK_LIST(self->obj), items, position);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_list_append_items kwargs
+static PyObject *
+_wrap_gtk_list_append_items(PyGtk_Object *self, PyObject *args,
+			    PyObject *kwargs)
+{
+    static char *kwlist[] = { "items", NULL };
+    PyObject *py_items;
+    GList *items = NULL;
+    int len, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!:GtkList.append_items",
+				     kwlist, &PyList_Type, &py_items))
+	return NULL;
+    len = PyList_Size(py_items);
+    for (i = 0; i < len; i++) {
+	PyObject *item = PyList_GetItem(py_items, i);
+	if (!PyGtk_Check(item)) {
+	    PyErr_SetString(PyExc_TypeError, "list item not a GtkObject");
+	    g_list_free(items);
+	    return NULL;
+	}
+	items = g_list_append(items, PyGtk_Get(item));
+    }
+    gtk_list_append_items(GTK_LIST(self->obj), items);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_list_prepend_items kwargs
+static PyObject *
+_wrap_gtk_list_prepend_items(PyGtk_Object *self, PyObject *args,
+			     PyObject *kwargs)
+{
+    static char *kwlist[] = { "items", NULL };
+    PyObject *py_items;
+    GList *items = NULL;
+    int len, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!:GtkList.preppend_items",
+				     kwlist, &PyList_Type, &py_items))
+	return NULL;
+    len = PyList_Size(py_items);
+    for (i = 0; i < len; i++) {
+	PyObject *item = PyList_GetItem(py_items, i);
+	if (!PyGtk_Check(item)) {
+	    PyErr_SetString(PyExc_TypeError, "list item not a GtkObject");
+	    g_list_free(items);
+	    return NULL;
+	}
+	items = g_list_append(items, PyGtk_Get(item));
+    }
+    gtk_list_prepend_items(GTK_LIST(self->obj), items);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_list_remove_items kwargs
+static PyObject *
+_wrap_gtk_list_remove_items(PyGtk_Object *self, PyObject *args,
+			    PyObject *kwargs)
+{
+    static char *kwlist[] = { "items", NULL };
+    PyObject *py_items;
+    GList *items = NULL;
+    int len, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!:GtkList.remove_items",
+				     kwlist, &PyList_Type, &py_items))
+	return NULL;
+    len = PyList_Size(py_items);
+    for (i = 0; i < len; i++) {
+	PyObject *item = PyList_GetItem(py_items, i);
+	if (!PyGtk_Check(item)) {
+	    PyErr_SetString(PyExc_TypeError, "list item not a GtkObject");
+	    g_list_free(items);
+	    return NULL;
+	}
+	items = g_list_append(items, PyGtk_Get(item));
+    }
+    gtk_list_remove_items(GTK_LIST(self->obj), items);
+    g_list_free(items);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_list_remove_items_no_unref
+%%
+override gtk_color_selection_set_color kwargs
+static PyObject *
+_wrap_gtk_color_selection_set_color(PyGtk_Object *self, PyObject *args,
+				    PyObject *kwargs)
+{
+    static char *kwlist[] = { "red", "green", "blue", "alpha", NULL };
+    double value[4];
+
+    value[3] = 1.0;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "ddd|d:GtkColorSelection.set_color",
+				     kwlist, &value[0], &value[1], &value[2],
+				     &value[3]))
+	return NULL;
+    gtk_color_selection_set_color(GTK_COLOR_SELECTION(self->obj), value);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_color_selection_get_color
+static PyObject *
+_wrap_gtk_color_selection_get_color(PyGtk_Object *self, PyObject *args)
+{
+    double value[4];
+
+    if (!PyArg_ParseTuple(args, ":GtkColorSelection.get_color"))
+        return NULL;
+    gtk_color_selection_get_color(GTK_COLOR_SELECTION(self->obj), value);
+    if (GTK_COLOR_SELECTION(self->obj)->use_opacity)
+        return Py_BuildValue("(dddd)", value[0],value[1],value[2],value[3]);
+    else
+        return Py_BuildValue("(ddd)", value[0], value[1], value[2]);
+}
+%%
+override gtk_calendar_get_date
+static PyObject *
+_wrap_gtk_calendar_get_date(PyGtk_Object *self, PyObject *args)
+{
+    guint year, month, day;
+
+    if (!PyArg_ParseTuple(args, ":GtkCalendar.get_date"))
+	return NULL;
+    gtk_calendar_get_date(GTK_CALENDAR(self->obj), &year, &month, &day);
+    return Py_BuildValue("(iii)", year, month, day);
+}
+%%
+override gtk_window_set_geometry_hints kwargs
+static PyObject *
+_wrap_gtk_window_set_geometry_hints(PyGtk_Object *self, PyObject *args,
+				    PyObject *kwargs)
+{
+    static char *kwlist[] = { "geometry_widget", "min_width", "min_height",
+			      "max_width", "max_height", "base_width",
+			      "base_height", "width_inc", "height_inc", NULL };
+    PyObject *py_geometry_widget = Py_None;
+    GtkWidget *geometry_widget = NULL;
+    gint min_width = -1, min_height = -1, max_width = -1, max_height = -1;
+    gint base_width = -1, base_height = -1, width_inc = -1, height_inc = -1;
+    gdouble min_aspect = -1.0, max_aspect = -1.0;
+    GdkGeometry geometry = { 0 };
+    GdkWindowHints geom_mask = 0;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+			"|Oiiiiiiiidd:GtkWindow.set_geometry_hints", kwlist,
+				     &py_geometry_widget, &min_width,
+				     &min_height, &max_width, &max_height,
+				     &base_width, &base_height, &width_inc,
+				     &height_inc, &min_aspect, &max_aspect))
+	return NULL;
+    if (PyGtk_Check(py_geometry_widget))
+	geometry_widget = GTK_WIDGET(PyGtk_Get(py_geometry_widget));
+    else if (py_geometry_widget != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"geometry_widget must be a GtkWidget or None");
+	return NULL;
+    }
+    if (min_width >= 0 || min_height >= 0) {
+	geometry.min_width = MAX(min_width, 0);
+	geometry.min_height = MAX(min_height, 0);
+	geom_mask |= GDK_HINT_MIN_SIZE;
+    }
+    if (max_width >= 0 || max_height >= 0) {
+	geometry.max_width = MAX(max_width, 0);
+	geometry.max_height = MAX(max_height, 0);
+	geom_mask |= GDK_HINT_MAX_SIZE;
+    }
+    if (base_width >= 0 || base_height >= 0) {
+	geometry.base_width = MAX(base_width, 0);
+	geometry.base_height = MAX(base_height, 0);
+	geom_mask |= GDK_HINT_BASE_SIZE;
+    }
+    if (width_inc >= 0 || height_inc >= 0) {
+	geometry.width_inc = MAX(width_inc, 0);
+	geometry.height_inc = MAX(height_inc, 0);
+	geom_mask |= GDK_HINT_RESIZE_INC;
+    }
+    if (min_aspect >= 0.0 || max_aspect >= 0.0) {
+	if (min_aspect <= 0.0 || max_aspect <= 0.0) {
+	    PyErr_SetString(PyExc_TypeError, "aspect ratios must be positive");
+	    return NULL;
+	}
+	geometry.min_aspect = min_aspect;
+	geometry.max_aspect = max_aspect;
+	geom_mask |= GDK_HINT_ASPECT;
+    }
+    gtk_window_set_geometry_hints(GTK_WINDOW(self->obj), geometry_widget,
+				  &geometry, geom_mask);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gdk_draw_polygon kwargs
+static PyObject *
+_wrap_gdk_draw_polygon(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "drawable", "gc", "filled", "points", NULL };
+    PyObject *drawable, *gc, *py_points;
+    gint filled, npoints, i;
+    GdkPoint *points;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!O!iO:draw_polygon",
+				     kwlist, &PyGdkWindow_Type, &drawable, &gc,
+				     &filled, &py_points))
+	return NULL;
+    if (!PySequence_Check(py_points)) {
+	PyErr_SetString(PyExc_TypeError, "forth argument must be a sequence");
+	return NULL;
+    }
+    npoints = PySequence_Length(py_points);
+    points = g_new(GdkPoint, npoints);
+    for (i = 0; i < npoints; i++) {
+	PyObject *item = PySequence_GetItem(py_points, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "hh", &points[i].x, &points[i].y)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "sequence members must be 2-tuples");
+	    g_free(points);
+	    return NULL;
+	}
+    }
+    gdk_draw_polygon(PyGdkWindow_Get(drawable), PyGdkGC_Get(gc), filled,
+		     points, npoints);
+    g_free(points);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gdk_draw_text kwargs
+static PyObject *
+_wrap_gdk_draw_text(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "drawable", "font", "gc", "x", "y", "text",NULL};
+    PyObject *drawable, *font, *gc;
+    int x, y, len;
+    char *text;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!O!O!iis#:draw_text",
+				     kwlist, &PyGdkWindow_Type, &drawable,
+				     &PyGdkFont_Type, &font,
+				     &PyGdkGC_Type, &gc,
+				     &x, &y, &text, &len))
+	return NULL;
+    gdk_draw_text(PyGdkWindow_Get(drawable), PyGdkFont_Get(font),
+		  PyGdkGC_Get(gc), x, y, text, len);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gdk_draw_points kwargs
+static PyObject *
+_wrap_gdk_draw_points(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "drawable", "gc", "points", NULL };
+    PyObject *drawable, *gc, *py_points;
+    gint npoints, i;
+    GdkPoint *points;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!O!O:draw_points",
+				     kwlist, &PyGdkWindow_Type, &drawable, &gc,
+				     &py_points))
+	return NULL;
+    if (!PySequence_Check(py_points)) {
+	PyErr_SetString(PyExc_TypeError, "third argument must be a sequence");
+	return NULL;
+    }
+    npoints = PySequence_Length(py_points);
+    points = g_new(GdkPoint, npoints);
+    for (i = 0; i < npoints; i++) {
+	PyObject *item = PySequence_GetItem(py_points, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "hh", &points[i].x, &points[i].y)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "sequence members must be 2-tuples");
+	    g_free(points);
+	    return NULL;
+	}
+    }
+    gdk_draw_points(PyGdkWindow_Get(drawable), PyGdkGC_Get(gc),points,npoints);
+    g_free(points);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gdk_draw_segments kwargs
+static PyObject *
+_wrap_gdk_draw_segments(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "drawable", "gc", "segs", NULL };
+    PyObject *drawable, *gc, *py_segs;
+    gint nsegs, i;
+    GdkSegment *segs;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!O!O:draw_segments",
+				     kwlist, &PyGdkWindow_Type, &drawable, &gc,
+				     &py_segs))
+	return NULL;
+    if (!PySequence_Check(py_segs)) {
+	PyErr_SetString(PyExc_TypeError, "third argument must be a sequence");
+	return NULL;
+    }
+    nsegs = PySequence_Length(py_segs);
+    segs = g_new(GdkSegment, nsegs);
+    for (i = 0; i < nsegs; i++) {
+	PyObject *item = PySequence_GetItem(py_segs, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "hhhh", &segs[i].x1, &segs[i].y1,
+			      &segs[i].x2, &segs[i].y2)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "sequence members must be 4-tuples");
+	    g_free(segs);
+	    return NULL;
+	}
+    }
+    gdk_draw_segments(PyGdkWindow_Get(drawable), PyGdkGC_Get(gc), segs, nsegs);
+    g_free(segs);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gdk_draw_lines kwargs
+static PyObject *
+_wrap_gdk_draw_lines(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "drawable", "gc", "points", NULL };
+    PyObject *drawable, *gc, *py_points;
+    gint npoints, i;
+    GdkPoint *points;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!O!O:draw_lines",
+				     kwlist, &PyGdkWindow_Type, &drawable, &gc,
+				     &py_points))
+	return NULL;
+    if (!PySequence_Check(py_points)) {
+	PyErr_SetString(PyExc_TypeError, "third argument must be a sequence");
+	return NULL;
+    }
+    npoints = PySequence_Length(py_points);
+    points = g_new(GdkPoint, npoints);
+    for (i = 0; i < npoints; i++) {
+	PyObject *item = PySequence_GetItem(py_points, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "hh", &points[i].x, &points[i].y)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "sequence members must be 2-tuples");
+	    g_free(points);
+	    return NULL;
+	}
+    }
+    gdk_draw_lines(PyGdkWindow_Get(drawable), PyGdkGC_Get(gc), points,npoints);
+    g_free(points);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore
+  gdk_color_copy gdk_color_free
+  gdk_color_hash gdk_color_equal
+  gdk_color_parse
+%%
+override gdk_pixmap_create_from_xpm kwargs
+static PyObject *
+_wrap_gdk_pixmap_create_from_xpm(PyObject *self, PyObject *args,
+				 PyObject *kwargs)
+{
+    static char *kwlist[] = { "window", "transparent_color", "filename", NULL};
+    PyObject *window, *py_trans_color, *ret;
+    GdkColor *trans_color = NULL;
+    gchar *filename;
+    GdkPixmap *pixmap;
+    GdkBitmap *mask;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!Os:pixmap_create_from_xpm", kwlist,
+				     &PyGdkWindow_Type, &window,
+				     &py_trans_color, &filename))
+	return NULL;
+    if (PyGdkColor_Check(py_trans_color))
+	trans_color = PyGdkColor_Get(py_trans_color);
+    else if (py_trans_color != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"transparent_color must be a colour or None");
+	return NULL;
+    }
+    pixmap = gdk_pixmap_create_from_xpm(PyGdkWindow_Get(window), &mask,
+					trans_color, filename);
+    if (pixmap == NULL) {
+	PyErr_SetString(PyExc_IOError, "can't load pixmap");
+	return NULL;
+    }
+    ret = Py_BuildValue("(NN)", PyGdkWindow_New(pixmap),PyGdkWindow_New(mask));
+    gdk_pixmap_unref(pixmap);
+    gdk_bitmap_unref(mask);
+    return ret;
+}
+%%
+override gdk_pixmap_colormap_create_from_xpm kwargs
+static PyObject *
+_wrap_gdk_pixmap_colormap_create_from_xpm(PyObject *self, PyObject *args,
+					  PyObject *kwargs)
+{
+    static char *kwlist[] = { "window", "colormap", "transparent_color",
+			      "filename", NULL };
+    PyObject *py_window, *py_colormap, *py_trans_color, *ret;
+    GdkWindow *window = NULL;
+    GdkColormap *colormap = NULL;
+    GdkColor *trans_color = NULL;
+    gchar *filename;
+    GdkPixmap *pixmap;
+    GdkBitmap *mask;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOOs:pixmap_colormap_create_from_xpm",
+				     kwlist, &py_window, &py_colormap,
+				     &py_trans_color, &filename))
+	return NULL;
+    if (PyGdkWindow_Check(py_window))
+	window = PyGdkWindow_Get(py_window);
+    else if (py_window != Py_None) {
+	PyErr_SetString(PyExc_TypeError, "window must be a GdkWindow or None");
+	return NULL;
+    }
+    if (PyGdkColormap_Check(py_colormap))
+	colormap = PyGdkColormap_Get(py_colormap);
+    else if (py_colormap != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"colormap must be a GdkColormap or None");
+	return NULL;
+    }
+    if (PyGdkColor_Check(py_trans_color))
+	trans_color = PyGdkColor_Get(py_trans_color);
+    else if (py_trans_color != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"transparent_color must be a colour or None");
+	return NULL;
+    }
+    pixmap = gdk_pixmap_colormap_create_from_xpm(window, colormap, &mask,
+						 trans_color, filename);
+    if (pixmap == NULL) {
+	PyErr_SetString(PyExc_IOError, "can't load pixmap");
+	return NULL;
+    }
+    ret = Py_BuildValue("(NN)", PyGdkWindow_New(pixmap),PyGdkWindow_New(mask));
+    gdk_pixmap_unref(pixmap);
+    gdk_bitmap_unref(mask);
+    return ret;
+}
+%%
+override gdk_pixmap_create_from_xpm_d kwargs
+static PyObject *
+_wrap_gdk_pixmap_create_from_xpm_d(PyObject *self, PyObject *args,
+				   PyObject *kwargs)
+{
+    static char *kwlist[] = { "window", "transparent_color", "data", NULL };
+    PyObject *window, *py_trans_color, *py_data, *ret;
+    GdkColor *trans_color = NULL;
+    gchar **data;
+    int len, i;
+    GdkPixmap *pixmap;
+    GdkBitmap *mask;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!OO!:pixmap_create_from_xpm_d", kwlist,
+				     &PyGdkWindow_Type, &window,
+				     &py_trans_color,
+				     &PyList_Type, &py_data))
+	return NULL;
+    if (PyGdkColor_Check(py_trans_color))
+	trans_color = PyGdkColor_Get(py_trans_color);
+    else if (py_trans_color != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"transparent_color must be a colour or None");
+	return NULL;
+    }
+    len = PyList_Size(py_data);
+    data = g_new(gchar *, len);
+    for (i = 0; i < len; i ++) {
+	PyObject *item = PyList_GetItem(py_data, i);
+	if (!PyString_Check(item)) {
+	    PyErr_SetString(PyExc_TypeError, "data items must be strings");
+	    g_free(data);
+	    return NULL;
+	}
+	data[i] = PyString_AsString(item);
+    }
+    pixmap = gdk_pixmap_create_from_xpm_d(PyGdkWindow_Get(window), &mask,
+					  trans_color, data);
+    g_free(data);
+    if (pixmap == NULL) {
+	PyErr_SetString(PyExc_IOError, "can't load pixmap");
+	return NULL;
+    }
+    ret = Py_BuildValue("(NN)", PyGdkWindow_New(pixmap),PyGdkWindow_New(mask));
+    gdk_pixmap_unref(pixmap);
+    gdk_bitmap_unref(mask);
+    return ret;
+}
+%%
+override gdk_pixmap_colormap_create_from_xpm_d kwargs
+static PyObject *
+_wrap_gdk_pixmap_colormap_create_from_xpm_d(PyObject *self, PyObject *args,
+					    PyObject *kwargs)
+{
+    static char *kwlist[] = { "window", "colormap", "transparent_color",
+			      "data", NULL };
+    PyObject *py_window, *py_colormap, *py_trans_color, *py_data, *ret;
+    GdkWindow *window = NULL;
+    GdkColormap *colormap = NULL;
+    GdkColor *trans_color = NULL;
+    gchar **data;
+    int len, i;
+    GdkPixmap *pixmap;
+    GdkBitmap *mask;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOOO!:pixmap_colormap_create_from_xpm_d",
+				     kwlist, &py_window, &py_colormap,
+				     &py_trans_color,
+				     &PyList_Type, &py_data))
+	return NULL;
+    if (PyGdkWindow_Check(py_window))
+	window = PyGdkWindow_Get(py_window);
+    else if (py_window != Py_None) {
+	PyErr_SetString(PyExc_TypeError, "window must be a GdkWindow or None");
+	return NULL;
+    }
+    if (PyGdkColormap_Check(py_colormap))
+	colormap = PyGdkColormap_Get(py_colormap);
+    else if (py_colormap != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"colormap must be a GdkColormap or None");
+	return NULL;
+    }
+    if (PyGdkColor_Check(py_trans_color))
+	trans_color = PyGdkColor_Get(py_trans_color);
+    else if (py_trans_color != Py_None) {
+	PyErr_SetString(PyExc_TypeError,
+			"transparent_color must be a colour or None");
+	return NULL;
+    }
+    len = PyList_Size(py_data);
+    data = g_new(gchar *, len);
+    for (i = 0; i < len; i ++) {
+	PyObject *item = PyList_GetItem(py_data, i);
+	if (!PyString_Check(item)) {
+	    PyErr_SetString(PyExc_TypeError, "data items must be strings");
+	    g_free(data);
+	    return NULL;
+	}
+	data[i] = PyString_AsString(item);
+    }
+    pixmap = gdk_pixmap_colormap_create_from_xpm_d(window, colormap, &mask,
+						   trans_color, data);
+    g_free(data);
+    if (pixmap == NULL) {
+	PyErr_SetString(PyExc_IOError, "can't load pixmap");
+	return NULL;
+    }
+    ret = Py_BuildValue("(NN)", PyGdkWindow_New(pixmap),PyGdkWindow_New(mask));
+    gdk_pixmap_unref(pixmap);
+    gdk_bitmap_unref(mask);
+    return ret;
+}

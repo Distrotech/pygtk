@@ -646,13 +646,13 @@
 (function pixmap_new
   (c-name gdk_pixmap_new)
   (return-type GdkPixmap*)
-  (parameter (type-and-name GdkWindow* window))
+  (parameter (type-and-name GdkWindow* window) (null-ok))
   (parameter (type-and-name gint width))
   (parameter (type-and-name gint height))
   (parameter (type-and-name gint depth))
 )
 
-(function gdk_pixmap_create_from_xpm
+(function pixmap_create_from_xpm
   (c-name gdk_pixmap_create_from_xpm)
   (return-type GdkPixmap*)
   (parameter (type-and-name GdkWindow* window))
@@ -661,7 +661,7 @@
   (parameter (type-and-name const-gchar* filename))
 )
 
-(function gdk_pixmap_colormap_create_from_xpm
+(function pixmap_colormap_create_from_xpm
   (c-name gdk_pixmap_colormap_create_from_xpm)
   (return-type GdkPixmap*)
   (parameter (type-and-name  GdkWindow* window))
@@ -671,7 +671,7 @@
   (parameter (type-and-name const-gchar* filename))
 )
 
-(function gdk_pixmap_create_from_xpm_d
+(function pixmap_create_from_xpm_d
   (c-name gdk_pixmap_create_from_xpm_d)
   (return-type GdkPixmap*)
   (parameter (type-and-name GdkWindow* window))
@@ -680,7 +680,7 @@
   (parameter (type-and-name gchar** data))
 )
 
-(function gdk_pixmap_colormap_create_from_xpm_d
+(function pixmap_colormap_create_from_xpm_d
   (c-name gdk_pixmap_colormap_create_from_xpm_d)
   (return-type GdkPixmap*)
   (parameter (type-and-name  GdkWindow* window))
@@ -806,7 +806,7 @@
   (parameter (type-and-name const-gchar* fontset_name))
 )
 
-(function gdk_draw_point
+(function draw_point
   (c-name gdk_draw_point)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -815,7 +815,7 @@
   (parameter (type-and-name gint y))
 )
 
-(function gdk_draw_line
+(function draw_line
   (c-name gdk_draw_line)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -826,7 +826,7 @@
   (parameter (type-and-name gint y2))
 )
 
-(function gdk_draw_rectangle
+(function draw_rectangle
   (c-name gdk_draw_rectangle)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -838,7 +838,7 @@
   (parameter (type-and-name gint height))
 )
 
-(function gdk_draw_arc
+(function draw_arc
   (c-name gdk_draw_arc)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -852,7 +852,7 @@
   (parameter (type-and-name gint angle2))
 )
 
-(function gdk_draw_polygon
+(function draw_polygon
   (c-name gdk_draw_polygon)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -862,7 +862,7 @@
   (parameter (type-and-name gint npoints))
 )
 
-(function gdk_draw_string
+(function draw_string
   (c-name gdk_draw_string)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -873,7 +873,7 @@
   (parameter (type-and-name const-gchar* string))
 )
 
-(function gdk_draw_text
+(function draw_text
   (c-name gdk_draw_text)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -885,7 +885,7 @@
   (parameter (type-and-name gint text_length))
 )
 
-(function gdk_draw_text_wc
+(function draw_text_wc
   (c-name gdk_draw_text_wc)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -897,7 +897,7 @@
   (parameter (type-and-name gint text_length))
 )
 
-(function gdk_draw_pixmap
+(function draw_pixmap
   (c-name gdk_draw_pixmap)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -911,7 +911,7 @@
   (parameter (type-and-name gint height))
 )
 
-(function gdk_draw_image
+(function draw_image
   (c-name gdk_draw_image)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -925,7 +925,7 @@
   (parameter (type-and-name gint height))
 )
 
-(function gdk_draw_points
+(function draw_points
   (c-name gdk_draw_points)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -934,7 +934,7 @@
   (parameter (type-and-name gint npoints))
 )
 
-(function gdk_draw_segments
+(function draw_segments
   (c-name gdk_draw_segments)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -943,7 +943,7 @@
   (parameter (type-and-name gint nsegs))
 )
 
-(function gdk_draw_lines
+(function draw_lines
   (c-name gdk_draw_lines)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -979,27 +979,27 @@
 
 ;; From /usr/include/gdk/gdkrgb.h
 
-(function gdk_rgb_xpixel_from_rgb
+(function rgb_xpixel_from_rgb
   (c-name gdk_rgb_xpixel_from_rgb)
   (return-type gulong)
   (parameter (type-and-name guint32 rgb))
 )
 
-(function gdk_rgb_gc_set_foreground
+(function rgb_gc_set_foreground
   (c-name gdk_rgb_gc_set_foreground)
   (return-type none)
   (parameter (type-and-name GdkGC* gc))
   (parameter (type-and-name guint32 rgb))
 )
 
-(function gdk_rgb_gc_set_background
+(function rgb_gc_set_background
   (c-name gdk_rgb_gc_set_background)
   (return-type none)
   (parameter (type-and-name GdkGC* gc))
   (parameter (type-and-name guint32 rgb))
 )
 
-(function gdk_draw_rgb_image
+(function draw_rgb_image
   (c-name gdk_draw_rgb_image)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -1013,7 +1013,7 @@
   (parameter (type-and-name gint rowstride))
 )
 
-(function gdk_draw_rgb_image_dithalign
+(function draw_rgb_image_dithalign
   (c-name gdk_draw_rgb_image_dithalign)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -1029,7 +1029,7 @@
   (parameter (type-and-name gint ydith))
 )
 
-(function gdk_draw_rgb_32_image
+(function draw_rgb_32_image
   (c-name gdk_draw_rgb_32_image)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -1043,7 +1043,7 @@
   (parameter (type-and-name gint rowstride))
 )
 
-(function gdk_draw_gray_image
+(function draw_gray_image
   (c-name gdk_draw_gray_image)
   (return-type none)
   (parameter (type-and-name GdkDrawable* drawable))
@@ -1057,12 +1057,12 @@
   (parameter (type-and-name gint rowstride))
 )
 
-(function gdk_rgb_get_cmap
+(function rgb_get_cmap
   (c-name gdk_rgb_get_cmap)
   (return-type GdkColormap*)
 )
 
-(function gdk_rgb_get_visual
+(function rgb_get_visual
   (c-name gdk_rgb_get_visual)
   (return-type GdkVisual*)
 )

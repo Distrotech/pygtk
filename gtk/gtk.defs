@@ -4299,23 +4299,23 @@
   (return-type GtkWidget*)
 )
 
-(function gtk_hbutton_box_get_spacing_default
+(function hbutton_box_get_spacing_default
   (c-name gtk_hbutton_box_get_spacing_default)
   (return-type gint)
 )
 
-(function gtk_hbutton_box_get_layout_default
+(function hbutton_box_get_layout_default
   (c-name gtk_hbutton_box_get_layout_default)
   (return-type GtkButtonBoxStyle)
 )
 
-(function gtk_hbutton_box_set_spacing_default
+(function hbutton_box_set_spacing_default
   (c-name gtk_hbutton_box_set_spacing_default)
   (return-type none)
   (parameter (type-and-name gint spacing))
 )
 
-(function gtk_hbutton_box_set_layout_default
+(function hbutton_box_set_layout_default
   (c-name gtk_hbutton_box_set_layout_default)
   (return-type none)
   (parameter (type-and-name GtkButtonBoxStyle layout))
@@ -9495,23 +9495,23 @@
   (return-type GtkWidget*)
 )
 
-(function gtk_vbutton_box_get_spacing_default
+(function vbutton_box_get_spacing_default
   (c-name gtk_vbutton_box_get_spacing_default)
   (return-type gint)
 )
 
-(function gtk_vbutton_box_set_spacing_default
+(function vbutton_box_set_spacing_default
   (c-name gtk_vbutton_box_set_spacing_default)
   (return-type none)
   (parameter (type-and-name gint spacing))
 )
 
-(function gtk_vbutton_box_get_layout_default
+(function vbutton_box_get_layout_default
   (c-name gtk_vbutton_box_get_layout_default)
   (return-type GtkButtonBoxStyle)
 )
 
-(function gtk_vbutton_box_set_layout_default
+(function vbutton_box_set_layout_default
   (c-name gtk_vbutton_box_set_layout_default)
   (return-type none)
   (parameter (type-and-name GtkButtonBoxStyle layout))
