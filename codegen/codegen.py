@@ -72,16 +72,16 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    sizeof(PyGtk_Object),		/* tp_basicsize */\n' + \
 	   '    0,				/* tp_itemsize */\n' + \
 	   '    /* methods */\n' + \
-	   '    (destructor)pygtk_dealloc,	/* tp_dealloc */\n' + \
+	   '    (destructor)0,			/* tp_dealloc */\n' + \
 	   '    (printfunc)0,			/* tp_print */\n' + \
 	   '    (getattrfunc)%(getattr)s,	/* tp_getattr */\n' + \
-	   '    (setattrfunc)pygtk_setattr,	/* tp_setattr */\n' + \
-	   '    (cmpfunc)pygtk_compare,		/* tp_compare */\n' + \
-	   '    (reprfunc)pygtk_repr,		/* tp_repr */\n' + \
+	   '    (setattrfunc)0,			/* tp_setattr */\n' + \
+	   '    (cmpfunc)0,			/* tp_compare */\n' + \
+	   '    (reprfunc)0,			/* tp_repr */\n' + \
 	   '    0,				/* tp_as_number */\n' + \
 	   '    0,				/* tp_as_sequence */\n' + \
 	   '    0,				/* tp_as_mapping */\n' + \
-	   '    (hashfunc)pygtk_hash,		/* tp_hash */\n' + \
+	   '    (hashfunc)0,			/* tp_hash */\n' + \
            '    (ternaryfunc)0,			/* tp_call */\n' + \
            '    (reprfunc)0,			/* tp_str */\n' + \
 	   '    (getattrofunc)0,		/* tp_getattro */\n' + \
@@ -307,7 +307,7 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
     if objobj.fields:
         dict['getattr'] = write_getattr(parser, objobj, fp)
     else:
-        dict['getattr'] = 'pygtk_getattr'
+        dict['getattr'] = '0'
     if objobj.c_name == 'GtkObject':
         dict['methods'] = '{ _PyGtkObject_methods, &base_object_method_chain }'
     else:
@@ -362,15 +362,13 @@ def write_source(parser, overrides, fp=sys.stdout):
     for obj in parser.objects:
         for parent in parser.objects:
             if (parent.name, parent.module) == obj.parent:
-                fp.write('    PyExtensionClass_ExportSubclassSingle(d, "' +
-                         obj.c_name + '", Py' + obj.c_name + '_Type, Py' +
+                fp.write('    pygtk_register_class(d, "' +
+                         obj.c_name + '", &Py' + obj.c_name + '_Type, &Py' +
                          parent.c_name + '_Type);\n')
                 break
         else:
-            fp.write('    PyExtensionClass_Export(d, "' + obj.c_name +
-                     '", Py' + obj.c_name + '_Type);\n')
-        fp.write('    pygtk_register_class("' + obj.c_name + '", &Py' +
-                 obj.c_name + '_Type);\n')
+            fp.write('    pygtk_register_class(d, "' + obj.c_name +
+                     '", &Py' + obj.c_name + '_Type, NULL);\n')
     fp.write('}\n')
 
 def register_types(parser):

@@ -86,10 +86,26 @@ static const char *pygtk_wrapper_key = "pygtk::wrapper";
 static const char *pygtk_ownedref_key = "pygtk::ownedref";
 
 void
-pygtk_register_class(const gchar *class_name, PyExtensionClass *ec)
+pygtk_register_class(PyObject *dict, const gchar *class_name,
+		     PyExtensionClass *ec, PyExtensionClass *parent)
 {
     if (!class_hash)
 	class_hash = g_hash_table_new(g_str_hash, g_str_equal);
+
+    /* set standard pygtk class functions if they aren't already set */
+    if (!ec->tp_dealloc) ec->tp_dealloc = (destructor)pygtk_dealloc;
+    if (!ec->tp_getattr) ec->tp_getattr = (getattrfunc)pygtk_getattr;
+    if (!ec->tp_setattr) ec->tp_setattr = (setattrfunc)pygtk_setattr;
+    if (!ec->tp_compare) ec->tp_compare = (cmpfunc)pygtk_compare;
+    if (!ec->tp_repr)    ec->tp_repr    = (reprfunc)pygtk_repr;
+    if (!ec->tp_hash)    ec->tp_hash    = (hashfunc)pygtk_hash;
+
+    if (parent) {
+	PyExtensionClass_ExportSubclassSingle(dict, (char *)class_name,
+					      *ec, *parent);
+    } else {
+	PyExtensionClass_Export(dict, (char *)class_name, *ec);
+    }
 
     g_hash_table_insert(class_hash, g_strdup(class_name), ec);
 }

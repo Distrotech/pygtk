@@ -1,3 +1,17 @@
+2000-05-04  James Henstridge  <james@daa.com.au>
+
+	* codegen/codegen.py (typetmpl): leave some fields as blanks to be
+	filled in by pygtk_register_class.
+	(write_class): leave getattr as blank if we don't specify a
+	getattr routine.
+	(write_source): just call pygtk_register_class to register the
+	types.
+
+	* gtk/gtkobject-support.c (pygtk_register_class): make this
+	function actually call PyExtensionClass_Export for you, and fill
+	in some of the class functions if they are missing.  This is for
+	convenience and to make the windows port easier in the future.
+
 2000-04-10  James Henstridge  <james@daa.com.au>
 
 	* ExtensionClass.c (subclass_coerce): fix bug in ExtensionClass code

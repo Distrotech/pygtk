@@ -93,7 +93,8 @@ gint pygtk_flag_get_value(GtkType enum_type, PyObject *obj, int *val);
 static gboolean PyGtk_FatalExceptions = FALSE;
 
 /* object support */
-void pygtk_register_class(const gchar *class_name, PyExtensionClass *ec);
+void pygtk_register_class(PyObject *dict, const gchar *class_name,
+			  PyExtensionClass *ec, PyExtensionClass *parent);
 void pygtk_register_wrapper(PyObject *self);
 PyObject *pygtk_no_constructor(PyObject *self, PyObject *args);
 
