@@ -26,5 +26,5 @@ create_pixmap_from_xpm = pixmap_create_from_xpm
 create_pixmap_from_xpm_d = pixmap_create_from_xpm_d
 
 # for importing ...
-__all__ = ['_gtk', 'GTK', 'GDK', 'imlib' ]
+__all__ = ['_gtk', 'GTK', 'GDK', 'imlib', 'libglade', 'gl' ]
 

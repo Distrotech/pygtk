@@ -1,5 +1,9 @@
 2000-06-23  James Henstridge  <james@daa.com.au>
 
+	* gtk/gtkgl.defs (use_gdk_font): fix up a few extra function names.
+
+	* gtk/__init__.py (__all__): add extra modules to list.
+
 	* gtk/libglade.override: import PyGtkWidget_Type so that new
 	PyGtk_Check's work correctly.
 
