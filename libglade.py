@@ -13,6 +13,9 @@ class GladeXML(_gtk.GtkData):
 		if _obj: self._o = _obj; return
 		self._o = _libglade.glade_xml_new_with_domain(filename, root,
 							      domain)
+		if not self._o:
+		    raise RuntimeError, \
+		    "failed to parse glade document (see previous warnings)"
 	class __cnv:
 		def __init__(self, func):
 			self.func = func
@@ -76,3 +79,4 @@ def get_widget_tree(widget):
 		return GladeXML(_obj=xml)
 	return xml
 
+# vim: set ts=8 sts=8 sw=8 noexpandtab:

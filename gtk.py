@@ -1314,6 +1314,8 @@ class GtkCList(GtkContainer):
 		_gtk.gtk_clist_set_column_width(self._o, col, width)
 	def set_foreground(self, row, colour):
 		_gtk.gtk_clist_set_foreground(self._o, row, colour)
+	def set_focus_row(self, row):
+		_gtk.gtk_clist_set_focus_row(self._o, row)
 	def set_hadjustment(self, adj):
 		_gtk.gtk_clist_set_hadjustment(self._o, adj._o)
 	def set_vadjustment(self, adj):
@@ -2951,3 +2953,5 @@ def _window_new(parent, attribs):
 	return _gtk.gdk_window_new(parent, attribs)
 
 _disable_gdk_threading = _gtk._disable_gdk_threading
+
+# vim: set ts=8 sts=8 sw=8 noexpandtab:

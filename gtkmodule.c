@@ -4789,6 +4789,28 @@ static PyObject *_wrap_gtk_clist_insert(PyObject *self, PyObject *args) {
 	g_free(list);
 	return PyInt_FromLong(i);
 }
+
+static PyObject *_wrap_gtk_clist_set_focus_row(PyObject *self, PyObject *args) {
+    int row;
+    PyGtk_Object *c;
+    GtkCList *clist;
+    if (!PyArg_ParseTuple(args, "O!i:gtk_clist_set_focus_row", &PyGtk_Type, &c,
+			  &row))
+	return NULL;
+    clist = GTK_CLIST(PyGtk_Get(c));
+    if (row < 0 || row >= clist->rows) {
+	PyErr_SetString(PyExc_ValueError,
+		        "row number outside range for this clist");
+	return NULL;
+    }
+    clist->focus_row = row;
+    /* if clist is unfrozen, redraw it to display correctly */
+    if (clist->freeze_count == 0)
+        gtk_widget_draw(GTK_WIDGET(clist), NULL);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static PyObject *_wrap_gtk_clist_set_row_data(PyObject *self, PyObject *args) {
         PyGtk_Object *obj;
 	int row;
@@ -6957,6 +6979,7 @@ static PyMethodDef _gtkmoduleMethods[] = {
     { "gtk_clist_new_with_titles", _wrap_gtk_clist_new_with_titles, 1 },
     { "gtk_clist_get_text", _wrap_gtk_clist_get_text, 1 },
     { "gtk_clist_get_pixmap", _wrap_gtk_clist_get_pixmap, 1 },
+    { "gtk_clist_set_focus_row", _wrap_gtk_clist_set_focus_row, 1 },
     { "gtk_clist_get_pixtext", _wrap_gtk_clist_get_pixtext, 1 },
     { "gtk_clist_prepend", _wrap_gtk_clist_prepend, 1 },
     { "gtk_clist_append", _wrap_gtk_clist_append, 1 },
@@ -7168,3 +7191,4 @@ init_gtk(void) {
      if (PyErr_Occurred())
          Py_FatalError("can't initialise module _gtk");
 }
+/* vi: set ts=8 sw=4 noexpandtab sts=8: */
