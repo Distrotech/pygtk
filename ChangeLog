@@ -1,5 +1,12 @@
 2001-09-25  James Henstridge  <james@daa.com.au>
 
+	* gobjectmodule.c (pygobject_get_dict): getter for __dict__ on
+	GObject wrappers.
+	(PyGObject_Type): include getsets list.
+
+	* codegen/codegen.py (write_getsets): change "struct getsets" to
+	PyGetSetDef to match recent changes in python.
+
 	* gtk/gdk.override (_wrap_gdk_device__get_axes): change to getter.
 	(_wrap_gdk_device__get_keys): turn into a getter.
 	(_wrap_gdk_drag_context__get_targets): same here.

@@ -392,7 +392,7 @@ def write_getsets(parser, objobj, castmacro, overrides, fp=sys.stdout):
 	    #traceback.print_exc()
     if not getsets:
         return '0'
-    fp.write('static struct getsetlist %s[] = {\n' % getsets_name)
+    fp.write('static PyGetSetDef %s[] = {\n' % getsets_name)
     for getset in getsets:
         fp.write(getset)
     fp.write('    { NULL, (getter)0, (setter)0 },\n')
