@@ -1393,7 +1393,7 @@ PyGdkWindow_PropertyChange(PyGdkWindow_Object *self, PyObject *args)
 	    return NULL;
 	property = gdk_atom_intern(propname, FALSE);
     }
-    if (PyGtkEnum_get_value(GTK_TYPE_GDK_PROP_MODE, py_mode, (gint *)&mode))
+    if (pygtk_enum_get_value(GTK_TYPE_GDK_PROP_MODE, py_mode, (gint *)&mode))
 	return NULL;
     switch (format) {
     case 8:
@@ -2469,6 +2469,7 @@ _pygtk_register_boxed_types(PyObject *moddict)
 #define register_tp(x) Py##x##_Type.ob_type = &PyType_Type; \
     PyDict_SetItemString(moddict, #x "Type", (PyObject *)&Py##x##_Type);
 
+    ExtensionClassImported;
     register_tp(GtkAccelGroup);
     register_tp(GtkStyle);
     PyGtkStyleHelper_Type.ob_type = &PyType_Type;

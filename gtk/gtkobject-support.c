@@ -154,7 +154,15 @@ pygtk_dealloc(PyGtk_Object *self)
 PyObject *
 pygtk_getattr(PyGtk_Object *self, char *attr)
 {
+    ExtensionClassImported;
+
     return Py_FindAttrString((PyObject *)self, attr);
+}
+
+int
+pygtk_setattr(PyGtk_Object *self, char *attr, PyObject *value)
+{
+    return -1;
 }
 
 int
@@ -238,11 +246,11 @@ pygtk_arg_from_pyobject(GtkArg *arg, PyObject *obj)
 	Py_DECREF(tmp);
 	break;
     case GTK_TYPE_ENUM:
-	if (PyGtkEnum_get_value(arg->type, obj, &(GTK_VALUE_ENUM(*arg))))
+	if (pygtk_enum_get_value(arg->type, obj, &(GTK_VALUE_ENUM(*arg))))
 	    return -1;
 	break;
     case GTK_TYPE_FLAGS:
-	if (PyGtkFlag_get_value(arg->type, obj, &(GTK_VALUE_FLAGS(*arg))))
+	if (pygtk_flag_get_value(arg->type, obj, &(GTK_VALUE_FLAGS(*arg))))
 	    return -1;
 	break;
     case GTK_TYPE_INT:
@@ -546,13 +554,13 @@ pygtk_ret_from_pyobject(GtkArg *ret, PyObject *py_ret)
 	}
 	break;
     case GTK_TYPE_ENUM:
-	if (PyGtkEnum_get_value(ret->type, py_ret, GTK_RETLOC_ENUM(*ret))) {
+	if (pygtk_enum_get_value(ret->type, py_ret, GTK_RETLOC_ENUM(*ret))) {
 	    PyErr_Clear();
 	    *GTK_RETLOC_ENUM(*ret) = 0;
 	}
 	break;
     case GTK_TYPE_FLAGS:
-	if (PyGtkFlag_get_value(ret->type, py_ret, GTK_RETLOC_FLAGS(*ret))) {
+	if (pygtk_flag_get_value(ret->type, py_ret, GTK_RETLOC_FLAGS(*ret))) {
 	    PyErr_Clear();
 	    *GTK_RETLOC_FLAGS(*ret) = 0;
 	}

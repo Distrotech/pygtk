@@ -227,6 +227,7 @@ def write_source(parser, fp=sys.stdout):
         fp.write('\n')
     fp.write('/* intialise stuff extension classes */\n')
     fp.write('void\nregister_classes(PyObject *d)\n{\n')
+    fp.write('    ExtensionClassImported;\n');
     for obj in parser.objects:
         for parent in parser.objects:
             if (parent.name, parent.module) == obj.parent:

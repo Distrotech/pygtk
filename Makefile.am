@@ -13,7 +13,7 @@ ExtensionClass_la_SOURCES = \
 EXTRA_DIST = \
 	pygtk.spec \
 	MAPPING \
-	ExtensionClass.stc \
+	ExtensionClass.stx \
 	examples/imlib/view.py \
 	examples/ide/gtkcons.py \
 	examples/ide/gtkdb.py \
