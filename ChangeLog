@@ -1,5 +1,14 @@
 2000-03-26  James Henstridge  <james@daa.com.au>
 
+	* gtk/gtk.defs: updated defs file.  Added gdk constant definitions
+	and added is-constructor-of lines to lots of constructor functions.
+	Will have to write custom routines for most _new and _new_with_label
+	pairs, or think of some other way of doing things.
+
+	* ltihooks.py: set of import hooks for python that understand libtool
+	.la files when performing imports.  Mainly used for testing of the
+	package without having to install it, or make lots of symlinks.
+
 	* codegen/codegen.py (write_method): fixes to codegen for doing
 	return types.
 

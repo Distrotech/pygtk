@@ -594,6 +594,505 @@
 
 ;; Enumerations and flags ...
 
+(enum WindowType
+  (in-module Gdk)
+  (c-name GdkWindowType)
+  (value (name root) (c-name GDK_WINDOW_ROOT))
+  (value (name toplevel) (c-name GDK_WINDOW_TOPLEVEL))
+  (value (name child) (c-name GDK_WINDOW_CHILD))
+  (value (name dialog) (c-name GDK_WINDOW_DIALOG))
+  (value (name temp) (c-name GDK_WINDOW_TEMP))
+  (value (name pixmap) (c-name GDK_WINDOW_PIXMAP))
+  (value (name foreign) (c-name GDK_WINDOW_FOREIGN))
+)
+
+(enum WindowClass
+  (in-module Gdk)
+  (c-name GdkWindowClass)
+  (value (name utput) (c-name GDK_INPUT_OUTPUT))
+  (value (name nly) (c-name GDK_INPUT_ONLY))
+)
+
+(enum ImageType
+  (in-module Gdk)
+  (c-name GdkImageType)
+  (value (name normal) (c-name GDK_IMAGE_NORMAL))
+  (value (name shared) (c-name GDK_IMAGE_SHARED))
+  (value (name fastest) (c-name GDK_IMAGE_FASTEST))
+)
+
+(enum VisualType
+  (in-module Gdk)
+  (c-name GdkVisualType)
+  (value (name static-gray) (c-name GDK_VISUAL_STATIC_GRAY))
+  (value (name grayscale) (c-name GDK_VISUAL_GRAYSCALE))
+  (value (name static-color) (c-name GDK_VISUAL_STATIC_COLOR))
+  (value (name pseudo-color) (c-name GDK_VISUAL_PSEUDO_COLOR))
+  (value (name true-color) (c-name GDK_VISUAL_TRUE_COLOR))
+  (value (name direct-color) (c-name GDK_VISUAL_DIRECT_COLOR))
+)
+
+(enum FontType
+  (in-module Gdk)
+  (c-name GdkFontType)
+  (value (name font) (c-name GDK_FONT_FONT))
+  (value (name fontset) (c-name GDK_FONT_FONTSET))
+)
+
+(flags WindowAttributesType
+  (in-module Gdk)
+  (c-name GdkWindowAttributesType)
+  (value (name title) (c-name GDK_WA_TITLE))
+  (value (name x) (c-name GDK_WA_X))
+  (value (name y) (c-name GDK_WA_Y))
+  (value (name cursor) (c-name GDK_WA_CURSOR))
+  (value (name colormap) (c-name GDK_WA_COLORMAP))
+  (value (name visual) (c-name GDK_WA_VISUAL))
+  (value (name wmclass) (c-name GDK_WA_WMCLASS))
+  (value (name noredir) (c-name GDK_WA_NOREDIR))
+)
+
+(flags WindowHints
+  (in-module Gdk)
+  (c-name GdkWindowHints)
+  (value (name pos) (c-name GDK_HINT_POS))
+  (value (name min-size) (c-name GDK_HINT_MIN_SIZE))
+  (value (name max-size) (c-name GDK_HINT_MAX_SIZE))
+  (value (name base-size) (c-name GDK_HINT_BASE_SIZE))
+  (value (name aspect) (c-name GDK_HINT_ASPECT))
+  (value (name resize-inc) (c-name GDK_HINT_RESIZE_INC))
+)
+
+(enum Function
+  (in-module Gdk)
+  (c-name GdkFunction)
+  (value (name copy) (c-name GDK_COPY))
+  (value (name invert) (c-name GDK_INVERT))
+  (value (name xor) (c-name GDK_XOR))
+  (value (name clear) (c-name GDK_CLEAR))
+  (value (name and) (c-name GDK_AND))
+  (value (name and-reverse) (c-name GDK_AND_REVERSE))
+  (value (name and-invert) (c-name GDK_AND_INVERT))
+  (value (name noop) (c-name GDK_NOOP))
+  (value (name or) (c-name GDK_OR))
+  (value (name equiv) (c-name GDK_EQUIV))
+  (value (name or-reverse) (c-name GDK_OR_REVERSE))
+  (value (name copy-invert) (c-name GDK_COPY_INVERT))
+  (value (name or-invert) (c-name GDK_OR_INVERT))
+  (value (name nand) (c-name GDK_NAND))
+  (value (name set) (c-name GDK_SET))
+)
+
+(enum Fill
+  (in-module Gdk)
+  (c-name GdkFill)
+  (value (name solid) (c-name GDK_SOLID))
+  (value (name tiled) (c-name GDK_TILED))
+  (value (name stippled) (c-name GDK_STIPPLED))
+  (value (name opaque-stippled) (c-name GDK_OPAQUE_STIPPLED))
+)
+
+(enum FillRule
+  (in-module Gdk)
+  (c-name GdkFillRule)
+  (value (name even-odd-rule) (c-name GDK_EVEN_ODD_RULE))
+  (value (name winding-rule) (c-name GDK_WINDING_RULE))
+)
+
+(enum LineStyle
+  (in-module Gdk)
+  (c-name GdkLineStyle)
+  (value (name solid) (c-name GDK_LINE_SOLID))
+  (value (name on-off-dash) (c-name GDK_LINE_ON_OFF_DASH))
+  (value (name double-dash) (c-name GDK_LINE_DOUBLE_DASH))
+)
+
+(enum CapStyle
+  (in-module Gdk)
+  (c-name GdkCapStyle)
+  (value (name not-last) (c-name GDK_CAP_NOT_LAST))
+  (value (name butt) (c-name GDK_CAP_BUTT))
+  (value (name round) (c-name GDK_CAP_ROUND))
+  (value (name projecting) (c-name GDK_CAP_PROJECTING))
+)
+
+(enum JoinStyle
+  (in-module Gdk)
+  (c-name GdkJoinStyle)
+  (value (name miter) (c-name GDK_JOIN_MITER))
+  (value (name round) (c-name GDK_JOIN_ROUND))
+  (value (name bevel) (c-name GDK_JOIN_BEVEL))
+)
+
+(enum CursorType
+  (in-module Gdk)
+  (c-name GdkCursorType)
+  (value (name gdk-cursor-is-pixmap) (c-name GDK_CURSOR_IS_PIXMAP))
+)
+
+(enum FilterReturn
+  (in-module Gdk)
+  (c-name GdkFilterReturn)
+  (value (name continue) (c-name GDK_FILTER_CONTINUE))
+  (value (name translate) (c-name GDK_FILTER_TRANSLATE))
+  (value (name remove) (c-name GDK_FILTER_REMOVE))
+)
+
+(enum VisibilityState
+  (in-module Gdk)
+  (c-name GdkVisibilityState)
+  (value (name unobscured) (c-name GDK_VISIBILITY_UNOBSCURED))
+  (value (name partial) (c-name GDK_VISIBILITY_PARTIAL))
+  (value (name fully-obscured) (c-name GDK_VISIBILITY_FULLY_OBSCURED))
+)
+
+(enum EventType
+  (in-module Gdk)
+  (c-name GdkEventType)
+  (value (name nothing) (c-name GDK_NOTHING))
+  (value (name delete) (c-name GDK_DELETE))
+  (value (name destroy) (c-name GDK_DESTROY))
+  (value (name expose) (c-name GDK_EXPOSE))
+  (value (name motion-notify) (c-name GDK_MOTION_NOTIFY))
+  (value (name button-press) (c-name GDK_BUTTON_PRESS))
+  (value (name 2button-press) (c-name GDK_2BUTTON_PRESS))
+  (value (name 3button-press) (c-name GDK_3BUTTON_PRESS))
+  (value (name button-release) (c-name GDK_BUTTON_RELEASE))
+  (value (name key-press) (c-name GDK_KEY_PRESS))
+  (value (name key-release) (c-name GDK_KEY_RELEASE))
+  (value (name enter-notify) (c-name GDK_ENTER_NOTIFY))
+  (value (name leave-notify) (c-name GDK_LEAVE_NOTIFY))
+  (value (name focus-change) (c-name GDK_FOCUS_CHANGE))
+  (value (name configure) (c-name GDK_CONFIGURE))
+  (value (name map) (c-name GDK_MAP))
+  (value (name unmap) (c-name GDK_UNMAP))
+  (value (name property-notify) (c-name GDK_PROPERTY_NOTIFY))
+  (value (name selection-clear) (c-name GDK_SELECTION_CLEAR))
+  (value (name selection-request) (c-name GDK_SELECTION_REQUEST))
+  (value (name selection-notify) (c-name GDK_SELECTION_NOTIFY))
+  (value (name proximity-in) (c-name GDK_PROXIMITY_IN))
+  (value (name proximity-out) (c-name GDK_PROXIMITY_OUT))
+  (value (name drag-enter) (c-name GDK_DRAG_ENTER))
+  (value (name drag-leave) (c-name GDK_DRAG_LEAVE))
+  (value (name drag-motion) (c-name GDK_DRAG_MOTION))
+  (value (name drag-status) (c-name GDK_DRAG_STATUS))
+  (value (name drop-start) (c-name GDK_DROP_START))
+  (value (name drop-finished) (c-name GDK_DROP_FINISHED))
+  (value (name client-event) (c-name GDK_CLIENT_EVENT))
+  (value (name visibility-notify) (c-name GDK_VISIBILITY_NOTIFY))
+  (value (name no-expose) (c-name GDK_NO_EXPOSE))
+)
+
+(flags EventMask
+  (in-module Gdk)
+  (c-name GdkEventMask)
+  (value (name exposure-mask) (c-name GDK_EXPOSURE_MASK))
+  (value (name pointer-motion-mask) (c-name GDK_POINTER_MOTION_MASK))
+  (value (name pointer-motion-hint-mask) (c-name GDK_POINTER_MOTION_HINT_MASK))
+  (value (name button-motion-mask) (c-name GDK_BUTTON_MOTION_MASK))
+  (value (name button1-motion-mask) (c-name GDK_BUTTON1_MOTION_MASK))
+  (value (name button2-motion-mask) (c-name GDK_BUTTON2_MOTION_MASK))
+  (value (name button3-motion-mask) (c-name GDK_BUTTON3_MOTION_MASK))
+  (value (name button-press-mask) (c-name GDK_BUTTON_PRESS_MASK))
+  (value (name button-release-mask) (c-name GDK_BUTTON_RELEASE_MASK))
+  (value (name key-press-mask) (c-name GDK_KEY_PRESS_MASK))
+  (value (name key-release-mask) (c-name GDK_KEY_RELEASE_MASK))
+  (value (name enter-notify-mask) (c-name GDK_ENTER_NOTIFY_MASK))
+  (value (name leave-notify-mask) (c-name GDK_LEAVE_NOTIFY_MASK))
+  (value (name focus-change-mask) (c-name GDK_FOCUS_CHANGE_MASK))
+  (value (name structure-mask) (c-name GDK_STRUCTURE_MASK))
+  (value (name property-change-mask) (c-name GDK_PROPERTY_CHANGE_MASK))
+  (value (name visibility-notify-mask) (c-name GDK_VISIBILITY_NOTIFY_MASK))
+  (value (name proximity-in-mask) (c-name GDK_PROXIMITY_IN_MASK))
+  (value (name proximity-out-mask) (c-name GDK_PROXIMITY_OUT_MASK))
+  (value (name substructure-mask) (c-name GDK_SUBSTRUCTURE_MASK))
+  (value (name all-events-mask) (c-name GDK_ALL_EVENTS_MASK))
+)
+
+(enum NotifyType
+  (in-module Gdk)
+  (c-name GdkNotifyType)
+  (value (name ancestor) (c-name GDK_NOTIFY_ANCESTOR))
+  (value (name virtual) (c-name GDK_NOTIFY_VIRTUAL))
+  (value (name inferior) (c-name GDK_NOTIFY_INFERIOR))
+  (value (name nonlinear) (c-name GDK_NOTIFY_NONLINEAR))
+  (value (name nonlinear-virtual) (c-name GDK_NOTIFY_NONLINEAR_VIRTUAL))
+  (value (name unknown) (c-name GDK_NOTIFY_UNKNOWN))
+)
+
+(enum CrossingMode
+  (in-module Gdk)
+  (c-name GdkCrossingMode)
+  (value (name normal) (c-name GDK_CROSSING_NORMAL))
+  (value (name grab) (c-name GDK_CROSSING_GRAB))
+  (value (name ungrab) (c-name GDK_CROSSING_UNGRAB))
+)
+
+(flags ModifierType
+  (in-module Gdk)
+  (c-name GdkModifierType)
+  (value (name shift-mask) (c-name GDK_SHIFT_MASK))
+  (value (name lock-mask) (c-name GDK_LOCK_MASK))
+  (value (name control-mask) (c-name GDK_CONTROL_MASK))
+  (value (name mod1-mask) (c-name GDK_MOD1_MASK))
+  (value (name mod2-mask) (c-name GDK_MOD2_MASK))
+  (value (name mod3-mask) (c-name GDK_MOD3_MASK))
+  (value (name mod4-mask) (c-name GDK_MOD4_MASK))
+  (value (name mod5-mask) (c-name GDK_MOD5_MASK))
+  (value (name button1-mask) (c-name GDK_BUTTON1_MASK))
+  (value (name button2-mask) (c-name GDK_BUTTON2_MASK))
+  (value (name button3-mask) (c-name GDK_BUTTON3_MASK))
+  (value (name button4-mask) (c-name GDK_BUTTON4_MASK))
+  (value (name button5-mask) (c-name GDK_BUTTON5_MASK))
+  (value (name release-mask) (c-name GDK_RELEASE_MASK))
+  (value (name modifier-mask) (c-name GDK_MODIFIER_MASK))
+)
+
+(enum SubwindowMode
+  (in-module Gdk)
+  (c-name GdkSubwindowMode)
+  (value (name clip-by-children) (c-name GDK_CLIP_BY_CHILDREN))
+  (value (name include-inferiors) (c-name GDK_INCLUDE_INFERIORS))
+)
+
+(flags InputCondition
+  (in-module Gdk)
+  (c-name GdkInputCondition)
+  (value (name read) (c-name GDK_INPUT_READ))
+  (value (name write) (c-name GDK_INPUT_WRITE))
+  (value (name exception) (c-name GDK_INPUT_EXCEPTION))
+)
+
+(enum Status
+  (in-module Gdk)
+  (c-name GdkStatus)
+  (value (name ok) (c-name GDK_OK))
+  (value (name error) (c-name GDK_ERROR))
+  (value (name error-param) (c-name GDK_ERROR_PARAM))
+  (value (name error-file) (c-name GDK_ERROR_FILE))
+  (value (name error-mem) (c-name GDK_ERROR_MEM))
+)
+
+(enum ByteOrder
+  (in-module Gdk)
+  (c-name GdkByteOrder)
+  (value (name lsb-first) (c-name GDK_LSB_FIRST))
+  (value (name msb-first) (c-name GDK_MSB_FIRST))
+)
+
+(flags GCValuesMask
+  (in-module Gdk)
+  (c-name GdkGCValuesMask)
+  (value (name foreground) (c-name GDK_GC_FOREGROUND))
+  (value (name background) (c-name GDK_GC_BACKGROUND))
+  (value (name font) (c-name GDK_GC_FONT))
+  (value (name function) (c-name GDK_GC_FUNCTION))
+  (value (name fill) (c-name GDK_GC_FILL))
+  (value (name tile) (c-name GDK_GC_TILE))
+  (value (name stipple) (c-name GDK_GC_STIPPLE))
+  (value (name clip-mask) (c-name GDK_GC_CLIP_MASK))
+  (value (name subwindow) (c-name GDK_GC_SUBWINDOW))
+  (value (name ts-x-origin) (c-name GDK_GC_TS_X_ORIGIN))
+  (value (name ts-y-origin) (c-name GDK_GC_TS_Y_ORIGIN))
+  (value (name clip-x-origin) (c-name GDK_GC_CLIP_X_ORIGIN))
+  (value (name clip-y-origin) (c-name GDK_GC_CLIP_Y_ORIGIN))
+  (value (name exposures) (c-name GDK_GC_EXPOSURES))
+  (value (name line-width) (c-name GDK_GC_LINE_WIDTH))
+  (value (name line-style) (c-name GDK_GC_LINE_STYLE))
+  (value (name cap-style) (c-name GDK_GC_CAP_STYLE))
+  (value (name join-style) (c-name GDK_GC_JOIN_STYLE))
+)
+
+(enum Selection
+  (in-module Gdk)
+  (c-name GdkSelection)
+  (value (name primary) (c-name GDK_SELECTION_PRIMARY))
+  (value (name secondary) (c-name GDK_SELECTION_SECONDARY))
+)
+
+(enum PropertyState
+  (in-module Gdk)
+  (c-name GdkPropertyState)
+  (value (name new-value) (c-name GDK_PROPERTY_NEW_VALUE))
+  (value (name delete) (c-name GDK_PROPERTY_DELETE))
+)
+
+(enum PropMode
+  (in-module Gdk)
+  (c-name GdkPropMode)
+  (value (name replace) (c-name GDK_PROP_MODE_REPLACE))
+  (value (name prepend) (c-name GDK_PROP_MODE_PREPEND))
+  (value (name append) (c-name GDK_PROP_MODE_APPEND))
+)
+
+(enum InputSource
+  (in-module Gdk)
+  (c-name GdkInputSource)
+  (value (name mouse) (c-name GDK_SOURCE_MOUSE))
+  (value (name pen) (c-name GDK_SOURCE_PEN))
+  (value (name eraser) (c-name GDK_SOURCE_ERASER))
+  (value (name cursor) (c-name GDK_SOURCE_CURSOR))
+)
+
+(enum InputMode
+  (in-module Gdk)
+  (c-name GdkInputMode)
+  (value (name disabled) (c-name GDK_MODE_DISABLED))
+  (value (name screen) (c-name GDK_MODE_SCREEN))
+  (value (name window) (c-name GDK_MODE_WINDOW))
+)
+
+(enum AxisUse
+  (in-module Gdk)
+  (c-name GdkAxisUse)
+  (value (name ignore) (c-name GDK_AXIS_IGNORE))
+  (value (name x) (c-name GDK_AXIS_X))
+  (value (name y) (c-name GDK_AXIS_Y))
+  (value (name pressure) (c-name GDK_AXIS_PRESSURE))
+  (value (name xtilt) (c-name GDK_AXIS_XTILT))
+  (value (name ytilt) (c-name GDK_AXIS_YTILT))
+  (value (name last) (c-name GDK_AXIS_LAST))
+)
+
+(enum Target
+  (in-module Gdk)
+  (c-name GdkTarget)
+  (value (name bitmap) (c-name GDK_TARGET_BITMAP))
+  (value (name colormap) (c-name GDK_TARGET_COLORMAP))
+  (value (name drawable) (c-name GDK_TARGET_DRAWABLE))
+  (value (name pixmap) (c-name GDK_TARGET_PIXMAP))
+  (value (name string) (c-name GDK_TARGET_STRING))
+)
+
+(enum SelectionType
+  (in-module Gdk)
+  (c-name GdkSelectionType)
+  (value (name atom) (c-name GDK_SELECTION_TYPE_ATOM))
+  (value (name bitmap) (c-name GDK_SELECTION_TYPE_BITMAP))
+  (value (name colormap) (c-name GDK_SELECTION_TYPE_COLORMAP))
+  (value (name drawable) (c-name GDK_SELECTION_TYPE_DRAWABLE))
+  (value (name integer) (c-name GDK_SELECTION_TYPE_INTEGER))
+  (value (name pixmap) (c-name GDK_SELECTION_TYPE_PIXMAP))
+  (value (name window) (c-name GDK_SELECTION_TYPE_WINDOW))
+  (value (name string) (c-name GDK_SELECTION_TYPE_STRING))
+)
+
+(enum ExtensionMode
+  (in-module Gdk)
+  (c-name GdkExtensionMode)
+  (value (name none) (c-name GDK_EXTENSION_EVENTS_NONE))
+  (value (name all) (c-name GDK_EXTENSION_EVENTS_ALL))
+  (value (name cursor) (c-name GDK_EXTENSION_EVENTS_CURSOR))
+)
+
+(enum IMStyle
+  (in-module Gdk)
+  (c-name GdkIMStyle)
+  (value (name preedit-area) (c-name GDK_IM_PREEDIT_AREA))
+  (value (name preedit-callbacks) (c-name GDK_IM_PREEDIT_CALLBACKS))
+  (value (name preedit-position) (c-name GDK_IM_PREEDIT_POSITION))
+  (value (name preedit-nothing) (c-name GDK_IM_PREEDIT_NOTHING))
+  (value (name preedit-none) (c-name GDK_IM_PREEDIT_NONE))
+  (value (name preedit-mask) (c-name GDK_IM_PREEDIT_MASK))
+  (value (name status-area) (c-name GDK_IM_STATUS_AREA))
+  (value (name status-callbacks) (c-name GDK_IM_STATUS_CALLBACKS))
+  (value (name status-nothing) (c-name GDK_IM_STATUS_NOTHING))
+  (value (name status-none) (c-name GDK_IM_STATUS_NONE))
+  (value (name status-mask) (c-name GDK_IM_STATUS_MASK))
+)
+
+(flags ICAttributesType
+  (in-module Gdk)
+  (c-name GdkICAttributesType)
+  (value (name style) (c-name GDK_IC_STYLE))
+  (value (name client-window) (c-name GDK_IC_CLIENT_WINDOW))
+  (value (name focus-window) (c-name GDK_IC_FOCUS_WINDOW))
+  (value (name filter-events) (c-name GDK_IC_FILTER_EVENTS))
+  (value (name spot-location) (c-name GDK_IC_SPOT_LOCATION))
+  (value (name line-spacing) (c-name GDK_IC_LINE_SPACING))
+  (value (name cursor) (c-name GDK_IC_CURSOR))
+  (value (name preedit-fontset) (c-name GDK_IC_PREEDIT_FONTSET))
+  (value (name preedit-area) (c-name GDK_IC_PREEDIT_AREA))
+  (value (name preedit-area-needed) (c-name GDK_IC_PREEDIT_AREA_NEEDED))
+  (value (name preedit-foreground) (c-name GDK_IC_PREEDIT_FOREGROUND))
+  (value (name preedit-background) (c-name GDK_IC_PREEDIT_BACKGROUND))
+  (value (name preedit-pixmap) (c-name GDK_IC_PREEDIT_PIXMAP))
+  (value (name preedit-colormap) (c-name GDK_IC_PREEDIT_COLORMAP))
+  (value (name status-fontset) (c-name GDK_IC_STATUS_FONTSET))
+  (value (name status-area) (c-name GDK_IC_STATUS_AREA))
+  (value (name status-area-needed) (c-name GDK_IC_STATUS_AREA_NEEDED))
+  (value (name status-foreground) (c-name GDK_IC_STATUS_FOREGROUND))
+  (value (name status-background) (c-name GDK_IC_STATUS_BACKGROUND))
+  (value (name status-pixmap) (c-name GDK_IC_STATUS_PIXMAP))
+  (value (name status-colormap) (c-name GDK_IC_STATUS_COLORMAP))
+  (value (name all-req) (c-name GDK_IC_ALL_REQ))
+  (value (name preedit-area-req) (c-name GDK_IC_PREEDIT_AREA_REQ))
+  (value (name preedit-position-req) (c-name GDK_IC_PREEDIT_POSITION_REQ))
+  (value (name status-area-req) (c-name GDK_IC_STATUS_AREA_REQ))
+)
+
+(flags WMDecoration
+  (in-module Gdk)
+  (c-name GdkWMDecoration)
+  (value (name all) (c-name GDK_DECOR_ALL))
+  (value (name border) (c-name GDK_DECOR_BORDER))
+  (value (name resizeh) (c-name GDK_DECOR_RESIZEH))
+  (value (name title) (c-name GDK_DECOR_TITLE))
+  (value (name menu) (c-name GDK_DECOR_MENU))
+  (value (name minimize) (c-name GDK_DECOR_MINIMIZE))
+  (value (name maximize) (c-name GDK_DECOR_MAXIMIZE))
+)
+
+(flags WMFunction
+  (in-module Gdk)
+  (c-name GdkWMFunction)
+  (value (name all) (c-name GDK_FUNC_ALL))
+  (value (name resize) (c-name GDK_FUNC_RESIZE))
+  (value (name move) (c-name GDK_FUNC_MOVE))
+  (value (name minimize) (c-name GDK_FUNC_MINIMIZE))
+  (value (name maximize) (c-name GDK_FUNC_MAXIMIZE))
+  (value (name close) (c-name GDK_FUNC_CLOSE))
+)
+
+(enum ColorContextMode
+  (in-module Gdk)
+  (c-name GdkColorContextMode)
+  (value (name undefined) (c-name GDK_CC_MODE_UNDEFINED))
+  (value (name bw) (c-name GDK_CC_MODE_BW))
+  (value (name std-cmap) (c-name GDK_CC_MODE_STD_CMAP))
+  (value (name true) (c-name GDK_CC_MODE_TRUE))
+  (value (name my-gray) (c-name GDK_CC_MODE_MY_GRAY))
+  (value (name palette) (c-name GDK_CC_MODE_PALETTE))
+)
+
+(enum OverlapType
+  (in-module Gdk)
+  (c-name GdkOverlapType)
+  (value (name in) (c-name GDK_OVERLAP_RECTANGLE_IN))
+  (value (name out) (c-name GDK_OVERLAP_RECTANGLE_OUT))
+  (value (name part) (c-name GDK_OVERLAP_RECTANGLE_PART))
+)
+
+(flags DragAction
+  (in-module Gdk)
+  (c-name GdkDragAction)
+  (value (name default) (c-name GDK_ACTION_DEFAULT))
+  (value (name copy) (c-name GDK_ACTION_COPY))
+  (value (name move) (c-name GDK_ACTION_MOVE))
+  (value (name link) (c-name GDK_ACTION_LINK))
+  (value (name private) (c-name GDK_ACTION_PRIVATE))
+  (value (name ask) (c-name GDK_ACTION_ASK))
+)
+
+(enum DragProtocol
+  (in-module Gdk)
+  (c-name GdkDragProtocol)
+  (value (name motif) (c-name GDK_DRAG_PROTO_MOTIF))
+  (value (name xdnd) (c-name GDK_DRAG_PROTO_XDND))
+  (value (name rootwin) (c-name GDK_DRAG_PROTO_ROOTWIN))
+  (value (name none) (c-name GDK_DRAG_PROTO_NONE))
+)
+
 (flags AccelFlags
   (in-module Gtk)
   (c-name GtkAccelFlags)
@@ -2608,6 +3107,7 @@
 
 (function gtk_color_selection_new
   (c-name gtk_color_selection_new)
+  (is-constructor-of GtkColorSelection)
   (return-type GtkWidget*)
 )
 
@@ -2646,6 +3146,7 @@
 
 (function gtk_color_selection_dialog_new
   (c-name gtk_color_selection_dialog_new)
+  (is-constructo-of GtkColorSelectionDialog)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* title))
 )
@@ -2661,6 +3162,7 @@
 
 (function gtk_combo_new
   (c-name gtk_combo_new)
+  (is-constructor-of GtkCombo)
   (return-type GtkWidget*)
 )
 
@@ -2713,10 +3215,6 @@
   (c-name gtk_combo_disable_activate)
   (return-type none)
 )
-
-
-
-;; From /usr/include/gtk/gtkcompat.h
 
 
 
@@ -3566,6 +4064,7 @@
 
 (function gtk_curve_new
   (c-name gtk_curve_new)
+  (is-constructor-of GtkCurve)
   (return-type GtkWidget*)
 )
 
@@ -3626,10 +4125,6 @@
 
 
 
-;; From /usr/include/gtk/gtkdebug.h
-
-
-
 ;; From /usr/include/gtk/gtkdialog.h
 
 (function gtk_dialog_get_type
@@ -3639,6 +4134,7 @@
 
 (function gtk_dialog_new
   (c-name gtk_dialog_new)
+  (is-constructor-of GtkDialog)
   (return-type GtkWidget*)
 )
 
@@ -3661,72 +4157,72 @@
   (parameter (type-and-name GdkDragContext* context))
 )
 
-(function gtk_drag_highlight
+(method drag_highlight
+  (of-object Widget (Gtk))
   (c-name gtk_drag_highlight)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_drag_unhighlight
+(method drag_unhighlight
+  (of-object Widget (Gtk))
   (c-name gtk_drag_unhighlight)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_drag_dest_set
+(method drag_dest_set
+  (of-object Widget (Gtk))
   (c-name gtk_drag_dest_set)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GtkDestDefaults flags))
   (parameter (type-and-name const-GtkTargetEntry* targets))
   (parameter (type-and-name gint n_targets))
   (parameter (type-and-name GdkDragAction actions))
 )
 
-(function gtk_drag_dest_set_proxy
+(method drag_dest_set_proxy
+  (of-object Widget (Gtk))
   (c-name gtk_drag_dest_set_proxy)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkWindow* proxy_window))
   (parameter (type-and-name GdkDragProtocol protocol))
   (parameter (type-and-name gboolean use_coordinates))
 )
 
-(function gtk_drag_dest_unset
+(method drag_dest_unset
+  (of-object Widget (Gtk))
   (c-name gtk_drag_dest_unset)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_drag_source_set
+(method drag_source_set
+  (of-object Widget (Gtk))
   (c-name gtk_drag_source_set)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkModifierType start_button_mask))
   (parameter (type-and-name const-GtkTargetEntry* targets))
   (parameter (type-and-name gint n_targets))
   (parameter (type-and-name GdkDragAction actions))
 )
 
-(function gtk_drag_source_unset
+(method drag_source_unset
+  (of-object Widget (Gtk))
   (c-name gtk_drag_source_unset)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_drag_source_set_icon
+(method drag_source_set_icon
+  (of-object Widget (Gtk))
   (c-name gtk_drag_source_set_icon)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkColormap* colormap))
   (parameter (type-and-name GdkPixmap* pixmap))
   (parameter (type-and-name GdkBitmap* mask))
 )
 
-(function gtk_drag_begin
+(method drag_begin
+  (of-object Widget (Gtk))
   (c-name gtk_drag_begin)
   (return-type GdkDragContext*)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GtkTargetList* targets))
   (parameter (type-and-name GdkDragAction actions))
   (parameter (type-and-name gint button))
@@ -3794,6 +4290,7 @@
 
 (function gtk_drawing_area_new
   (c-name gtk_drawing_area_new)
+  (is-constructor-of GtkDrawingArea)
   (return-type GtkWidget*)
 )
 
@@ -3916,6 +4413,7 @@
 
 (function gtk_entry_new
   (c-name gtk_entry_new)
+  (is-constructor-of GtkEntry)
   (return-type GtkWidget*)
 )
 
@@ -3990,10 +4488,6 @@
 
 
 
-;; From /usr/include/gtk/gtkenums.h
-
-
-
 ;; From /usr/include/gtk/gtkeventbox.h
 
 (function gtk_event_box_get_type
@@ -4003,6 +4497,7 @@
 
 (function gtk_event_box_new
   (c-name gtk_event_box_new)
+  (is-constructor-of GtkEventBox)
   (return-type GtkWidget*)
 )
 
@@ -4021,6 +4516,7 @@
 
 (function gtk_file_selection_new
   (c-name gtk_file_selection_new)
+  (is-constructor-of GtkFileSelection)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* title))
 )
@@ -4068,6 +4564,7 @@
 
 (function gtk_fixed_new
   (c-name gtk_fixed_new)
+  (is-constructor-of GtkFixed)
   (return-type GtkWidget*)
 )
 
@@ -4100,6 +4597,7 @@
 
 (function gtk_font_selection_new
   (c-name gtk_font_selection_new)
+  (is-constructor-of GtkFontSelection)
   (return-type GtkWidget*)
 )
 
@@ -4156,6 +4654,7 @@
 
 (function gtk_font_selection_dialog_new
   (c-name gtk_font_selection_dialog_new)
+  (is-constructor-of GtkFontSelectionDialog)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* title))
 )
@@ -4217,8 +4716,9 @@
 
 (function gtk_frame_new
   (c-name gtk_frame_new)
+  (is-constructor-of GtkFrame)
   (return-type GtkWidget*)
-  (parameter (type-and-name const-gchar* label))
+  (parameter (type-and-name const-gchar* label) (null-ok))
 )
 
 (method set_label
@@ -4254,19 +4754,9 @@
 
 (function gtk_gamma_curve_new
   (c-name gtk_gamma_curve_new)
+  (is-constructor-of GtkGammaCurve)
   (return-type GtkWidget*)
 )
-
-
-
-;; From /usr/include/gtk/gtkgc.h
-
-(function gtk_gc_release
-  (c-name gtk_gc_release)
-  (return-type none)
-  (parameter (type-and-name GdkGC* gc))
-)
-
 
 
 ;; From /usr/include/gtk/gtkhandlebox.h
@@ -4278,6 +4768,7 @@
 
 (function gtk_handle_box_new
   (c-name gtk_handle_box_new)
+  (is-constructor-of GtkHandleBox)
   (return-type GtkWidget*)
 )
 
@@ -4313,6 +4804,7 @@
 
 (function gtk_hbutton_box_new
   (c-name gtk_hbutton_box_new)
+  (is-constructor-of GtkHButtonBox)
   (return-type GtkWidget*)
 )
 
@@ -4349,6 +4841,7 @@
 
 (function gtk_hbox_new
   (c-name gtk_hbox_new)
+  (is-constructor-of GtkHBox)
   (return-type GtkWidget*)
   (parameter (type-and-name gboolean homogeneous))
   (parameter (type-and-name gint spacing))
@@ -4365,6 +4858,7 @@
 
 (function gtk_hpaned_new
   (c-name gtk_hpaned_new)
+  (is-constructor-of GtkHPaned)
   (return-type GtkWidget*)
 )
 
@@ -4379,6 +4873,7 @@
 
 (function gtk_hruler_new
   (c-name gtk_hruler_new)
+  (is-constructor-of GtkHRuler)
   (return-type GtkWidget*)
 )
 
@@ -4393,6 +4888,7 @@
 
 (function gtk_hscale_new
   (c-name gtk_hscale_new)
+  (is-constructor-of GtkHScale)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* adjustment))
 )
@@ -4408,6 +4904,7 @@
 
 (function gtk_hscrollbar_new
   (c-name gtk_hscrollbar_new)
+  (is-constructor-of GtkHScrollbar)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* adjustment))
 )
@@ -4423,6 +4920,7 @@
 
 (function gtk_hseparator_new
   (c-name gtk_hseparator_new)
+  (is-constructor-of GtkHSeparator)
   (return-type GtkWidget*)
 )
 
@@ -4437,6 +4935,7 @@
 
 (function gtk_image_new
   (c-name gtk_image_new)
+  (is-constructor-of GtkImage)
   (return-type GtkWidget*)
   (parameter (type-and-name GdkImage* val))
   (parameter (type-and-name GdkBitmap* mask))
@@ -4469,6 +4968,7 @@
 
 (function gtk_input_dialog_new
   (c-name gtk_input_dialog_new)
+  (is-constructor-of GtkInputDialog)
   (return-type GtkWidget*)
 )
 
@@ -4483,6 +4983,7 @@
 
 (function gtk_invisible_new
   (c-name gtk_invisible_new)
+  (is-constructor-of GtkInvisible)
   (return-type GtkWidget*)
 )
 
@@ -4524,6 +5025,7 @@
 
 (function gtk_item_factory_new
   (c-name gtk_item_factory_new)
+  (is-constructor-of GtkItemFactory)
   (return-type GtkItemFactory*)
   (parameter (type-and-name GtkType container_type))
   (parameter (type-and-name const-gchar* path))
@@ -4755,6 +5257,7 @@
 
 (function gtk_label_new
   (c-name gtk_label_new)
+  (is-constructor-of GtkLabel)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* str))
 )
@@ -4812,6 +5315,7 @@
 
 (function gtk_layout_new
   (c-name gtk_layout_new)
+  (is-constructor-of GtkLayout)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* hadjustment))
   (parameter (type-and-name GtkAdjustment* vadjustment))
@@ -4892,6 +5396,7 @@
 
 (function gtk_list_new
   (c-name gtk_list_new)
+  (is-constructor-of GtkList)
   (return-type GtkWidget*)
 )
 
@@ -5358,6 +5863,7 @@
 
 (function gtk_menu_new
   (c-name gtk_menu_new)
+  (is-constructor-of GtkMenu)
   (return-type GtkWidget*)
 )
 
@@ -5498,6 +6004,7 @@
 
 (function gtk_menu_bar_new
   (c-name gtk_menu_bar_new)
+  (is-constructor-of GtkMenuBar)
   (return-type GtkWidget*)
 )
 
@@ -5529,70 +6036,6 @@
   (return-type none)
   (parameter (type-and-name GtkShadowType type))
 )
-
-
-
-;; From /usr/include/gtk/gtkmenufactory.h
-
-(function gtk_menu_factory_new
-  (c-name gtk_menu_factory_new)
-  (return-type GtkMenuFactory*)
-  (parameter (type-and-name GtkMenuFactoryType type))
-)
-
-(method destroy
-  (of-object MenuFactory (Gtk))
-  (c-name gtk_menu_factory_destroy)
-  (return-type none)
-)
-
-(method add_entries
-  (of-object MenuFactory (Gtk))
-  (c-name gtk_menu_factory_add_entries)
-  (return-type none)
-  (parameter (type-and-name GtkMenuEntry* entries))
-  (parameter (type-and-name int nentries))
-)
-
-(method add_subfactory
-  (of-object MenuFactory (Gtk))
-  (c-name gtk_menu_factory_add_subfactory)
-  (return-type none)
-  (parameter (type-and-name GtkMenuFactory* subfactory))
-  (parameter (type-and-name const-char* path))
-)
-
-(method remove_paths
-  (of-object MenuFactory (Gtk))
-  (c-name gtk_menu_factory_remove_paths)
-  (return-type none)
-  (parameter (type-and-name char** paths))
-  (parameter (type-and-name int npaths))
-)
-
-(method remove_entries
-  (of-object MenuFactory (Gtk))
-  (c-name gtk_menu_factory_remove_entries)
-  (return-type none)
-  (parameter (type-and-name GtkMenuEntry* entries))
-  (parameter (type-and-name int nentries))
-)
-
-(method remove_subfactory
-  (of-object MenuFactory (Gtk))
-  (c-name gtk_menu_factory_remove_subfactory)
-  (return-type none)
-  (parameter (type-and-name GtkMenuFactory* subfactory))
-  (parameter (type-and-name const-char* path))
-)
-
-(method find
-  (of-object MenuFactory (Gtk))
-  (c-name gtk_menu_factory_find)
-  (return-type GtkMenuPath*)
-  (parameter (type-and-name const-char* path))
-)
-
 
 
 ;; From /usr/include/gtk/gtkmenuitem.h
@@ -5759,6 +6202,7 @@
 
 (function gtk_notebook_new
   (c-name gtk_notebook_new)
+  (is-constructor-of GtkNotebook)
   (return-type GtkWidget*)
 )
 
@@ -6305,6 +6749,7 @@
 
 (function gtk_option_menu_new
   (c-name gtk_option_menu_new)
+  (is-constructor-of GtkOptionMenu)
   (return-type GtkWidget*)
 )
 
@@ -6345,6 +6790,7 @@
 
 (function gtk_packer_new
   (c-name gtk_packer_new)
+  (is-constructor-of GtkPacker)
   (return-type GtkWidget*)
 )
 
@@ -6508,6 +6954,7 @@
 
 (function gtk_pixmap_new
   (c-name gtk_pixmap_new)
+  (is-constructor-of GtkPixmap)
   (return-type GtkWidget*)
   (parameter (type-and-name GdkPixmap* pixmap))
   (parameter (type-and-name GdkBitmap* mask))
@@ -6554,6 +7001,7 @@
 
 (function gtk_plug_new
   (c-name gtk_plug_new)
+  (is-constructor-of GtkPlug)
   (return-type GtkWidget*)
   (parameter (type-and-name guint32 socket_id))
 )
@@ -6574,6 +7022,7 @@
 
 (function gtk_preview_new
   (c-name gtk_preview_new)
+  (is-constructor-of GtkPreview)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkPreviewType type))
 )
@@ -6670,10 +7119,6 @@
   (c-name gtk_preview_reset)
   (return-type none)
 )
-
-
-
-;; From /usr/include/gtk/gtkprivate.h
 
 
 
@@ -7050,96 +7495,74 @@
 
 ;; From /usr/include/gtk/gtkrc.h
 
-(function gtk_rc_init
-  (c-name gtk_rc_init)
-  (return-type none)
-)
-
-(function gtk_rc_add_default_file
+(function rc_add_default_file
   (c-name gtk_rc_add_default_file)
   (return-type none)
   (parameter (type-and-name const-gchar* filename))
 )
 
-(function gtk_rc_set_default_files
+(function rc_set_default_files
   (c-name gtk_rc_set_default_files)
   (return-type none)
   (parameter (type-and-name gchar** filenames))
 )
 
-(function gtk_rc_get_default_files
+(function rc_get_default_files
   (c-name gtk_rc_get_default_files)
   (return-type gchar**)
 )
 
-(function gtk_rc_parse
+(function rc_parse
   (c-name gtk_rc_parse)
   (return-type none)
   (parameter (type-and-name const-gchar* filename))
 )
 
-(function gtk_rc_parse_string
+(function rc_parse_string
   (c-name gtk_rc_parse_string)
   (return-type none)
   (parameter (type-and-name const-gchar* rc_string))
 )
 
-(function gtk_rc_reparse_all
+(function rc_reparse_all
   (c-name gtk_rc_reparse_all)
   (return-type gboolean)
 )
 
-(function gtk_rc_get_style
+(function rc_get_style
   (c-name gtk_rc_get_style)
   (return-type GtkStyle*)
   (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_rc_add_widget_name_style
+(function rc_add_widget_name_style
   (c-name gtk_rc_add_widget_name_style)
   (return-type none)
   (parameter (type-and-name GtkRcStyle* rc_style))
   (parameter (type-and-name const-gchar* pattern))
 )
 
-(function gtk_rc_add_widget_class_style
+(function rc_add_widget_class_style
   (c-name gtk_rc_add_widget_class_style)
   (return-type none)
   (parameter (type-and-name GtkRcStyle* rc_style))
   (parameter (type-and-name const-gchar* pattern))
 )
 
-(function gtk_rc_add_class_style
+(function rc_add_class_style
   (c-name gtk_rc_add_class_style)
   (return-type none)
   (parameter (type-and-name GtkRcStyle* rc_style))
   (parameter (type-and-name const-gchar* pattern))
 )
 
-(function gtk_rc_style_new
-  (c-name gtk_rc_style_new)
-  (return-type GtkRcStyle*)
-)
-
-(method ref
-  (of-object RcStyle (Gtk))
-  (c-name gtk_rc_style_ref)
-  (return-type none)
-)
-
-(method unref
-  (of-object RcStyle (Gtk))
-  (c-name gtk_rc_style_unref)
-  (return-type none)
-)
-
-(function gtk_rc_set_image_loader
+(function rc_set_image_loader
   (c-name gtk_rc_set_image_loader)
   (return-type none)
   (parameter (type-and-name GtkImageLoader loader))
 )
 
-(function gtk_rc_load_image
+(function rc_load_image
   (c-name gtk_rc_load_image)
   (return-type GdkPixmap*)
   (parameter (type-and-name GdkColormap* colormap))
@@ -7147,44 +7570,44 @@
   (parameter (type-and-name const-gchar* filename))
 )
 
-(function gtk_rc_find_pixmap_in_path
+(function rc_find_pixmap_in_path
   (c-name gtk_rc_find_pixmap_in_path)
   (return-type gchar*)
   (parameter (type-and-name GScanner* scanner))
   (parameter (type-and-name const-gchar* pixmap_file))
 )
 
-(function gtk_rc_find_module_in_path
+(function rc_find_module_in_path
   (c-name gtk_rc_find_module_in_path)
   (return-type gchar*)
   (parameter (type-and-name const-gchar* module_file))
 )
 
-(function gtk_rc_get_theme_dir
+(function rc_get_theme_dir
   (c-name gtk_rc_get_theme_dir)
   (return-type gchar*)
 )
 
-(function gtk_rc_get_module_dir
+(function rc_get_module_dir
   (c-name gtk_rc_get_module_dir)
   (return-type gchar*)
 )
 
-(function gtk_rc_parse_color
+(function rc_parse_color
   (c-name gtk_rc_parse_color)
   (return-type guint)
   (parameter (type-and-name GScanner* scanner))
   (parameter (type-and-name GdkColor* color))
 )
 
-(function gtk_rc_parse_state
+(function rc_parse_state
   (c-name gtk_rc_parse_state)
   (return-type guint)
   (parameter (type-and-name GScanner* scanner))
   (parameter (type-and-name GtkStateType* state))
 )
 
-(function gtk_rc_parse_priority
+(function rc_parse_priority
   (c-name gtk_rc_parse_priority)
   (return-type guint)
   (parameter (type-and-name GScanner* scanner))
@@ -7291,6 +7714,7 @@
 
 (function gtk_scrolled_window_new
   (c-name gtk_scrolled_window_new)
+  (is-constructor-of GtkScrolledWindow)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* hadjustment))
   (parameter (type-and-name GtkAdjustment* vadjustment))
@@ -7399,36 +7823,36 @@
   (parameter (type-and-name guint* info))
 )
 
-(function gtk_selection_owner_set
+(method selection_owner_set
+  (of-object Widget (Gtk))
   (c-name gtk_selection_owner_set)
   (return-type gint)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkAtom selection))
   (parameter (type-and-name guint32 time))
 )
 
-(function gtk_selection_add_target
+(method selection_add_target
+  (of-object Widget (Gtk))
   (c-name gtk_selection_add_target)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkAtom selection))
   (parameter (type-and-name GdkAtom target))
   (parameter (type-and-name guint info))
 )
 
-(function gtk_selection_add_targets
+(method selection_add_targets
+  (of-object Widget (Gtk))
   (c-name gtk_selection_add_targets)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkAtom selection))
   (parameter (type-and-name const-GtkTargetEntry* targets))
   (parameter (type-and-name guint ntargets))
 )
 
-(function gtk_selection_convert
+(method selection_convert
+  (of-object Widget (Gtk))
   (c-name gtk_selection_convert)
   (return-type gint)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkAtom selection))
   (parameter (type-and-name GdkAtom target))
   (parameter (type-and-name guint32 time))
@@ -7444,23 +7868,23 @@
   (parameter (type-and-name gint length))
 )
 
-(function gtk_selection_remove_all
+(method selection_remove_all
+  (of-object Widget (Gtk))
   (c-name gtk_selection_remove_all)
   (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_selection_clear
+(method selection_clear
+  (of-object Widget (Gtk))
   (c-name gtk_selection_clear)
   (return-type gint)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkEventSelection* event))
 )
 
-(function gtk_selection_request
+(method selection_request
+  (of-object Widget (Gtk))
   (c-name gtk_selection_request)
   (return-type gint)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkEventSelection* event))
 )
 
@@ -7471,17 +7895,17 @@
   (parameter (type-and-name GdkEventProperty* event))
 )
 
-(function gtk_selection_notify
+(method selection_notify
+  (of-object Widget (Gtk))
   (c-name gtk_selection_notify)
   (return-type gint)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkEventSelection* event))
 )
 
-(function gtk_selection_property_notify
+(method selection_property_notify
+  (of-object Widget (Gtk))
   (c-name gtk_selection_property_notify)
   (return-type gint)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkEventProperty* event))
 )
 
@@ -7537,51 +7961,51 @@
   (parameter (type-and-name const-gchar* name))
 )
 
-(function gtk_signal_emit_stop
+(method signal_emit_stop
+  (of-object Object (Gtk))
   (c-name gtk_signal_emit_stop)
   (return-type none)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name guint signal_id))
 )
 
-(function gtk_signal_emit_stop_by_name
+(method emit_stop_by_name
+  (of-object Object (Gtk))
   (c-name gtk_signal_emit_stop_by_name)
   (return-type none)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name const-gchar* name))
 )
 
-(function gtk_signal_connect
+(method connect
+  (of-object Object (Gtk))
   (c-name gtk_signal_connect)
   (return-type guint)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name const-gchar* name))
   (parameter (type-and-name GtkSignalFunc func))
   (parameter (type-and-name gpointer func_data))
 )
 
-(function gtk_signal_connect_after
+(method connect_after
+  (of-object Object (Gtk))
   (c-name gtk_signal_connect_after)
   (return-type guint)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name const-gchar* name))
   (parameter (type-and-name GtkSignalFunc func))
   (parameter (type-and-name gpointer func_data))
 )
 
-(function gtk_signal_connect_object
+(method connect_object
+  (of-object Object (Gtk))
   (c-name gtk_signal_connect_object)
   (return-type guint)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name const-gchar* name))
   (parameter (type-and-name GtkSignalFunc func))
   (parameter (type-and-name GtkObject* slot_object))
 )
 
-(function gtk_signal_connect_object_after
+(method connect_object_after
+  (of-object Object (Gtk))
   (c-name gtk_signal_connect_object_after)
   (return-type guint)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name const-gchar* name))
   (parameter (type-and-name GtkSignalFunc func))
   (parameter (type-and-name GtkObject* slot_object))
@@ -7619,10 +8043,10 @@
   (parameter (type-and-name GtkObject* alive_object))
 )
 
-(function gtk_signal_disconnect
+(method disconnect
+  (of-object Object (Gtk))
   (c-name gtk_signal_disconnect)
   (return-type none)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name guint handler_id))
 )
 
@@ -7641,10 +8065,10 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_signal_handler_block
+(method signal_handler_block
+  (of-object Object (Gtk))
   (c-name gtk_signal_handler_block)
   (return-type none)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name guint handler_id))
 )
 
@@ -7663,10 +8087,10 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_signal_handler_unblock
+(method signal_handler_unblock
+  (of-object Object (Gtk))
   (c-name gtk_signal_handler_unblock)
   (return-type none)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name guint handler_id))
 )
 
@@ -7685,10 +8109,10 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_signal_handler_pending
+(method signal_handler_pending
+  (of-object Object (Gtk))
   (c-name gtk_signal_handler_pending)
   (return-type guint)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name guint signal_id))
   (parameter (type-and-name gboolean may_be_blocked))
 )
@@ -7703,10 +8127,10 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_signal_handler_pending_by_id
+(method signal_handler_pending_by_id
+  (of-object Object (Gtk))
   (c-name gtk_signal_handler_pending_by_id)
   (return-type gint)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name guint handler_id))
   (parameter (type-and-name gboolean may_be_blocked))
 )
@@ -7741,11 +8165,6 @@
   (parameter (type-and-name guint signal_id))
 )
 
-(function gtk_signal_init
-  (c-name gtk_signal_init)
-  (return-type none)
-)
-
 (function gtk_signal_new
   (c-name gtk_signal_new)
   (return-type guint)
@@ -7772,10 +8191,10 @@
   (parameter (type-and-name GtkType* params))
 )
 
-(function gtk_signal_emit
+(method emit
+  (of-object Object (Gtk))
   (c-name gtk_signal_emit)
   (return-type none)
-  (parameter (type-and-name GtkObject* object))
   (parameter (type-and-name guint signal_id))
   (varargs t)
 )
@@ -7804,10 +8223,10 @@
   (parameter (type-and-name GtkArg* params))
 )
 
-(function gtk_signal_handlers_destroy
+(method signal_handlers_destroy
+  (of-object Object (Gtk))
   (c-name gtk_signal_handlers_destroy)
   (return-type none)
-  (parameter (type-and-name GtkObject* object))
 )
 
 (function gtk_signal_set_funcs
@@ -7823,6 +8242,7 @@
 
 (function gtk_socket_new
   (c-name gtk_socket_new)
+  (is-constructor-of GtkSocket)
   (return-type GtkWidget*)
 )
 
@@ -7858,6 +8278,7 @@
 
 (function gtk_spin_button_new
   (c-name gtk_spin_button_new)
+  (is-constructor-of GtkSpinButton)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* adjustment))
   (parameter (type-and-name gfloat climb_rate))
@@ -7963,6 +8384,7 @@
 
 (function gtk_statusbar_new
   (c-name gtk_statusbar_new)
+  (is-constructor-of GtkStatusbar)
   (return-type GtkWidget*)
 )
 
@@ -8684,6 +9106,7 @@
 
 (function gtk_table_new
   (c-name gtk_table_new)
+  (is-constructor-of GtkTable)
   (return-type GtkWidget*)
   (parameter (type-and-name guint rows))
   (parameter (type-and-name guint columns))
@@ -8772,6 +9195,7 @@
 
 (function gtk_tearoff_menu_item_new
   (c-name gtk_tearoff_menu_item_new)
+  (is-constructor-of GtkTearoffMenuItem)
   (return-type GtkWidget*)
 )
 
@@ -8786,6 +9210,7 @@
 
 (function gtk_text_new
   (c-name gtk_text_new)
+  (is-constructor-of GtkText)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* hadj))
   (parameter (type-and-name GtkAdjustment* vadj))
@@ -8878,34 +9303,6 @@
 
 
 
-;; From /usr/include/gtk/gtkthemes.h
-
-(function gtk_theme_engine_get
-  (c-name gtk_theme_engine_get)
-  (return-type GtkThemeEngine*)
-  (parameter (type-and-name const-gchar* name))
-)
-
-(method ref
-  (of-object ThemeEngine (Gtk))
-  (c-name gtk_theme_engine_ref)
-  (return-type none)
-)
-
-(method unref
-  (of-object ThemeEngine (Gtk))
-  (c-name gtk_theme_engine_unref)
-  (return-type none)
-)
-
-(function gtk_themes_exit
-  (c-name gtk_themes_exit)
-  (return-type none)
-  (parameter (type-and-name gint error_code))
-)
-
-
-
 ;; From /usr/include/gtk/gtktipsquery.h
 
 (function gtk_tips_query_get_type
@@ -8915,6 +9312,7 @@
 
 (function gtk_tips_query_new
   (c-name gtk_tips_query_new)
+  (is-constructor-of GtkTipsQuery)
   (return-type GtkWidget*)
 )
 
@@ -9002,6 +9400,7 @@
 
 (function gtk_toolbar_new
   (c-name gtk_toolbar_new)
+  (is-constructor-of GtkToolbar)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkOrientation orientation))
   (parameter (type-and-name GtkToolbarStyle style))
@@ -9193,6 +9592,7 @@
 
 (function gtk_tooltips_new
   (c-name gtk_tooltips_new)
+  (is-constructor-of GtkTooltips)
   (return-type GtkTooltips*)
 )
 
@@ -9255,6 +9655,7 @@
 
 (function gtk_tree_new
   (c-name gtk_tree_new)
+  (is-constructor-of GtkTree)
   (return-type GtkWidget*)
 )
 
@@ -9417,16 +9818,7 @@
 
 
 
-;; From /usr/include/gtk/gtktypebuiltins.h
-
-
-
 ;; From /usr/include/gtk/gtktypeutils.h
-
-(function gtk_type_init
-  (c-name gtk_type_init)
-  (return-type none)
-)
 
 (method unique
   (of-object Type (Gtk))
@@ -9595,6 +9987,7 @@
 
 (function gtk_vbutton_box_new
   (c-name gtk_vbutton_box_new)
+  (is-constructor-of GtkVButtonBox)
   (return-type GtkWidget*)
 )
 
@@ -9631,6 +10024,7 @@
 
 (function gtk_vbox_new
   (c-name gtk_vbox_new)
+  (is-constructor-of GtkVBox)
   (return-type GtkWidget*)
   (parameter (type-and-name gboolean homogeneous))
   (parameter (type-and-name gint spacing))
@@ -9647,6 +10041,7 @@
 
 (function gtk_viewport_new
   (c-name gtk_viewport_new)
+  (is-constructor-of GtkViewport)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* hadjustment))
   (parameter (type-and-name GtkAdjustment* vadjustment))
@@ -9696,6 +10091,7 @@
 
 (function gtk_vpaned_new
   (c-name gtk_vpaned_new)
+  (is-constructor-of GtkVPaned)
   (return-type GtkWidget*)
 )
 
@@ -9710,6 +10106,7 @@
 
 (function gtk_vruler_new
   (c-name gtk_vruler_new)
+  (is-constructor-of GtkVRuler)
   (return-type GtkWidget*)
 )
 
@@ -9724,6 +10121,7 @@
 
 (function gtk_vscale_new
   (c-name gtk_vscale_new)
+  (is-constructor-of GtkVScale)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* adjustment))
 )
@@ -9734,6 +10132,7 @@
 
 (function gtk_vscrollbar_new
   (c-name gtk_vscrollbar_new)
+  (is-constructor-of GtkVScrollbar)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkAdjustment* adjustment))
 )
@@ -9749,6 +10148,7 @@
 
 (function gtk_vseparator_new
   (c-name gtk_vseparator_new)
+  (is-constructor-of GtkVSeparator)
   (return-type GtkWidget*)
 )
 
@@ -10422,6 +10822,7 @@
 
 (function gtk_window_new
   (c-name gtk_window_new)
+  (is-constructor-of GtkWindow)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkWindowType type))
 )
