@@ -28,7 +28,7 @@ mainiteration = main_iteration
 
 load_font = gdk.Font
 load_fontset = gdk.fontset_load
-create_pixmap = Pixmap
+create_pixmap = gdk.Pixmap
 create_pixmap_from_xpm = gdk.pixmap_create_from_xpm
 create_pixmap_from_xpm_d = gdk.pixmap_create_from_xpm_d
 

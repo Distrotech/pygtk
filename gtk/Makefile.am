@@ -52,6 +52,7 @@ $(srcdir)/gdk.c: $(srcdir)/gdk.defs $(srcdir)/gdk.override
 	cd $(srcdir) \
 	&& $(PYTHON) ../codegen/codegen.py \
 	    --register ../pango.defs \
+	    --register gtk.defs \
 	    --override gdk.override \
 	    --prefix pygdk gdk.defs > gen-gdk.c \
 	&& cp gen-gdk.c gdk.c \

@@ -26,6 +26,8 @@ static PyExtensionClass *_PyPangoFont_Type;
 static PyExtensionClass *_PyPangoLayout_Type;
 #define PyPangoLayout_Type (*_PyPangoLayout_Type)
 
+extern PyExtensionClass PyGtkWidget_Type;
+
 %%
 init
 {
