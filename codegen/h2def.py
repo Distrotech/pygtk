@@ -11,8 +11,9 @@
 
 import string, sys, re, types
 
-obj_name_pat = "[A-Z][a-z]+[A-Z][A-Za-z0-9]*"
+# ------------------ Find object definitions -----------------
 
+obj_name_pat = "[A-Z][a-z]+[A-Z][A-Za-z0-9]*"
 
 def find_obj_defs(buf, objdefs=[]):
     """
@@ -64,10 +65,8 @@ def sort_obj_defs(objdefs):
     return objdefs
 
 def write_obj_defs(objdefs, output):
-    need_close=0
     if type(output)==types.StringType:
         fp=open(output,'w')
-        need_close=1
     elif type(output)==types.FileType:
         fp=output
     else:
@@ -102,6 +101,71 @@ def write_obj_defs(objdefs, output):
         fp.write('  (c-name ' + klass + ')\n')
         # should do something about accessible fields
         fp.write(')\n\n')
+
+# ------------------ Find enum definitions -----------------
+
+def find_enum_defs(buf, enums=[]):
+    # strip comments
+    # bulk comments
+    pat = re.compile(r"""/[*](.|\n)*?[*]/""", re.MULTILINE)
+    buf=pat.sub('',buf)
+
+    buf = re.sub('\n', ' ', buf)
+    
+    enum_pat = re.compile(r'enum\s*{([^}]*)}\s*([A-Z][A-Za-z]*)(\s|;)')
+    splitter = re.compile(r'\s*,\s', re.MULTILINE)
+    pos = 0
+    while pos < len(buf):
+        m = enum_pat.search(buf, pos)
+        if not m: break
+
+        name = m.group(2)
+        vals = m.group(1)
+        isflags = string.find(vals, '<<') >= 0
+        entries = []
+        for val in splitter.split(vals):
+            entries.append(string.split(val)[0])
+        enums.append((name, isflags, entries))
+        
+        pos = m.end()
+
+def write_enum_defs(enums, output=None):
+    if type(output)==types.StringType:
+        fp=open(output,'w')
+    elif type(output)==types.FileType:
+        fp=output
+    else:
+        fp=sys.stdout
+
+    fp.write(';; Enumerations and flags ...\n\n')
+    pat = re.compile('([A-Z][a-z]+)([A-Za-z0-9]+)')
+    trans = string.maketrans(string.uppercase + '_', string.lowercase + '-')
+    for cname, isflags, entries in enums:
+        name = cname
+        module = None
+        m = pat.match(cname)
+        if m:
+            module = m.group(1)
+            name = m.group(2)
+        if isflags:
+            fp.write('(flags ' + name + '\n')
+        else:
+            fp.write('(enum ' + name + '\n')
+        if module:
+            fp.write('  (in-module ' + module + ')\n')
+        fp.write('  (c-name ' + cname + ')\n')
+        prefix = entries[0]
+        for ent in entries:
+            # shorten prefix til we get a match ...
+            while ent[:len(prefix)] != prefix:
+                prefix = prefix[:-1]
+        for ent in entries:
+            fp.write('  (value (name ' +
+                         string.translate(ent[len(prefix):], trans) +
+                         ') (c-name ' + ent + '))\n')
+        fp.write(')\n\n')
+
+# ------------------ Find function definitions -----------------
 
 #comment_pat = re.compile(r"""(/[*](.|\n)*?[*]/)|(^;.*$)""", re.MULTILINE)
 
@@ -236,6 +300,8 @@ def write_def(input,output=None):
     buf = define_func(buf, fp)
     fp.write('\n')
 
+# ------------------ Glue code -----------------
+
 def make_gdk_defs():
     """ This is intended to be run only by the package maintainer!!! """
     p='/usr/local/src/gtk+-1.2.6/gdk/'
@@ -263,10 +329,14 @@ if __name__ == '__main__':
 
     # read all the object definitions in 
     objdefs = [('GtkObject', None)]
+    enums = []
     for filename in args:
-        find_obj_defs(open(filename).read(), objdefs)
+        buf = open(filename).read()
+        find_obj_defs(buf, objdefs)
+        find_enum_defs(buf, enums)
     objdefs = sort_obj_defs(objdefs)
     write_obj_defs(objdefs,None)
+    write_enum_defs(enums,None)
 
     for filename in args:
         write_def(filename,None)
