@@ -1,5 +1,12 @@
 2000-06-23  James Henstridge  <james@daa.com.au>
 
+	* examples/glade/glade.py (win): update glade example to use libglade.
+
+	* gtk/gtk.override (_wrap_gtk_widget_draw): implementation.
+
+	* gtk/gtk-extrafuncs.defs (get_allocation): add extra compatibility
+	method.
+
 	* examples/gl/*.py: update examples with s/gtkgl/gtk.gl/
 
 	* gtk/Makefile.am: add rules to build gtk.gl.

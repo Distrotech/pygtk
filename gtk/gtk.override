@@ -325,6 +325,19 @@ _wrap_gtk_widget_get_window(PyGtk_Object *self, PyObject *args)
     return Py_None;
 }
 %%
+override gtk_widget_get_allocation
+static PyObject *
+_wrap_gtk_widget_get_allocation(PyGtk_Object *self, PyObject *args)
+{
+    GtkAllocation allocation;
+
+    if (!PyArg_ParseTuple(args, ":GtkWidget.get_allocation"))
+	return NULL;
+    allocation = GTK_WIDGET(self->obj)->allocation;
+    return Py_BuildValue("(iiii)", (int)allocation.x, (int)allocation.y,
+			 (int)allocation.width, (int)allocation.height);
+}
+%%
 override gtk_widget_draw kwargs
 static PyObject *
 _wrap_gtk_widget_draw(PyGtk_Object *self, PyObject *args, PyObject *kwargs)

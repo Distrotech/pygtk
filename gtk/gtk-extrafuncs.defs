@@ -25,3 +25,9 @@
   (c-name gtk_widget_get_window)
   (return-type GdkWindow)
 )
+
+(method get_allocation
+  (of-object Widget (Gtk))
+  (c-name gtk_widget_get_allocation)
+  (return-type GtkAllocation)
+)
