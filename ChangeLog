@@ -1,3 +1,9 @@
+2003-12-22  James Henstridge  <james@daa.com.au>
+
+	* gtk/gdk.defs (gdk_pixmap_foreign_new): caller owns return
+	value (bug #129754).
+	(window_foreign_new): same here.
+
 2003-12-17  James Henstridge  <james@daa.com.au>
 
 	* configure.in (CFLAGS): add -fno-strict-aliasing to CFLAGS if the

@@ -1783,6 +1783,7 @@
 (define-function gdk_pixmap_foreign_new
   (c-name "gdk_pixmap_foreign_new")
   (return-type "GdkPixmap*")
+  (caller-owns-return #t)
   (parameters
     '("GdkNativeWindow" "anid")
   )
@@ -2395,6 +2396,7 @@
 (define-function window_foreign_new
   (c-name "gdk_window_foreign_new")
   (return-type "GdkWindow*")
+  (caller-owns-return #t)
   (parameters
     '("GdkNativeWindow" "anid")
   )
