@@ -1747,6 +1747,9 @@
 )
 
 
+(include "gtk-extrafuncs.defs")
+
+
 ;; From /usr/include/gtk/gtk.h
 
 
@@ -2136,28 +2139,28 @@
   (return-type GtkType)
 )
 
-(function gtk_button_box_get_child_size_default
+(function button_box_get_child_size_default
   (c-name gtk_button_box_get_child_size_default)
   (return-type none)
   (parameter (type-and-name gint* min_width))
   (parameter (type-and-name gint* min_height))
 )
 
-(function gtk_button_box_get_child_ipadding_default
+(function button_box_get_child_ipadding_default
   (c-name gtk_button_box_get_child_ipadding_default)
   (return-type none)
   (parameter (type-and-name gint* ipad_x))
   (parameter (type-and-name gint* ipad_y))
 )
 
-(function gtk_button_box_set_child_size_default
+(function button_box_set_child_size_default
   (c-name gtk_button_box_set_child_size_default)
   (return-type none)
   (parameter (type-and-name gint min_width))
   (parameter (type-and-name gint min_height))
 )
 
-(function gtk_button_box_set_child_ipadding_default
+(function button_box_set_child_ipadding_default
   (c-name gtk_button_box_set_child_ipadding_default)
   (return-type none)
   (parameter (type-and-name gint ipad_x))
@@ -3154,7 +3157,7 @@
 
 (function gtk_color_selection_dialog_new
   (c-name gtk_color_selection_dialog_new)
-  (is-constructo-of GtkColorSelectionDialog)
+  (is-constructor-of GtkColorSelectionDialog)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* title))
 )
@@ -4726,7 +4729,7 @@
   (c-name gtk_frame_new)
   (is-constructor-of GtkFrame)
   (return-type GtkWidget*)
-  (parameter (type-and-name const-gchar* label) (null-ok))
+  (parameter (type-and-name const-gchar* label) (default "NULL") (null-ok))
 )
 
 (method set_label
@@ -9297,9 +9300,9 @@
   (of-object Text (Gtk))
   (c-name gtk_text_insert)
   (return-type none)
-  (parameter (type-and-name GdkFont* font))
-  (parameter (type-and-name GdkColor* fore))
-  (parameter (type-and-name GdkColor* back))
+  (parameter (type-and-name GdkFont* font) (null-ok))
+  (parameter (type-and-name GdkColor* fore) (null-ok))
+  (parameter (type-and-name GdkColor* back) (null-ok))
   (parameter (type-and-name const-char* chars))
   (parameter (type-and-name gint length))
 )

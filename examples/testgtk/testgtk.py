@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import ltihooks
 from gtk import *
 import GtkExtra
 
@@ -9,6 +10,10 @@ def delete_event(win, event=None):
 	win.hide()
 	# don't destroy window -- just leave it hidden
 	return TRUE
+
+def close_win(widget):
+	win = widget.get_toplevel()
+	win.hide()
 
 def create_statusbar_test(_button):
 	if not wins.has_key('statusbar_test'):
@@ -44,7 +49,7 @@ def create_statusbar_test(_button):
 		button.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		hbox.add(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -72,7 +77,7 @@ def create_buttons(_button):
 		table.show()
 
 		def toggle_show(b):
-			if b.flags(VISIBLE):
+			if b.flags() & VISIBLE:
 				b.hide()
 			else:
 				b.show()
@@ -95,7 +100,7 @@ def create_buttons(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -131,7 +136,7 @@ def create_toggle_buttons(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -167,7 +172,7 @@ def create_check_buttons(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -206,7 +211,7 @@ def create_radio_buttons(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -259,7 +264,7 @@ def create_button_box(_button):
 		button.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		win.action_area.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -427,7 +432,7 @@ def create_reparent(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -475,7 +480,7 @@ def create_pixmap(_button):
 		box1.pack_start(box2, expand=FALSE)
 		box2.show()
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -525,7 +530,7 @@ def create_tooltips(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -534,6 +539,7 @@ def create_tooltips(_button):
 		tooltips.set_tip(button, "Push this button to close window",
 				 "push")
 		tooltips.enable()
+		win.tooltips = tooltips # so it doesn't get garbage collected
 	wins["tooltips"].show()
 
 def create_menu(depth):
@@ -601,7 +607,7 @@ def create_menus(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -634,7 +640,7 @@ def create_scrolled_windows(_button):
 				table.attach(button, i,i+1, j,j+1)
 				button.show()
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		win.action_area.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -672,7 +678,7 @@ def create_entry(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -747,7 +753,7 @@ def create_list(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -872,7 +878,7 @@ def create_clist(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -888,8 +894,8 @@ def create_color_selection(_button):
 		win.set_position(WIN_POS_MOUSE)
 		win.connect("delete_event", delete_event)
 
-		win.cancel_button.connect("clicked", win.hide)
-		win.ok_button.connect("clicked", win.hide)
+		win.cancel_button.connect("clicked", close_win)
+		win.ok_button.connect("clicked", close_win)
 	wins["color_selection"].show()
 
 def create_file_selection(_button):
@@ -900,7 +906,7 @@ def create_file_selection(_button):
 		def file_selection_ok(_button, fs=win):
 			print fs.get_filename()
 		win.ok_button.connect("clicked", file_selection_ok)
-		win.cancel_button.connect("clicked", win.hide)
+		win.cancel_button.connect("clicked", close_win)
 	wins["file_selection"].show()
 
 def create_dialog(_button):
@@ -911,7 +917,7 @@ def create_dialog(_button):
 		win.set_title("dialog")
 
 		button = GtkButton("OK")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		win.action_area.pack_start(button)
 		button.show()
 
@@ -976,7 +982,7 @@ def create_range_controls(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -1054,29 +1060,29 @@ def create_text(_button):
 		table.attach(text, 0,1, 0,1)
 		text.show()
 
-		hscrollbar = GtkHScrollbar(text.get_hadjustment())
+		hscrollbar = GtkHScrollbar(text.hadj)
 		table.attach(hscrollbar, 0,1, 1,2, yoptions=FILL)
 		hscrollbar.show()
 
-		vscrollbar = GtkVScrollbar(text.get_vadjustment())
+		vscrollbar = GtkVScrollbar(text.vadj)
 		table.attach(vscrollbar, 1,2, 0,1, xoptions=FILL)
 		vscrollbar.show()
 
 		text.freeze()
-#		style = text.get_style()
-#		font = style.font ; fg = style.white; bg = style.bg[
-	        text.insert_defaults("some text\n")
-		text.insert_defaults("more text\n")
-		text.insert_defaults("\n")
-		text.insert_defaults("(a blank line)\n")
-		text.insert_defaults("\n")
-		text.insert_defaults("beaverloop\n")
-		text.insert_defaults("\n")
-		text.insert_defaults("Bad Acid ... Jazz!\n")
-		text.insert_defaults("\n")
-		text.insert_defaults("They all call me mellow yellow,\n")
-		text.insert_defaults("Thats 'cause I'm a mellow fellow,\n")
-		text.insert_defaults("You walk by and I'll say hello,\n")
+		def insert_text(string, text=text):
+			text.insert(None, None, None, string, len(string))
+	        insert_text("some text\n")
+		insert_text("more text\n")
+		insert_text("\n")
+		insert_text("(a blank line)\n")
+		insert_text("\n")
+		insert_text("beaverloop\n")
+		insert_text("\n")
+		insert_text("Bad Acid ... Jazz!\n")
+		insert_text("\n")
+		insert_text("They all call me mellow yellow,\n")
+		insert_text("Thats 'cause I'm a mellow fellow,\n")
+		insert_text("You walk by and I'll say hello,\n")
 		text.thaw()
 
 		separator = GtkHSeparator()
@@ -1089,7 +1095,7 @@ def create_text(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -1137,7 +1143,7 @@ def create_notebook(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.show()
 
@@ -1199,7 +1205,7 @@ def create_panes(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -1282,7 +1288,7 @@ def create_dnd(_button):
 		box2.show()
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		box2.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -1375,7 +1381,7 @@ def create_timeout_test(_button):
 				func[1] = 0
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		win.action_area.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -1419,7 +1425,7 @@ def create_idle_test(_button):
 				func[1] = 0
 
 		button = GtkButton("close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		win.action_area.pack_start(button)
 		button.set_flags(CAN_DEFAULT)
 		button.grab_default()
@@ -1524,7 +1530,7 @@ def create_cursor_test(_button):
 		hbox.show()
 
 		button = GtkButton("Close")
-		button.connect("clicked", win.hide)
+		button.connect("clicked", close_win)
 		hbox.pack_start(button)
 		button.show()
 	wins["cursor_test"].show()

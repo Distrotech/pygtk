@@ -1,6 +1,9 @@
 #ifndef _PYGTK_PRIVATE_H_
 #define _PYGTK_PRIVATE_H_
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #ifdef _PYGTK_H_
 #error "don't include pygtk.h and pygtk-private.h together"

@@ -97,7 +97,8 @@ class StringArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
 		    extracode, arglist):
 	if pdflt:
-	    varlist.add('char', '*' + pname + ' = "' + pdflt + '"')
+            if pdflt != 'NULL': pdflt = '"' + pdflt + '"'
+	    varlist.add('char', '*' + pname + ' = ' + pdflt)
 	else:
 	    varlist.add('char', '*' + pname)
 	parselist.append('&' + pname)
@@ -364,7 +365,7 @@ class BoxedArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
 		    extracode, arglist):
 	if pnull:
-            varlist.add(ptype[:-1], '*' + pname)
+            varlist.add(ptype[:-1], '*' + pname + ' = NULL')
 	    varlist.add('PyObject', '*py_' + pname + ' = Py_None')
 	    parselist.append('&py_' + pname)
 	    extracode.append(self.null % {'name':pname, 'get':self.getter,

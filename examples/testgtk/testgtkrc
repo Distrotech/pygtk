@@ -43,6 +43,7 @@ style "toggle_button" = "button"
 style "text"
 {
   fg[NORMAL] = { 1.0, 1.0, 1.0 }
+  text[NORMAL] = { 1.0, 1.0, 1.0 }
   base[NORMAL] = {   0,   0,   0 }
 }
 

@@ -49,7 +49,7 @@ esac
 if test -z "$ACLOCAL_FLAGS"; then
 
 	acdir=`aclocal --print-ac-dir`
-        m4list="glib.m4 gettext.m4 pythondir.m4 pyexecmod.m4"
+        m4list="glib.m4 gettext.m4 python.m4"
 
 	for file in $m4list
 	do

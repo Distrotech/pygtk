@@ -7,10 +7,10 @@ import traceback
 
 # have to do return type processing
 functmpl = 'static PyObject *\n' + \
-	   '_wrap_%(cname)s(PyObject *self, PyObject *args)\n' + \
+	   '_wrap_%(cname)s(PyObject *self, PyObject *args, PyObject *kwargs)\n' + \
 	   '{\n' + \
 	   '%(varlist)s' + \
-	   '    if (!PyArg_ParseTuple(args, "%(typecodes)s:%(name)s"%(parselist)s))\n' + \
+	   '    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "%(typecodes)s:%(name)s"%(parselist)s))\n' + \
 	   '        return NULL;\n' + \
 	   '%(extracode)s\n' + \
 	   '%(handleret)s\n' + \
@@ -18,10 +18,10 @@ functmpl = 'static PyObject *\n' + \
 funccalltmpl = '%(cname)s(%(arglist)s)'
 
 methtmpl = 'static PyObject *\n' + \
-	   '_wrap_%(cname)s(PyGtk_Object *self, PyObject *args)\n' + \
+	   '_wrap_%(cname)s(PyGtk_Object *self, PyObject *args, PyObject *kwargs)\n' + \
 	   '{\n' + \
 	   '%(varlist)s' + \
-	   '    if (!PyArg_ParseTuple(args, "%(typecodes)s:%(class)s.%(name)s"%(parselist)s))\n' + \
+	   '    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "%(typecodes)s:%(class)s.%(name)s"%(parselist)s))\n' + \
 	   '        return NULL;\n' + \
 	   '%(extracode)s\n' + \
 	   '%(handleret)s\n' + \
@@ -29,10 +29,10 @@ methtmpl = 'static PyObject *\n' + \
 methcalltmpl = '%(cname)s(%(cast)s(self->obj)%(arglist)s)'
 
 consttmpl = 'static PyObject *\n' + \
-	    '_wrap_%(cname)s(PyGtk_Object *self, PyObject *args)\n' + \
+	    '_wrap_%(cname)s(PyGtk_Object *self, PyObject *args, PyObject *kwargs)\n' + \
 	    '{\n' + \
 	    '%(varlist)s' + \
-	    '    if (!PyArg_ParseTuple(args, "%(typecodes)s:%(class)s.__init__"%(parselist)s))\n' + \
+	    '    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "%(typecodes)s:%(class)s.__init__"%(parselist)s))\n' + \
 	    '        return NULL;\n' + \
 	    '%(extracode)s\n' + \
 	    '    self->obj = (GtkObject *)%(cname)s(%(arglist)s);\n' + \
@@ -109,6 +109,12 @@ def write_function(funcobj, fp=sys.stdout):
 	'varlist': varlist,
     }
 
+    # create the keyword argument name list ...
+    kwlist = string.join(map(lambda x: '"'+x[1]+'"', funcobj.params) +
+                         ['NULL'], ', ')
+    varlist.add('static char', '*kwlist[] = { ' + kwlist + ' }')
+    parselist.append('kwlist')
+
     for ptype, pname, pdflt, pnull in funcobj.params:
 	if pdflt and '|' not in parsestr:
 	    parsestr = parsestr + '|'
@@ -145,6 +151,12 @@ def write_method(objname, methobj, fp=sys.stdout):
 	'cast':    argtypes._to_upper_str(objname)[1:]
     }
 
+    # create the keyword argument name list ...
+    kwlist = string.join(map(lambda x: '"'+x[1]+'"', methobj.params) +
+                         ['NULL'], ', ')
+    varlist.add('static char', '*kwlist[] = { ' + kwlist + ' }')
+    parselist.append('kwlist')
+
     # handle return type ...
     for ptype, pname, pdflt, pnull in methobj.params:
 	if pdflt and '|' not in parsestr:
@@ -178,6 +190,12 @@ def write_constructor(objname, funcobj, fp=sys.stdout):
 	'class':   objname,
 	'cast':    argtypes._to_upper_str(objname)[1:]
     }
+
+    # create the keyword argument name list ...
+    kwlist = string.join(map(lambda x: '"'+x[1]+'"', funcobj.params) +
+                         ['NULL'], ', ')
+    varlist.add('static char', '*kwlist[] = { ' + kwlist + ' }')
+    parselist.append('kwlist')
 
     # handle return type ...
     for ptype, pname, pdflt, pnull in funcobj.params:
@@ -223,15 +241,19 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
     methods = []
     if constructor:
 	try:
+            methtype = 'METH_VARARGS'
             if overrides.is_overriden(constructor.c_name):
                 fp.write(overrides.override(constructor.c_name))
                 fp.write('\n\n')
+                if overrides.wants_kwargs(constructor.c_name):
+                    methtype = methtype + '|METH_KEYWORDS'
             else:
                 write_constructor(objobj.c_name, constructor, fp)
+                methtype = methtype + '|METH_KEYWORDS'
 	    methods.append(methdeftmpl %
 			   { 'name':  '__init__',
 			     'cname': '_wrap_' + constructor.c_name,
-			     'flags': 'METH_VARARGS'})
+			     'flags': methtype})
 	except:
 	    sys.stderr.write('Could not write constructor for ' +
 			     objobj.c_name + '\n')
@@ -257,14 +279,18 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
         if overrides.is_ignored(meth.c_name):
             continue
 	try:
+            methtype = 'METH_VARARGS'
             if overrides.is_overriden(meth.c_name):
                 fp.write(overrides.override(meth.c_name))
                 fp.write('\n\n')
+                if overrides.wants_kwargs(meth.c_name):
+                    methtype = methtype + '|METH_KEYWORDS'
             else:
                 write_method(objobj.c_name, meth, fp)
+                methtype = methtype + '|METH_KEYWORDS'
 	    methods.append(methdeftmpl % { 'name':  meth.name,
 					   'cname': '_wrap_' + meth.c_name,
-					   'flags': 'METH_VARARGS'})
+					   'flags': methtype})
 	except:
 	    sys.stderr.write('Could not write method ' + objobj.c_name +
 			     '.' + meth.name + '\n')
@@ -295,14 +321,18 @@ def write_functions(parser, overrides, fp=sys.stdout):
         if overrides.is_ignored(func.c_name):
             continue
 	try:
+            methtype = 'METH_VARARGS'
             if overrides.is_overriden(func.c_name):
                 fp.write(overrides.override(func.c_name))
                 fp.write('\n\n')
+                if overrides.wants_kwargs(func.c_name):
+                    methtype = methtype + '|METH_KEYWORDS'
             else:
                 write_function(func, fp)
+                methtype = methtype + '|METH_KEYWORDS'
 	    functions.append(methdeftmpl % { 'name':  func.name,
                                              'cname': '_wrap_' + func.c_name,
-                                             'flags': 'METH_VARARGS'})
+                                             'flags': methtype})
 	except:
 	    sys.stderr.write('Could not write function ' + func.name + '\n')
 	    #traceback.print_exc()

@@ -1,4 +1,36 @@
+2000-04-06  James Henstridge  <james@daa.com.au>
+
+	* codegen/argtypes.py (StringArg.write_param): if the default is set
+	to NULL, don't treat the default as a string.
+	(BoxedArg.write_param): generated code wasn't understanding NULL
+	correctly.
+
+	* codegen/codegen.py: make keyword lists static in generated code.
+
+	* gtk/gtk.override: add keyword arguments to lots of overriden
+	functions.  Also, make keyword lists static.
+
+	* codegen/codegen.py: if an overriden method wants to accept keyword
+	arguments, let it.
+
+	* codegen/override.py (Overrides): allow you to set a `kwargs' flag
+	for overridden function bodies so that they can accept keyword
+	argument lists.
+
+	* codegen/codegen.py: applied Toby D. Reeves' patch to handle keyword
+	arguments in generated wrappers.  This makes the new pygtk even
+	closer to the old one.  Very useful patch.
+
+	* acinclude.m4, configure.in (AM_CHECK_PYTHON_HEADERS): renamed macro
+	to more appropriate name.
+
 2000-03-31  James Henstridge  <james@daa.com.au>
+
+	* gtk/pygtk-private.h: include config.h
+
+	* acconfig.h: config.h template
+
+	* configure.in: use a config.h header file.
 
 	* gtk/gtk.override (_wrap_gtk_label_get): an override for gtk_label_get
 

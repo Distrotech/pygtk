@@ -34,6 +34,10 @@ ignore
   gtk_signal_handler_unblock_by_func
   gtk_signal_handler_unblock_by_data
   gtk_signal_handler_pending_by_func
+  gtk_signal_n_emissions
+  gtk_signal_n_emissions_by_name
+  gtk_signal_name
+  gtk_signal_remove_emission_hook
   gtk_signal_query
   gtk_quit_remove_by_data
   gtk_idle_remove_by_data
@@ -55,6 +59,7 @@ ignore
   gtk_object_remove_no_notify_by_id
   gtk_object_arg_set
   gtk_object_arg_get
+  gtk_trace_referencing
   gtk_widget_get
   gtk_widget_getv
   gtk_widget_set
@@ -86,6 +91,7 @@ ignore
   gtk_type_check_class_cast
   gtk_type_register_enum
   gtk_type_register_flags
+  gtk_preview_uninit
 %%
 ignore gtk_object_new gtk_object_newv gtk_object_query_args
   gtk_object_add_arg_type gtk_object_args_collect gtk_object_arg_get_info
@@ -110,13 +116,15 @@ _wrap_gtk_main(PyObject *self, PyObject *args)
     return Py_None;
 }
 %%
-override gtk_main_iteration
+override gtk_main_iteration kwargs
 static PyObject *
-_wrap_gtk_main_iteration(PyObject *self, PyObject *args)
+_wrap_gtk_main_iteration(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = {"block", NULL};
     int block = 1, ret;
 
-    if(!PyArg_ParseTuple(args,"|i:main_iteration", &block)) 
+    if(!PyArg_ParseTupleAndKeywords(args, kwargs, "|i:main_iteration", kwlist,
+				    &block)) 
         return NULL;
     pygtk_unblock_threads();
     ret = gtk_main_iteration_do(block);
@@ -231,16 +239,17 @@ _wrap_gtk_quit_add(PyObject *self, PyObject *args)
         data, (GtkDestroyNotify)pygtk_destroy_notify));
 }
 %%
-override gtk_input_add_full
+override gtk_input_add_full kwargs
 static PyObject *
-_wrap_gtk_input_add_full(PyObject *self, PyObject *args)
+_wrap_gtk_input_add_full(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "source", "condition", "callback", NULL };
     int source;
     GdkInputCondition condition;
     PyObject *callback;
 
-    if (!PyArg_ParseTuple(args, "iiO:input_add", &source, &condition,
-                          &callback))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO:input_add", kwlist,
+				     &source, &condition, &callback))
         return NULL;
     if (!PyCallable_Check(callback)) {
         PyErr_SetString(PyExc_TypeError, "3rd arg not callable.");
@@ -252,14 +261,16 @@ _wrap_gtk_input_add_full(PyObject *self, PyObject *args)
 			(GtkDestroyNotify)pygtk_destroy_notify));
 }
 %%
-override gtk_widget_draw
+override gtk_widget_draw kwargs
 static PyObject *
-_wrap_gtk_widget_draw(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_widget_draw(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "rect", NULL };
     GdkRectangle rect;
 
-    if (!PyArg_ParseTuple(args,"(hhhh):GtkWidget.draw",
-                         &(rect.x), &(rect.y), &(rect.width), &(rect.height)))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "(hhhh):GtkWidget.draw",
+				     kwlist, &(rect.x), &(rect.y),
+				     &(rect.width), &(rect.height)))
         return NULL;
     gtk_widget_draw(GTK_WIDGET(self->obj), &rect);
     Py_INCREF(Py_None);
@@ -278,15 +289,18 @@ _wrap_gtk_widget_size_request(PyGtk_Object *self, PyObject *args)
     return Py_BuildValue("(ii)", requisition.width, requisition.height);
 }
 %%
-override gtk_widget_size_allocate
+override gtk_widget_size_allocate kwargs
 static PyObject *
-_wrap_gtk_widget_size_allocate(PyGtk_Object *self, PyObject *args) 
+_wrap_gtk_widget_size_allocate(PyGtk_Object *self, PyObject *args,
+			       PyObject *kwargs)
 {
+    static char *kwlist[] = { "allocation", NULL };
     GtkAllocation allocation;
 
-    if(!PyArg_ParseTuple(args,"(hhhh):GtkWidget.size_allocate",
-                         &(allocation.x), &(allocation.y),
-                         &(allocation.width), &(allocation.height)))
+    if(!PyArg_ParseTupleAndKeywords(args, kwargs,
+				    "(hhhh):GtkWidget.size_allocate", kwlist,
+				    &(allocation.x), &(allocation.y),
+				    &(allocation.width), &(allocation.height)))
         return NULL;
     gtk_widget_size_allocate(GTK_WIDGET(self->obj), &allocation);
     Py_INCREF(Py_None);
@@ -305,15 +319,17 @@ _wrap_gtk_widget_get_child_requisition(PyGtk_Object *self, PyObject *args)
     return Py_BuildValue("(ii)", requisition.width, requisition.height);
 }
 %%
-override gtk_widget_intersect
+override gtk_widget_intersect kwargs
 static PyObject *
-_wrap_gtk_widget_intersect(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_widget_intersect(PyGtk_Object *self, PyObject *args, PyObject*kwargs)
 {
+    static char *kwlist[] = { "area", NULL };
     GdkRectangle area;
     GdkRectangle intersect;
 
-    if(!PyArg_ParseTuple(args,"(hhhh):GtkWidget.intersect",
-                         &(area.x), &(area.y), &(area.width), &(area.height))) 
+    if(!PyArg_ParseTupleAndKeywords(args, kwargs, "(hhhh):GtkWidget.intersect",
+				    kwlist, &(area.x), &(area.y),
+				    &(area.width), &(area.height))) 
         return NULL;
     if (gtk_widget_intersect(GTK_WIDGET(self->obj), &area, &intersect))
         return Py_BuildValue("(iiii)", (int)intersect.x, (int)intersect.y,
@@ -366,16 +382,20 @@ _wrap_gtk_container_children(PyGtk_Object *self, PyObject *args)
     return py_list;
 }
 %%
-override gtk_box_query_child_packing
+override gtk_box_query_child_packing kwargs
 static PyObject *
-_wrap_gtk_box_query_child_packing(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_box_query_child_packing(PyGtk_Object *self, PyObject *args,
+				  PyObject *kwargs)
 {
+    static char *kwlist[] = { "child", NULL };
     PyObject *child;
     gboolean expand, fill;
     guint padding;
     GtkPackType pack_type;
 
-    if (!PyArg_ParseTuple(args, "O:GtkBox.query_child_packing", &child))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O:GtkBox.query_child_packing", kwlist,
+				     &child))
 	return NULL;
     if (!PyGtk_Check(child)) {
 	PyErr_SetString(PyExc_TypeError, "first arg should be a GtkWidget");
@@ -437,14 +457,17 @@ _wrap_gtk_button_box_get_child_ipadding(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_clist_new
 %%
-override gtk_clist_new_with_titles
+override gtk_clist_new_with_titles kwargs
 static PyObject *
-_wrap_gtk_clist_new_with_titles(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_new_with_titles(PyGtk_Object *self, PyObject *args,
+				PyObject *kwargs)
 {
+    static char *kwlist[] = { "count", "titles", NULL };
     int count, i;
     PyObject *py_list = NULL;
 
-    if (!PyArg_ParseTuple(args, "i|O:GtkCList.__init__", &count, &py_list))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|O:GtkCList.__init__",
+				     kwlist, &count, &py_list))
 	return NULL;
     if (py_list) {
 	gchar **list;
@@ -482,14 +505,16 @@ _wrap_gtk_clist_new_with_titles(PyGtk_Object *self, PyObject *args)
     return Py_None;
 }
 %%
-override gtk_clist_get_text
+override gtk_clist_get_text kwargs
 static PyObject *
-_wrap_gtk_clist_get_text(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_get_text(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "row", "column", NULL };
     int r, c;
     char *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "ii:GtkCList.get_text", &r, &c))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii:GtkCList.get_text",
+				     kwlist, &r, &c))
 	return NULL;
     if (!gtk_clist_get_text(GTK_CLIST(self->obj), r, c, &text) || text==NULL) {
 	PyErr_SetString(PyExc_ValueError, "can't get text value");
@@ -498,16 +523,18 @@ _wrap_gtk_clist_get_text(PyGtk_Object *self, PyObject *args)
     return PyString_FromString(text);
 }
 %%
-override gtk_clist_get_pixmap
+override gtk_clist_get_pixmap kwargs
 static PyObject *
-_wrap_gtk_clist_get_pixmap(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_get_pixmap(PyGtk_Object *self, PyObject *args, PyObject*kwargs)
 {
+    static char *kwlist[] = { "row", "column", NULL };
     PyObject *pixmap, *mask;
     int r, c;
     GdkPixmap *p;
     GdkBitmap *m;
 
-    if (!PyArg_ParseTuple(args, "ii:GtkCList.get_pixmap", &r, &c))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii:GtkCList.get_pixmap",
+				     kwlist, &r, &c))
 	return NULL;
     if (!gtk_clist_get_pixmap(GTK_CLIST(self->obj), r, c, &p, &m)) {
 	PyErr_SetString(PyExc_ValueError, "can't get pixmap value");
@@ -528,10 +555,11 @@ _wrap_gtk_clist_get_pixmap(PyGtk_Object *self, PyObject *args)
     return Py_BuildValue("(NN)", pixmap, mask);
 }
 %%
-override gtk_clist_get_pixtext
+override gtk_clist_get_pixtext kwargs
 static PyObject *
-_wrap_gtk_clist_get_pixtext(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_get_pixtext(PyGtk_Object *self, PyObject*args, PyObject*kwargs)
 {
+    static char *kwlist[] = { "row", "column", NULL };
     PyObject *pixmap, *mask;
     int r, c;
     guint8 spacing;
@@ -539,7 +567,8 @@ _wrap_gtk_clist_get_pixtext(PyGtk_Object *self, PyObject *args)
     GdkPixmap *p;
     GdkBitmap *m;
 
-    if (!PyArg_ParseTuple(args, "ii:GtkCList.get_pixtext", &r, &c))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii:GtkCList.get_pixtext",
+				     kwlist, &r, &c))
 	return NULL;
     if (!gtk_clist_get_pixtext(GTK_CLIST(self->obj), r, c,
 			       &text, &spacing, &p, &m)) {
@@ -561,15 +590,17 @@ _wrap_gtk_clist_get_pixtext(PyGtk_Object *self, PyObject *args)
     return Py_BuildValue("(ziNN)", text, (int)spacing, pixmap, mask);
 }
 %%
-override gtk_clist_prepend
+override gtk_clist_prepend kwargs
 static PyObject *
-_wrap_gtk_clist_prepend(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_prepend(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "text", NULL };
     int col, i;
     PyObject *py_list;
     gchar **list;
 
-    if (!PyArg_ParseTuple(args, "O:GtkCList.prepend", &py_list))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O:GtkCList.prepend",
+				     kwlist, &py_list))
 	return NULL;
     if (!PySequence_Check(py_list)) {
 	PyErr_SetString(PyExc_TypeError, "argument not a sequence");
@@ -597,15 +628,17 @@ _wrap_gtk_clist_prepend(PyGtk_Object *self, PyObject *args)
     return PyInt_FromLong(i);
 }
 %%
-override gtk_clist_append
+override gtk_clist_append kwargs
 static PyObject *
-_wrap_gtk_clist_append(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_append(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "text", NULL };
     int col, i;
     PyObject *py_list;
     gchar **list;
 
-    if (!PyArg_ParseTuple(args, "O:GtkCList.append", &py_list))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O:GtkCList.append",
+				     kwlist, &py_list))
 	return NULL;
     if (!PySequence_Check(py_list)) {
 	PyErr_SetString(PyExc_TypeError, "argument not a sequence");
@@ -633,15 +666,17 @@ _wrap_gtk_clist_append(PyGtk_Object *self, PyObject *args)
     return PyInt_FromLong(i);
 }
 %%
-override gtk_clist_insert
+override gtk_clist_insert kwargs
 static PyObject *
-_wrap_gtk_clist_insert(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_insert(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "row", "text", NULL };
     int col, row, i;
     PyObject *py_list;
     gchar **list;
 
-    if (!PyArg_ParseTuple(args, "iO:GtkCList.insert", &row, &py_list))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iO:GtkCList.insert",
+				     kwlist, &row, &py_list))
 	return NULL;
     if (!PySequence_Check(py_list)) {
 	PyErr_SetString(PyExc_TypeError, "argument not a sequence");
@@ -669,13 +704,16 @@ _wrap_gtk_clist_insert(PyGtk_Object *self, PyObject *args)
     return PyInt_FromLong(i);
 }
 %%
-override gtk_clist_set_row_data
+override gtk_clist_set_row_data kwargs
 static PyObject *
-_wrap_gtk_clist_set_row_data(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_set_row_data(PyGtk_Object *self, PyObject *args,
+			     PyObject *kwargs)
 {
+    static char *kwlist[] = { "row", "data", NULL };
     int row;
     PyObject *data;
-    if (!PyArg_ParseTuple(args, "iO:GtkCList.set_row_data", &row, &data))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iO:GtkCList.set_row_data",
+				     kwlist, &row, &data))
 	return NULL;
     Py_INCREF(data);
     gtk_clist_set_row_data_full(GTK_CLIST(self->obj), row, data,
@@ -684,14 +722,17 @@ _wrap_gtk_clist_set_row_data(PyGtk_Object *self, PyObject *args)
     return Py_None;
 }
 %%
-override gtk_clist_get_row_data
+override gtk_clist_get_row_data kwargs
 static PyObject *
-_wrap_gtk_clist_get_row_data(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_get_row_data(PyGtk_Object *self, PyObject *args,
+			     PyObject *kwargs)
 {
+    static char *kwlist[] = { "row", NULL };
     PyObject *ret;
     int row;
 
-    if (!PyArg_ParseTuple(args, "i:GtkCList.get_row_data", &row))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i:GtkCList.get_row_data",
+				     kwlist, &row))
         return NULL;
     ret = gtk_clist_get_row_data(GTK_CLIST(self->obj), row);
     if (!ret) ret = Py_None;
@@ -699,25 +740,33 @@ _wrap_gtk_clist_get_row_data(PyGtk_Object *self, PyObject *args)
     return ret;
 }
 %%
-override gtk_clist_find_row_from_data
+override gtk_clist_find_row_from_data kwargs
 static PyObject *
-_wrap_gtk_clist_find_row_from_data(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_find_row_from_data(PyGtk_Object *self, PyObject *args,
+				   PyObject *kwargs)
 {
+    static char *kwlist[] = { "data", NULL };
     PyObject *data;
 
-    if (!PyArg_ParseTuple(args, "O:GtkCList.find_row_from_data", &data))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O:GtkCList.find_row_from_data", kwlist,
+				     &data))
         return NULL;
     return PyInt_FromLong(gtk_clist_find_row_from_data(
 				GTK_CLIST(self->obj), data));
 }
 %%
-override gtk_clist_get_selection_info
+override gtk_clist_get_selection_info kwargs
 static PyObject *
-_wrap_gtk_clist_get_selection_info(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_clist_get_selection_info(PyGtk_Object *self, PyObject *args,
+				   PyObject *kwargs)
 {
+    static char *kwlist[] = { "x", "y", NULL };
     gint x, y, row, column;
 
-    if (!PyArg_ParseTuple(args, "ii:GtkCList.get_selection_info", &x, &y))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "ii:GtkCList.get_selection_info", kwlist,
+				     &x, &y))
 	return NULL;
     if (gtk_clist_get_selection_info(GTK_CLIST(self->obj), x, y,
 				     &row, &column))
@@ -728,15 +777,19 @@ _wrap_gtk_clist_get_selection_info(PyGtk_Object *self, PyObject *args)
     }
 }   
 %%
-override gtk_combo_set_popdown_strings
+override gtk_combo_set_popdown_strings kwargs
 static PyObject *
-_wrap_gtk_combo_set_popdown_strings(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_combo_set_popdown_strings(PyGtk_Object *self, PyObject *args,
+				    PyObject *kwargs)
 {
+    static char *kwlist[] = { "strings", NULL };
     PyObject *list;
     GList *glist = NULL;
     int len, i;
 
-    if (!PyArg_ParseTuple(args, "O:GtkCombo.set_popdown_strings", &list))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O:GtkCombo.set_popdown_strings", kwlist,
+				     &list))
 	return NULL;
     if (!PySequence_Check(list)) {
 	PyErr_SetString(PyExc_TypeError, "first argument must be a sequence");
@@ -760,15 +813,19 @@ _wrap_gtk_combo_set_popdown_strings(PyGtk_Object *self, PyObject *args)
     return Py_None;
 }
 %%
-override gtk_curve_get_vector
+override gtk_curve_get_vector kwargs
 static PyObject *
-_wrap_gtk_curve_get_vector(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_curve_get_vector(PyGtk_Object *self, PyObject *args,
+			   PyObject *kwargs)
 {
+    static char *kwlist[] = { "size", NULL };
     int size = -1, i;
     gfloat *vector;
     PyObject *ret;
 
-    if (!PyArg_ParseTuple(args, "|i:GtkCurve.get_vector", &size))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "|i:GtkCurve.get_vector", kwlist,
+				     &size))
 	return NULL;
     if (size < 0) size = GTK_CURVE(self->obj)->num_points;
     vector = g_new(gfloat, size);
@@ -780,15 +837,18 @@ _wrap_gtk_curve_get_vector(PyGtk_Object *self, PyObject *args)
     return ret;
 }
 %%
-override gtk_curve_set_vector
+override gtk_curve_set_vector kwargs
 static PyObject *
-_wrap_gtk_curve_set_vector(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_curve_set_vector(PyGtk_Object *self, PyObject *args,
+			   PyObject *kwargs)
 {
+    static char *kwlist[] = { "vector", NULL };
     PyObject *seq;
     int size, i;
     gfloat *vector;
 
-    if (!PyArg_ParseTuple(args, "O:GtkCurve.set_vector", &seq))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O:GtkCurve.set_vector",
+				     kwlist, &seq))
 	return NULL;
     if (!PySequence_Check(seq)) {
 	PyErr_SetString(PyExc_TypeError, "1st argument is not a sequence");
@@ -814,20 +874,23 @@ _wrap_gtk_curve_set_vector(PyGtk_Object *self, PyObject *args)
     return Py_None;
 }
 %%
-override gtk_editable_insert_text
+override gtk_editable_insert_text kwargs
 static PyObject *
-_wrap_gtk_editable_insert_text(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_editable_insert_text(PyGtk_Object *self, PyObject *args,
+			       PyObject *kwargs)
 {
+    static char *kwlist[] = { "text", NULL };
     char *text;
     int len, pos;
 
-    if (!PyArg_ParseTuple(args, "s#:GtkEditable.insert_text", &text, &len))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s#:GtkEditable.insert_text",
+				     kwlist, &text, &len))
         return NULL;
     gtk_editable_insert_text(GTK_EDITABLE(self->obj), text, len, &pos);
     return PyInt_FromLong(pos);
 }
 %%
-override gtk_item_factory_create_items
+override gtk_item_factory_create_items kwargs
 static void
 pygtk_item_factory_cb(PyObject *callback, guint action, GtkWidget *widget)
 {
@@ -848,15 +911,18 @@ pygtk_item_factory_cb(PyObject *callback, guint action, GtkWidget *widget)
     pygtk_unblock_threads();
 }
 static PyObject *
-_wrap_gtk_item_factory_create_items(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_item_factory_create_items(PyGtk_Object *self, PyObject *args,
+				    PyObject *kwargs)
 {
+    static char *kwlist[] = { "entries", NULL };
     PyObject *list, *cb;
     GtkItemFactoryEntry ent;
     GtkItemFactory *ifact;
     int i, len;
 
-    if (!PyArg_ParseTuple(args, "O!:GtkItemFactory.create_items",
-			  &PyList_Type, &list))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "O!:GtkItemFactory.create_items", kwlist,
+				     &PyList_Type, &list))
 	return NULL;
     ifact = GTK_ITEM_FACTORY(self->obj);
     len = PyList_Size(list);
@@ -878,7 +944,7 @@ _wrap_gtk_item_factory_create_items(PyGtk_Object *self, PyObject *args)
     return Py_None;
 }
 %%
-override gtk_menu_popup
+override gtk_menu_popup kwargs
 static void
 pygtk_menu_position(GtkMenu *menu, int *x, int *y, PyObject *func)
 {
@@ -903,14 +969,17 @@ pygtk_menu_position(GtkMenu *menu, int *x, int *y, PyObject *func)
     pygtk_unblock_threads();
 }
 static PyObject *
-_wrap_gtk_menu_popup(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_menu_popup(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "parent_menu_shell", "parent_menu_item", "func",
+		       "button", "activate_time", NULL };
     PyObject *py_pms, *py_pmi;
     GtkWidget *pms = NULL, *pmi = NULL;
     PyObject *func;
     int button, time;
-    if (!PyArg_ParseTuple(args, "OOOii:GtkMenu.popup",
-			  &py_pms, &py_pmi, &func, &button, &time))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,  "OOOii:GtkMenu.popup",
+				     kwlist, &py_pms, &py_pmi, &func,
+				     &button, &time))
         return NULL;
     if (PyGtk_Check(py_pms))
         pms = GTK_WIDGET(PyGtk_Get(py_pms));
@@ -970,13 +1039,15 @@ _wrap_gtk_pixmap_get(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_button_new_with_label
 %%
-override gtk_button_new
+override gtk_button_new kwargs
 static PyObject *
-_wrap_gtk_button_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_button_new(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "label", NULL };
     gchar *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "|z:GtkButton.__init__", &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|z:GtkButton.__init__",
+				     kwlist, &text))
 	return NULL;
     if (text)
 	self->obj = (GtkObject *)gtk_button_new_with_label(text);
@@ -993,13 +1064,16 @@ _wrap_gtk_button_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_toggle_button_new_with_label
 %%
-override gtk_toggle_button_new
+override gtk_toggle_button_new kwargs
 static PyObject *
-_wrap_gtk_toggle_button_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_toggle_button_new(PyGtk_Object *self, PyObject*args, PyObject*kwargs)
 {
+    static char *kwlist[] = { "label", NULL };
     gchar *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "|z:GtkToggleButton.__init__", &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "|z:GtkToggleButton.__init__", kwlist,
+				     &text))
 	return NULL;
     if (text)
 	self->obj = (GtkObject *)gtk_toggle_button_new_with_label(text);
@@ -1016,13 +1090,15 @@ _wrap_gtk_toggle_button_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_check_button_new_with_label
 %%
-override gtk_check_button_new
+override gtk_check_button_new kwargs
 static PyObject *
-_wrap_gtk_check_button_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_check_button_new(PyGtk_Object *self, PyObject *args, PyObject*kwargs)
 {
+    static char *kwlist[] = { "label", NULL };
     gchar *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "|z:GtkCheckButton.__init__", &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"|z:GtkCheckButton.__init__",
+				     kwlist, &text))
 	return NULL;
     if (text)
 	self->obj = (GtkObject *)gtk_check_button_new_with_label(text);
@@ -1039,16 +1115,17 @@ _wrap_gtk_check_button_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore-glob gtk_radio_button_new_*
 %%
-override gtk_radio_button_new
+override gtk_radio_button_new kwargs
 static PyObject *
-_wrap_gtk_radio_button_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_radio_button_new(PyGtk_Object *self, PyObject *args, PyObject*kwargs)
 {
+    static char *kwlist[] = { "group", "label", NULL };
     PyObject *py_group = Py_None;
     gchar *label = NULL;
     GtkRadioButton *group;
 
-    if (!PyArg_ParseTuple(args, "|Oz:GtkRadioButton.__init__", &py_group,
-			  &label))
+    if (!PyArg_ParseTupleAndKeywords(args,kwargs,"|Oz:GtkRadioButton.__init__",
+				     kwlist, &py_group, &label))
 	return NULL;
     if (py_group == Py_None)
 	group = NULL;
@@ -1084,13 +1161,15 @@ _wrap_gtk_radio_button_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_list_item_new_with_label
 %%
-override gtk_list_item_new
+override gtk_list_item_new kwargs
 static PyObject *
-_wrap_gtk_list_item_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_list_item_new(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "label", NULL };
     gchar *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "|z:GtkListItem.__init__", &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|z:GtkListItem.__init__",
+				     kwlist, &text))
 	return NULL;
     if (text)
 	self->obj = (GtkObject *)gtk_list_item_new_with_label(text);
@@ -1107,13 +1186,15 @@ _wrap_gtk_list_item_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_tree_item_new_with_label
 %%
-override gtk_tree_item_new
+override gtk_tree_item_new kwargs
 static PyObject *
-_wrap_gtk_tree_item_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_tree_item_new(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "label", NULL };
     gchar *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "|z:GtkTreeItem.__init__", &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|z:GtkTreeItem.__init__",
+				     kwlist, &text))
 	return NULL;
     if (text)
 	self->obj = (GtkObject *)gtk_tree_item_new_with_label(text);
@@ -1130,13 +1211,15 @@ _wrap_gtk_tree_item_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_menu_item_new_with_label
 %%
-override gtk_menu_item_new
+override gtk_menu_item_new kwargs
 static PyObject *
-_wrap_gtk_menu_item_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_menu_item_new(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "label", NULL };
     gchar *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "|z:GtkMenuItem.__init__", &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|z:GtkMenuItem.__init__",
+				     kwlist, &text))
 	return NULL;
     if (text)
 	self->obj = (GtkObject *)gtk_menu_item_new_with_label(text);
@@ -1153,13 +1236,17 @@ _wrap_gtk_menu_item_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_check_menu_item_new_with_label
 %%
-override gtk_check_menu_item_new
+override gtk_check_menu_item_new kwargs
 static PyObject *
-_wrap_gtk_check_menu_item_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_check_menu_item_new(PyGtk_Object *self, PyObject *args,
+			      PyObject *kwargs)
 {
+    static char *kwlist[] = { "label", NULL };
     gchar *text = NULL;
 
-    if (!PyArg_ParseTuple(args, "|z:GtkCheckMenuItem.__init__", &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "|z:GtkCheckMenuItem.__init__", kwlist,
+				     &text))
 	return NULL;
     if (text)
 	self->obj = (GtkObject *)gtk_check_menu_item_new_with_label(text);
@@ -1176,16 +1263,19 @@ _wrap_gtk_check_menu_item_new(PyGtk_Object *self, PyObject *args)
 %%
 ignore gtk_radio_menu_item_new_with_label
 %%
-override gtk_radio_menu_item_new
+override gtk_radio_menu_item_new kwargs
 static PyObject *
-_wrap_gtk_radio_menu_item_new(PyGtk_Object *self, PyObject *args)
+_wrap_gtk_radio_menu_item_new(PyGtk_Object *self, PyObject *args,
+			      PyObject *kwargs)
 {
+    static char *kwlist[] = { "group", "label", NULL };
     gchar *text = NULL;
     PyObject *py_group = Py_None;
     GtkRadioMenuItem *group;
 
-    if (!PyArg_ParseTuple(args, "|Oz:GtkRadioMenuItem.__init__",
-			  &py_group, &text))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "|Oz:GtkRadioMenuItem.__init__", kwlist,
+				     &py_group, &text))
 	return NULL;
     if (py_group == Py_None)
 	group = NULL;

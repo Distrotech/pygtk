@@ -1,4 +1,5 @@
-AC_INIT
+AC_INIT(gtk/__init__.py)
+AM_CONFIG_HEADER(config.h)
 
 dnl for gnome-python:
 
@@ -8,22 +9,18 @@ AM_DISABLE_STATIC
 AC_PROG_LIBTOOL
 
 AM_PATH_PYTHON(module)
-
-dnl stuff for python extension modules ...
-py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
-py_exec_prefix=`$PYTHON -c "import sys; print sys.exec_prefix"`
-PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
-if test "$py_prefix" != "$py_exec_prefix"; then
-  PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
-fi
-AC_SUBST(PYTHON_INCLUDES)
+AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
 
 AM_CHECK_PYMOD(thread,,extra_mods=gthread,extra_mods=)
 
-AM_PATH_GTK(1.2.1,,,$extra_mods)
+dnl look for gtk
+AM_PATH_GTK(1.2.6,,,$extra_mods)
+
+dnl look for imlib
 AM_PATH_GDK_IMLIB(1.8, build_imlib=true, build_imlib=false)
 AM_CONDITIONAL(BUILD_IMLIB, $build_imlib)
 
+dnl look for gtkglarea
 AM_PATH_GTKGL(build_gtkgl=true, build_gtkgl=false)
 AM_CONDITIONAL(BUILD_GTKGL, $build_gtkgl)
 
