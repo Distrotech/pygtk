@@ -1,5 +1,10 @@
 2001-09-11  James Henstridge  <james@daa.com.au>
 
+	* gtk/__init__.py (create_pixmap): few fixups to get things to
+	import correctly.
+
+	* gtk/gtkmodule.c (init_gtk): there is no _pygdk_register_boxed().
+
 	* gtk/libglade.override (init): same here.
 
 	* gtk/gtk.override (init): same here.

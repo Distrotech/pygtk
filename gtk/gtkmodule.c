@@ -9,7 +9,6 @@
 
 void _pygtk_register_boxed_types(PyObject *moddict);
 void pygtk_register_classes(PyObject *d);
-void _pygdk_register_boxed_types(PyObject *moddict);
 void pygdk_register_classes(PyObject *d);
 
 extern PyMethodDef pygtk_functions[];
@@ -86,7 +85,6 @@ init_gtk(void)
     m = Py_InitModule("gtk.gdk", pygdk_functions);
     d = PyModule_GetDict(m);
 
-    _pygdk_register_boxed_types(d);
     pygdk_register_classes(d);
 
     if (PyErr_Occurred())
