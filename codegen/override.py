@@ -12,6 +12,8 @@ class Overrides:
 	self.glob_ignores = []
 	self.overrides = {}
 	self.kwargs = {}
+        self.headers = ''
+        self.init = ''
 	if fp == None: return
 	# read all the components of the file ...
 	bufs = map(string.strip, string.split(fp.read(), '%%'))
@@ -38,6 +40,10 @@ class Overrides:
 	    if 'kwargs' in words[1:]:
 		self.kwargs[func] = 1
 	    self.overrides[func] = rest
+        elif words[0] == 'headers':
+            self.headers = self.headers + '\n' + rest
+        elif words[0] == 'init':
+            self.init = self.init + '\n' + rest
 
     def is_ignored(self, name):
 	if self.ignores.has_key(name):
@@ -52,3 +58,7 @@ class Overrides:
 	return self.overrides[name]
     def wants_kwargs(self, name):
 	return self.kwargs.has_key(name)
+    def get_headers(self):
+        return self.headers
+    def get_init(self):
+        return self.init

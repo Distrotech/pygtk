@@ -1,3 +1,18 @@
+2000-06-18  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtkmodule.c (init_gtk): change names of some functions.
+
+	* gtk/gtk.override: add a headers section to include the required
+	header.
+
+	* codegen/codegen.py (register_types): allow specifying the prefix
+	for the type registration function and module functions array.
+	Insert header and init code in generated code.
+
+	* codegen/override.py (Overrides.get_init): add support for headers
+	and init sections for the override file.  These get inserted at the
+	top of the generated code and in the init function respectively.
+
 2000-06-17  James Henstridge  <james@daa.com.au>
 
 	* gtk/gtk.defs: fix up a few function names.

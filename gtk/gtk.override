@@ -1,5 +1,8 @@
 /* -*- Mode: C; c-basic-offset: 4 -*- */
 %%
+headers
+#include "pygtk-private.h"
+%%
 ignore-glob
   *_get_type
   gtk_marshal_*

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- Mode: Python; py-indent-offset: 4 -*-
 import sys, string
+import getopt
 import parser, argtypes, override
 
 import traceback
@@ -314,7 +315,7 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
         dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
     fp.write(typetmpl % dict)
 
-def write_functions(parser, overrides, fp=sys.stdout):
+def write_functions(parser, overrides, prefix, fp=sys.stdout):
     fp.write('\n/* ----------- functions ----------- */\n\n')
     functions = []
     for func in parser.find_functions():
@@ -338,14 +339,16 @@ def write_functions(parser, overrides, fp=sys.stdout):
 	    #traceback.print_exc()
     # write the PyMethodDef structure
     functions.append('    { NULL, NULL, 0 }\n')
-    fp.write('PyMethodDef gtk_functions[] = {\n')
+    fp.write('PyMethodDef ' + prefix + '_functions[] = {\n')
     fp.write(string.join(functions, ''))
     fp.write('};\n\n')
 
 
-def write_source(parser, overrides, fp=sys.stdout):
+def write_source(parser, overrides, prefix, fp=sys.stdout):
     fp.write('/* -*- Mode: C; c-basic-offset: 4 -*- */\n\n')
-    fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n#include "pygtk-private.h"\n\n')
+    fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n\n')
+    fp.write(overrides.get_headers())
+    fp.write('\n\n')
     fp.write('/* ---------- forward type declarations ---------- */\n')
     for obj in parser.objects:
         fp.write('PyExtensionClass Py' + obj.c_name + '_Type;\n')
@@ -354,11 +357,12 @@ def write_source(parser, overrides, fp=sys.stdout):
         write_class(parser, obj, overrides, fp)
         fp.write('\n')
 
-    write_functions(parser, overrides, fp)
+    write_functions(parser, overrides, prefix, fp)
 
     fp.write('/* intialise stuff extension classes */\n')
-    fp.write('void\nregister_classes(PyObject *d)\n{\n')
-    fp.write('    ExtensionClassImported;\n');
+    fp.write('void\n' + prefix + '_register_classes(PyObject *d)\n{\n')
+    fp.write('    ExtensionClassImported;\n')
+    fp.write(overrides.get_init() + '\n')
     for obj in parser.objects:
         for parent in parser.objects:
             if (parent.name, parent.module) == obj.parent:
@@ -381,14 +385,19 @@ def register_types(parser):
 	    argtypes.matcher.register_enum(enum.c_name)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        sys.stderr.write('usage: codegen.py defsfile [overridesfile]\n')
+    o = override.Overrides(None)
+    prefix = 'pygtk'
+    opts, args = getopt.getopt(sys.argv[1:], "o:p:", ["override=", "prefix="])
+    for opt, arg in opts:
+        if opt in ('-o', '--override'):
+            o = override.Overrides(open(arg))
+        elif opt in ('-p', '--prefix'):
+            prefix = arg
+    if len(args) < 1:
+        sys.stderr.write(
+            'usage: codegen.py [-o overridesfile] [-p prefix] defsfile\n')
         sys.exit(1)
-    if len(sys.argv) > 2:
-        o = override.Overrides(open(sys.argv[2], 'r'))
-    else:
-        o = override.Overrides(None)
-    p = parser.DefsParser(sys.argv[1])
+    p = parser.DefsParser(args[0])
     p.startParsing()
     register_types(p)
-    write_source(p, o)
+    write_source(p, o, prefix)

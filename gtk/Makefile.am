@@ -33,7 +33,7 @@ $(srcdir)/gtk.c: $(srcdir)/gtk.defs $(srcdir)/gdk.defs \
 		 $(srcdir)/gtk-extrafuncs.defs $(srcdir)/gtk.override
 	-chmod a+w $(srcdir)
 	cd $(srcdir) \
-	&& $(PYTHON) ../codegen/codegen.py gtk.defs gtk.override > gen-gtk.c \
+	&& $(PYTHON) ../codegen/codegen.py -o gtk.override gtk.defs > gen-gtk.c \
 	&& cp gen-gtk.c gtk.c \
 	&& rm -f gen-gtk.c
 

@@ -6,9 +6,9 @@
 #include "pygtk-private.h"
 
 void _pygtk_register_boxed_types(PyObject *moddict);
-void register_classes(PyObject *d);
+void pygtk_register_classes(PyObject *d);
 
-extern PyMethodDef gtk_functions[];
+extern PyMethodDef pygtk_functions[];
 
 extern PyExtensionClass PyGtkObject_Type;
 extern GHashTable *_pygtk_boxed_funcs;
@@ -97,12 +97,12 @@ init_gtk(void)
 			 (GtkSignalDestroy)pygtk_destroy_notify);
 
     /* now initialise pygtk */
-    m = Py_InitModule("_gtk", gtk_functions);
+    m = Py_InitModule("_gtk", pygtk_functions);
     d = PyModule_GetDict(m);
 
     _pygtk_boxed_funcs = g_hash_table_new(g_direct_hash, g_direct_equal);
     _pygtk_register_boxed_types(d);
-    register_classes(d);
+    pygtk_register_classes(d);
 
     /* for addon libraries ... */
     PyDict_SetItemString(d, "_PyGtk_API",
