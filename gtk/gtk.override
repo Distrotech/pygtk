@@ -122,6 +122,7 @@ ignore
   gtk_item_factory_popup_data
   gtk_item_factory_set_translate_func
   gtk_item_factory_create_items_ac
+  gtk_item_factory_create_menu_entries
   gtk_menu_attach_to_widget
   gtk_radio_menu_item_group
   gtk_radio_menu_item_set_group
@@ -469,6 +470,8 @@ _wrap_gtk_box_query_child_packing(PyGtk_Object *self, PyObject *args,
 				&padding, &pack_type);
     return Py_BuildValue("(iiii)", (int)expand, (int)fill, padding, pack_type);
 }
+%%
+ignore gtk_button_box_child_requisition
 %%
 override gtk_button_box_get_child_size_default
 static PyObject *
@@ -2693,3 +2696,147 @@ _wrap_gdk_pixmap_colormap_create_from_xpm_d(PyObject *self, PyObject *args,
     gdk_bitmap_unref(mask);
     return ret;
 }
+%%
+override gtk_drag_dest_set kwargs
+static PyObject *
+_wrap_gtk_drag_dest_set(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "flags", "targets", "actions", NULL };
+    PyObject *py_flags, *py_targets, *py_actions;
+    GtkDestDefaults flags;
+    GtkTargetEntry *targets;
+    GdkDragAction actions;
+    gint n_targets, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOO:GtkWidget.drag_dest_set", kwlist,
+				     &py_flags, &py_targets, &py_actions))
+	return NULL;
+    if (pygtk_flag_get_value(GTK_TYPE_DEST_DEFAULTS, py_flags, (gint *)&flags))
+	return NULL;
+    if (pygtk_flag_get_value(GTK_TYPE_GDK_DRAG_ACTION,
+			     py_actions, (gint *)&actions))
+	return NULL;
+    if (!PySequence_Check(py_targets)) {
+	PyErr_SetString(PyExc_TypeError, "targets must be a sequence");
+	return NULL;
+    }
+    n_targets = PySequence_Length(py_targets);
+    targets = g_new(GtkTargetEntry, n_targets);
+    for (i = 0; i < n_targets; i++) {
+	PyObject *item = PySequence_GetItem(py_targets, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "zii", &targets[i].target,
+			      &targets[i].flags, &targets[i].info)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "list items should be of form (string,int,int)");
+	    g_free(targets);
+	    return NULL;
+	}
+    }
+    gtk_drag_dest_set(GTK_WIDGET(self->obj), flags, targets, n_targets,
+		      actions);
+    g_free(targets);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_drag_source_set kwargs
+static PyObject *
+_wrap_gtk_drag_source_set(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "start_button_mask", "targets", "actions", NULL };
+    PyObject *py_sbmask, *py_targets, *py_actions;
+    GdkModifierType sbmask;
+    GtkTargetEntry *targets;
+    GdkDragAction actions;
+    gint n_targets, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOO:GtkWidget.drag_source_set", kwlist,
+				     &py_sbmask, &py_targets, &py_actions))
+	return NULL;
+    if (pygtk_flag_get_value(GTK_TYPE_GDK_MODIFIER_TYPE,
+			     py_sbmask, (gint *)&sbmask))
+	return NULL;
+    if (pygtk_flag_get_value(GTK_TYPE_GDK_DRAG_ACTION,
+			     py_actions, (gint *)&actions))
+	return NULL;
+    if (!PySequence_Check(py_targets)) {
+	PyErr_SetString(PyExc_TypeError, "targets must be a sequence");
+	return NULL;
+    }
+    n_targets = PySequence_Length(py_targets);
+    targets = g_new(GtkTargetEntry, n_targets);
+    for (i = 0; i < n_targets; i++) {
+	PyObject *item = PySequence_GetItem(py_targets, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "zii", &targets[i].target,
+			      &targets[i].flags, &targets[i].info)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "list items should be of form (string,int,int)");
+	    g_free(targets);
+	    return NULL;
+	}
+    }
+    gtk_drag_source_set(GTK_WIDGET(self->obj), sbmask, targets, n_targets,
+			actions);
+    g_free(targets);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_drag_begin kwargs
+static PyObject *
+_wrap_gtk_drag_begin(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "targets", "actions", "button", "event", NULL };
+    PyObject *py_targets, *py_actions, *event;
+    GtkTargetEntry *tents;
+    GtkTargetList *targets;
+    GdkDragAction actions;
+    gint button, n_targets, i;
+    GdkDragContext *context;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "OOiO!:GtkWidget.drag_begin", kwlist,
+				     &py_targets, &py_actions, &button,
+				     &PyGdkEvent_Type, &event))
+	return NULL;
+    if (pygtk_flag_get_value(GTK_TYPE_GDK_DRAG_ACTION,
+			     py_actions, (gint *)&actions))
+	return NULL;
+    if (!PySequence_Check(py_targets)) {
+	PyErr_SetString(PyExc_TypeError, "targets must be a sequence");
+	return NULL;
+    }
+    n_targets = PySequence_Length(py_targets);
+    tents = g_new(GtkTargetEntry, n_targets);
+    for (i = 0; i < n_targets; i++) {
+	PyObject *item = PySequence_GetItem(py_targets, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "zii", &tents[i].target,
+			      &tents[i].flags, &tents[i].info)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "list items should be of form (string,int,int)");
+	    g_free(tents);
+	    return NULL;
+	}
+    }
+    targets = gtk_target_list_new(tents, n_targets);
+    g_free(tents);
+    context = gtk_drag_begin(GTK_WIDGET(self->obj), targets, actions, button,
+			     PyGdkEvent_Get(event));
+    gtk_target_list_unref(targets);
+    if (context)
+	return PyGdkDragContext_New(context);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore
+  gtk_drag_source_handle_event gtk_drag_dest_handle_event
+  gtk_selection_request gtk_selection_notify gtk_selection_property_notify

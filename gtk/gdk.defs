@@ -538,7 +538,7 @@
   (parameter (type-and-name gint tag))
 )
 
-(function gdk_pointer_is_grabbed
+(function pointer_is_grabbed
   (c-name gdk_pointer_is_grabbed)
   (return-type gboolean)
 )
@@ -573,29 +573,29 @@
   (return-type none)
 )
 
-(function gdk_visual_get_system
+(function visual_get_system
   (c-name gdk_visual_get_system)
   (return-type GdkVisual*)
 )
 
-(function gdk_visual_get_best
+(function visual_get_best
   (c-name gdk_visual_get_best)
   (return-type GdkVisual*)
 )
 
-(function gdk_visual_get_best_with_depth
+(function visual_get_best_with_depth
   (c-name gdk_visual_get_best_with_depth)
   (return-type GdkVisual*)
   (parameter (type-and-name gint depth))
 )
 
-(function gdk_visual_get_best_with_type
+(function visual_get_best_with_type
   (c-name gdk_visual_get_best_with_type)
   (return-type GdkVisual*)
   (parameter (type-and-name GdkVisualType visual_type))
 )
 
-(function gdk_visual_get_best_with_both
+(function visual_get_best_with_both
   (c-name gdk_visual_get_best_with_both)
   (return-type GdkVisual*)
   (parameter (type-and-name gint depth))
@@ -626,13 +626,13 @@
   (parameter (type-and-name const-gchar* name))
 )
 
-(function gdk_cursor_new
+(function cursor_new
   (c-name gdk_cursor_new)
   (return-type GdkCursor*)
   (parameter (type-and-name GdkCursorType cursor_type))
 )
 
-(function gdk_cursor_new_from_pixmap
+(function cursor_new_from_pixmap
   (c-name gdk_cursor_new_from_pixmap)
   (return-type GdkCursor*)
   (parameter (type-and-name GdkPixmap* source))
@@ -691,7 +691,7 @@
 )
 
 
-(function gdk_colormap_new
+(function colormap_new
   (c-name gdk_colormap_new)
   (return-type GdkColormap*)
   (parameter (type-and-name GdkVisual* visual))
@@ -710,12 +710,12 @@
   (return-type none)
 )
 
-(function gdk_colormap_get_system
+(function colormap_get_system
   (c-name gdk_colormap_get_system)
   (return-type GdkColormap*)
 )
 
-(function gdk_colormap_get_system_size
+(function colormap_get_system_size
   (c-name gdk_colormap_get_system_size)
   (return-type gint)
 )

@@ -10206,78 +10206,78 @@
   (return-type none)
 )
 
-(function gtk_widget_push_style
+(function widget_push_style
   (c-name gtk_widget_push_style)
   (return-type none)
   (parameter (type-and-name GtkStyle* style))
 )
 
-(function gtk_widget_push_colormap
+(function widget_push_colormap
   (c-name gtk_widget_push_colormap)
   (return-type none)
   (parameter (type-and-name GdkColormap* cmap))
 )
 
-(function gtk_widget_push_visual
+(function widget_push_visual
   (c-name gtk_widget_push_visual)
   (return-type none)
   (parameter (type-and-name GdkVisual* visual))
 )
 
-(function gtk_widget_push_composite_child
+(function widget_push_composite_child
   (c-name gtk_widget_push_composite_child)
   (return-type none)
 )
 
-(function gtk_widget_pop_composite_child
+(function widget_pop_composite_child
   (c-name gtk_widget_pop_composite_child)
   (return-type none)
 )
 
-(function gtk_widget_pop_style
+(function widget_pop_style
   (c-name gtk_widget_pop_style)
   (return-type none)
 )
 
-(function gtk_widget_pop_colormap
+(function widget_pop_colormap
   (c-name gtk_widget_pop_colormap)
   (return-type none)
 )
 
-(function gtk_widget_pop_visual
+(function widget_pop_visual
   (c-name gtk_widget_pop_visual)
   (return-type none)
 )
 
-(function gtk_widget_set_default_style
+(function widget_set_default_style
   (c-name gtk_widget_set_default_style)
   (return-type none)
   (parameter (type-and-name GtkStyle* style))
 )
 
-(function gtk_widget_set_default_colormap
+(function widget_set_default_colormap
   (c-name gtk_widget_set_default_colormap)
   (return-type none)
   (parameter (type-and-name GdkColormap* colormap))
 )
 
-(function gtk_widget_set_default_visual
+(function widget_set_default_visual
   (c-name gtk_widget_set_default_visual)
   (return-type none)
   (parameter (type-and-name GdkVisual* visual))
 )
 
-(function gtk_widget_get_default_style
+(function widget_get_default_style
   (c-name gtk_widget_get_default_style)
   (return-type GtkStyle*)
 )
 
-(function gtk_widget_get_default_colormap
+(function widget_get_default_colormap
   (c-name gtk_widget_get_default_colormap)
   (return-type GdkColormap*)
 )
 
-(function gtk_widget_get_default_visual
+(function widget_get_default_visual
   (c-name gtk_widget_get_default_visual)
   (return-type GdkVisual*)
 )

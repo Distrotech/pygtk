@@ -1,3 +1,14 @@
+2000-06-19  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtk.override: ignore some more internal functions.
+
+	* gtk/gtk.defs: removed the gtk_prefix on some functions.
+
+	* gtk/gdk.defs: removed gdk_ prefix on some functions
+
+	* gtk/gtk.override: add support for some unimplemented dnd functions.
+	Ignore some internal dnd functions.
+
 2000-06-18  James Henstridge  <james@daa.com.au>
 
 	* examples/simple/hello1.py:
