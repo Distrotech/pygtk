@@ -1789,12 +1789,12 @@
   (return-type guint)
 )
 
-(function gtk_accel_group_new
+(function GtkAccelGroup
   (c-name gtk_accel_group_new)
   (return-type GtkAccelGroup*)
 )
 
-(function gtk_accel_group_get_default
+(function accel_group_get_default
   (c-name gtk_accel_group_get_default)
   (return-type GtkAccelGroup*)
 )
@@ -1931,24 +1931,6 @@
   (parameter (type-and-name GtkType class_type))
   (parameter (type-and-name GtkSignalRunType signal_flags))
   (parameter (type-and-name guint handler_offset))
-)
-
-(function gtk_accel_group_marshal_add
-  (c-name gtk_accel_group_marshal_add)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_accel_group_marshal_remove
-  (c-name gtk_accel_group_marshal_remove)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
 )
 
 (function gtk_accel_groups_from_object

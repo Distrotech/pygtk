@@ -16,15 +16,32 @@ ignore-glob
   gtk_timeout_add_*
   gtk_idle_add_*
   gtk_accelerator_*
-  gtk_accel_group_*
-  gtk_accel_groups_*
-  gtk_target_list_*
+ gtk_target_list_*
 %%
 ignore
   gtk_init
   gtk_init_check
   gtk_exit
   gtk_set_locale
+  gtk_accel_group_ref
+  gtk_accel_group_unref
+  gtk_accel_group_lock
+  gtk_accel_group_unlock
+  gtk_accel_groups_activate
+  gtk_accel_group_activate
+  gtk_accel_group_attach
+  gtk_accel_group_detach
+  gtk_accel_group_get_entry
+  gtk_accel_group_lock_entry
+  gtk_accel_group_unlock_entry
+  gtk_accel_group_add
+  gtk_accel_group_remove
+  gtk_accel_group_handle_add
+  gtk_accel_group_handle_remove
+  gtk_accel_group_create_add
+  gtk_accel_group_create_remove
+  gtk_accel_groups_from_object
+  gtk_accel_group_entries_from_object
   gtk_signal_set_funcs
   gtk_signal_lookup
   gtk_signal_disconnect_by_func
@@ -92,6 +109,18 @@ ignore
   gtk_type_register_enum
   gtk_type_register_flags
   gtk_preview_uninit
+  gtk_item_factory_create_item
+  gtk_item_factory_delete_entry
+  gtk_item_factory_delete_entries
+  gtk_item_factory_popup_with_data
+  gtk_item_factory_popup_data
+  gtk_item_factory_set_translate_func
+  gtk_item_factory_create_items_ac
+  gtk_menu_attach_to_widget
+  gtk_radio_menu_item_group
+  gtk_radio_menu_item_set_group
+  gtk_radio_button_group
+  gtk_radio_button_set_group
 %%
 ignore gtk_object_new gtk_object_newv gtk_object_query_args
   gtk_object_add_arg_type gtk_object_args_collect gtk_object_arg_get_info
@@ -259,6 +288,22 @@ _wrap_gtk_input_add_full(PyObject *self, PyObject *args, PyObject *kwargs)
     return PyInt_FromLong(gtk_input_add_full(source, condition, NULL,
 			(GtkCallbackMarshal)pygtk_input_marshal, callback,
 			(GtkDestroyNotify)pygtk_destroy_notify));
+}
+%%
+override gtk_accel_group_new
+static PyObject *
+_wrap_gtk_accel_group_new(PyGtk_Object *self, PyObject *args)
+{
+    GtkAccelGroup *accel_group;
+    PyObject *ret;
+
+    if (!PyArg_ParseTuple(args, ":GtkAccelGroup.__init__"))
+	return NULL;
+
+    accel_group = gtk_accel_group_new();
+    ret = PyGtkAccelGroup_New(accel_group);
+    gtk_accel_group_unref(accel_group);
+    return ret;
 }
 %%
 override gtk_widget_draw kwargs

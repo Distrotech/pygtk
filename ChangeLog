@@ -1,3 +1,13 @@
+2000-05-06  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtk.override: specifically ignore certain gtk_accel_group
+	functions so that _new and _get_default are not ignored.
+	(_wrap_gtk_accel_group_new): override implementation so we don't
+	leak an accel group reference.
+
+	* gtk/gtk-types.c (pygtk_accel_group_getattr): add accel group
+	methods.
+	
 2000-05-04  James Henstridge  <james@daa.com.au>
 
 	* codegen/codegen.py (typetmpl): leave some fields as blanks to be

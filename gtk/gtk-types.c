@@ -173,14 +173,14 @@ PyGtkCTreeNode_New(GtkCTreeNode *node)
 }
 
 static void
-PyGtkAccelGroup_Dealloc(PyGtkAccelGroup_Object *self)
+pygtk_accel_group_dealloc(PyGtkAccelGroup_Object *self)
 {
     gtk_accel_group_unref(self->obj); 
     PyMem_DEL(self);
 }
 
 static int
-PyGtkAccelGroup_Compare(PyGtkAccelGroup_Object *self,
+pygtk_accel_group_compare(PyGtkAccelGroup_Object *self,
 			PyGtkAccelGroup_Object *v)
 {
     if (self->obj == v->obj) return 0;
@@ -189,9 +189,41 @@ PyGtkAccelGroup_Compare(PyGtkAccelGroup_Object *self,
 }
 
 static long
-PyGtkAccelGroup_Hash(PyGtkAccelGroup_Object *self)
+pygtk_accel_group_hash(PyGtkAccelGroup_Object *self)
 {
     return (long)self->obj;
+}
+
+static PyObject *
+pygtk_accel_group_lock(PyGtkAccelGroup_Object *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ":GtkAccelGroup.lock"))
+	return NULL;
+    gtk_accel_group_lock(self->obj);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+pygtk_accel_group_unlock(PyGtkAccelGroup_Object *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ":GtkAccelGroup.unlock"))
+	return NULL;
+    gtk_accel_group_unlock(self->obj);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyMethodDef pygtk_accel_group_methods[] = {
+    { "lock", (PyCFunction)pygtk_accel_group_lock, METH_VARARGS },
+    { "unlock", (PyCFunction)pygtk_accel_group_unlock, METH_VARARGS },
+    { NULL, NULL, 0 }
+};
+
+static PyObject *
+pygtk_accel_group_getattr(PyGtkAccelGroup_Object *self, gchar *attr)
+{
+    return Py_FindMethod(pygtk_accel_group_methods, (PyObject *)self, attr);
 }
 
 PyTypeObject PyGtkAccelGroup_Type = {
@@ -200,16 +232,16 @@ PyTypeObject PyGtkAccelGroup_Type = {
     "GtkAccelGroup",
     sizeof(PyGtkAccelGroup_Object),
     0,
-    (destructor)PyGtkAccelGroup_Dealloc,
+    (destructor)pygtk_accel_group_dealloc,
     (printfunc)0,
-    (getattrfunc)0,
+    (getattrfunc)pygtk_accel_group_getattr,
     (setattrfunc)0,
-    (cmpfunc)PyGtkAccelGroup_Compare,
+    (cmpfunc)pygtk_accel_group_compare,
     (reprfunc)0,
     0,
     0,
     0,
-    (hashfunc)PyGtkAccelGroup_Hash,
+    (hashfunc)pygtk_accel_group_hash,
     (ternaryfunc)0,
     (reprfunc)0,
     0L,0L,0L,0L,
