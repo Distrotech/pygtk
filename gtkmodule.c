@@ -5228,7 +5228,12 @@ _wrap_gtk_radio_button_group(PyObject *self, PyObject *args)
         return NULL;
     for (tmp = buttons; tmp != NULL; tmp = tmp->next) {
         PyObject *button = PyGtk_New(tmp->data);
+        if (!button) {
+            Py_DECREF(button);
+            return NULL;
+        }
         PyList_Append(ret, button);
+        Py_DECREF(button);
     }
     return ret;
 }
