@@ -5179,6 +5179,26 @@ static PyObject *_wrap_gtk_radio_button_new_with_label(PyObject *self, PyObject 
     return PyGtk_New((GtkObject *)gtk_radio_button_new_with_label(NULL,label));
 }
 
+static PyObject *
+_wrap_gtk_radio_button_group(PyObject *self, PyObject *args)
+{
+    GSList *buttons, *tmp;
+    PyObject *ret;
+    PyGtk_Object *radiobutton;
+    if (!PyArg_ParseTuple(args, "O!:gtk_radio_button_group", 
+                          &PyGtk_Type, &radiobutton))
+        return NULL;
+    buttons = gtk_radio_button_group(GTK_RADIO_BUTTON(PyGtk_Get(radiobutton)));
+    if ((ret = PyList_New(0)) == NULL)
+        return NULL;
+    for (tmp = buttons; tmp != NULL; tmp = tmp->next) {
+        PyObject *button = PyGtk_New(tmp->data);
+        PyList_Append(ret, button);
+    }
+    return ret;
+}
+
+
 static PyObject *_wrap_gtk_text_insert_defaults(PyObject *self, PyObject *args) {
     PyGtk_Object *txt;
     char *chars;
@@ -6961,6 +6981,7 @@ static PyMethodDef _gtkmoduleMethods[] = {
     { "gtk_radio_menu_item_new_with_label", _wrap_gtk_radio_menu_item_new_with_label, 1 },
     { "gtk_radio_button_new", _wrap_gtk_radio_button_new, 1 },
     { "gtk_radio_button_new_with_label", _wrap_gtk_radio_button_new_with_label, 1 },
+    { "gtk_radio_button_group", _wrap_gtk_radio_button_group, 1 },
     { "gtk_text_insert_defaults", _wrap_gtk_text_insert_defaults, 1 },
     { "gtk_toolbar_append_item", _wrap_gtk_toolbar_append_item, 1 },
     { "gtk_toolbar_prepend_item", _wrap_gtk_toolbar_prepend_item, 1 },

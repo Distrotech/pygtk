@@ -654,6 +654,10 @@ class GtkRadioButton(GtkCheckButton):
 					None, label)
 			else:
 				self._o = _gtk.gtk_radio_button_new_with_label_from_widget(group._o, label)
+	def group(self):
+		l = _gtk.gtk_radio_button_group(self._o)
+		return map(_obj2inst, l)
+        
 
 class GtkFrame(GtkBin):
 	get_type = _gtk.gtk_frame_get_type
