@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- Mode: Python; py-indent-offset: 4 -*-
 import sys, string
 import parser, argtypes
@@ -23,7 +24,7 @@ methtmpl = 'static PyObject *\n' + \
 	   '    if (!PyArg_ParseTuple(args, "%(typecodes)s:%(class)s.%(name)s"%(parselist)s))\n' + \
 	   '        return NULL;\n' + \
 	   '%(extracode)s\n' + \
-	   '%(handleret)s' + \
+	   '%(handleret)s\n' + \
 	   '}\n\n'
 methcalltmpl = '%(cname)s(%(cast)s(self->obj)%(arglist)s)'
 
@@ -68,7 +69,7 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    /* Space for future expansion */\n' + \
 	   '    0L, 0L,\n' + \
 	   '    NULL, /* Documentation string */\n' + \
-	   '    METHOD_CHAIN(_Py%(class)s_methods)\n' + \
+	   '    %(methods)s\n' + \
 	   '};\n\n'
 
 def write_function(funcobj, fp=sys.stdout):
@@ -77,6 +78,9 @@ def write_function(funcobj, fp=sys.stdout):
     parselist = ['']
     extracode = []
     arglist = []
+
+    if funcobj.varargs:
+        raise ValueError, "varargs functions not supported"
     
     dict = {
 	'name':    funcobj.name,
@@ -109,6 +113,9 @@ def write_method(objname, methobj, fp=sys.stdout):
     extracode = []
     arglist = ['']
 
+    if methobj.varargs:
+        raise ValueError, "varargs methods not supported"
+    
     dict = {
 	'name':    methobj.name,
 	'cname':   methobj.c_name,
@@ -198,7 +205,39 @@ def write_class(parser, objobj, fp=sys.stdout):
     fp.write('};\n\n')
 
     # write the type template
-    fp.write(typetmpl % {'class': objobj.c_name, 'getattr': 'pygtk_getattr'})
+    dict = { 'class': objobj.c_name }
+    dict['getattr'] = 'pygtk_getattr'
+    if objobj.c_name == 'GtkObject':
+        dict['methods'] = '{ _PyGtkObject_methods, base_object_method_chain }'
+    else:
+        dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
+    fp.write(typetmpl % dict)
+
+def write_source(parser, fp=sys.stdout):
+    fp.write('/* -*- Mode: C; c-basic-offset: 4 -*- */\n\n')
+    fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n\n')
+    fp.write('/* ---------- forward type declarations ---------- */\n')
+    for obj in parser.objects:
+        fp.write('PyExtensionClass *Py' + obj.c_name + '_Type;\n')
+    fp.write('\n')
+    for obj in parser.objects:
+        write_class(parser, obj)
+        fp.write('\n')
+    fp.write('/* intialise stuff extension classes */\n')
+    fp.write('void\nregister_classes(PyObject *d)\n{\n')
+    for obj in parser.objects:
+        for parent in parser.objects:
+            if (parent.name, parent.module) == obj.parent:
+                fp.write('    PyExtensionClass_ExportSubclassSingle(d, "' +
+                         obj.c_name + '", Py' + obj.c_name + '_Type, Py' +
+                         parent.c_name + '_Type);\n')
+                break
+        else:
+            fp.write('    PyExtensionClass_Export(d, "' + obj.c_name +
+                     '", Py' + obj.c_name + '_Type);\n')
+        fp.write('    pygtk_register_class("' + obj.c_name + '", &Py' +
+                 obj.c_name + '_Type);\n')
+    fp.write('}\n')
 
 def register_types(parser):
     for obj in parser.objects:
@@ -208,3 +247,12 @@ def register_types(parser):
 	    argtypes.matcher.register_flag(enum.c_name)
 	else:
 	    argtypes.matcher.register_enum(enum.c_name)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.stderr.write('usage: codegen.py defsfile\n')
+        sys.exit(1)
+    p = parser.DefsParser(sys.argv[1])
+    p.startParsing()
+    register_types(p)
+    write_source(p)

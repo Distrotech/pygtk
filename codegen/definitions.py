@@ -102,6 +102,7 @@ class MethodDef(Definition):
 	self.c_name = None
 	self.of_object = (None, None)
 	self.params = [] # of form (type, name, default, nullok)
+        self.varargs = 0
 	for arg in args:
 	    if type(arg) != type(()) or len(arg) < 2:
 		continue
@@ -128,6 +129,8 @@ class MethodDef(Definition):
 		    elif parg[0] == 'null-ok':
 			pnull = 1
 		self.params.append((ptype, pname, pdflt, pnull))
+            elif arg[0] == 'varargs':
+                self.varargs = arg[1] == 't'
     def merge(self, old):
 	# here we merge extra parameter flags accross to the new object.
 	for i in range(len(self.params)):
@@ -162,6 +165,7 @@ class FunctionDef(Definition):
 	self.ret = None
 	self.c_name = None
 	self.params = [] # of form (type, name, default, nullok)
+        self.varargs = 0
 	for arg in args:
 	    if type(arg) != type(()) or len(arg) < 2:
 		continue
@@ -186,7 +190,9 @@ class FunctionDef(Definition):
 			pdflt = parg[1]
 		    elif parg[0] == 'null-ok':
 			pnull = 1
-		self.params.append((ptype, pname, pdflt, pnull))
+		self.params.append((ptype, pname, pdflt, pnull)) 
+            elif arg[0] == 'varargs':
+                self.varargs = arg[1] == 't'
     _method_write_defs = MethodDef.__dict__['write_defs']
     def merge(self, old):
 	# here we merge extra parameter flags accross to the new object.
