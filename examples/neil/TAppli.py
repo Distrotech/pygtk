@@ -6,6 +6,7 @@
 
 import sys
 import time
+import ltihooks
 from gtk import *
 
 class Application:		
@@ -43,7 +44,7 @@ class Application:
 
 	def init_menu(self):
 		ag = GtkAccelGroup()
-		itemf = GtkItemFactory(GtkMenuBar, "<main>", ag)
+		itemf = GtkItemFactory(GtkMenuBar.get_type(), "<main>", ag)
 		self.w_window.add_accel_group(ag)
 		file_cb = self.process_file
 		edit_cb = self.process_edit
@@ -81,7 +82,7 @@ class Application:
 		c.show()
 		
 	def init_button(self):
-		t = GtkTable(rows=1, cols=2, homogeneous=TRUE)
+		t = GtkTable(rows=1, columns=2, homogeneous=TRUE)
 		b1 = GtkButton('Do it!')
 		b1.connect('clicked', self.doit)
 		b2 = GtkButton('Quit')

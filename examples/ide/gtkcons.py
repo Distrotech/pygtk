@@ -29,6 +29,7 @@
 
 import sys, string, traceback
 #sys.path.append('/home/james/.gimp/plug-ins')
+import ltihooks
 from gtk import *
 
 stdout = sys.stdout
@@ -135,7 +136,7 @@ class Console(GtkVBox):
 		self.inp.pack_start(self.text, padding=1)
 		self.text.show()
 
-		self.vscroll = GtkVScrollbar(self.text.get_vadjustment())
+		self.vscroll = GtkVScrollbar(self.text.vadj)
 		self.vscroll.set_update_policy(POLICY_AUTOMATIC)
 		self.inp.pack_end(self.vscroll, expand=FALSE)
 		self.vscroll.show()
@@ -145,7 +146,7 @@ class Console(GtkVBox):
 		self.inputbox.show()
 
 		self.prompt = GtkLabel(sys.ps1)
-		self.prompt.set_padding(xp=2, yp=0)
+		self.prompt.set_padding(xpad=2, ypad=0)
 		self.prompt.set_usize(26, -1)
 		self.inputbox.pack_start(self.prompt, fill=FALSE, expand=FALSE)
 		self.prompt.show()

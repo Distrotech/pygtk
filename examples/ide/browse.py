@@ -8,6 +8,7 @@
 
 # If this file is run straight, it will let you browse the gtk module.
 
+import ltihooks
 from gtk import *
 
 class BrowseTreeItem(GtkTreeItem):
@@ -19,10 +20,10 @@ class BrowseTreeItem(GtkTreeItem):
 		self.exp_id = self.connect("expand", self.sig_expand)
 	def init_subtree(self):
 		if self.dict:
-			self.subtree = GtkTree()
-			self.subtree.set_selection_mode(SELECTION_BROWSE)
-			self.subtree.connect("select_child", self.subsel_child)
-			self.set_subtree(self.subtree)
+			subtree = GtkTree()
+			subtree.set_selection_mode(SELECTION_BROWSE)
+			subtree.connect("select_child", self.subsel_child)
+			self.set_subtree(subtree)
 			self.subtree.show()
 	def subsel_child(self, _t, _c):
 		if self.disp:

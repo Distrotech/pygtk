@@ -4,6 +4,7 @@
 #
 
 import sys
+import ltihooks
 from gtk import *
 import GtkExtra
 
@@ -47,7 +48,7 @@ class Application:
 
 	def init_menu(self):
 		ag = GtkAccelGroup()
-		itemf = GtkItemFactory(GtkMenuBar, "<main>", ag)
+		itemf = GtkItemFactory(GtkMenuBar.get_type(), "<main>", ag)
 		self.w_window.add_accel_group(ag)
 		file_cb = self.process_file
 		edit_cb = self.process_edit
@@ -86,12 +87,12 @@ class Application:
 		self.w_text.connect("key_press_event", self.process_key)
 		self.w_text.set_events(GDK.KEY_PRESS_MASK)
 
-		self.w_hscrollbar=GtkHScrollbar(self.w_text.get_hadjustment())
+		self.w_hscrollbar=GtkHScrollbar(self.w_text.hadj)
 		self.w_table.attach(self.w_hscrollbar,0,1,1,2,
 				    yoptions=FILL)
 		self.w_hscrollbar.show()
 		
-		self.w_vscrollbar=GtkVScrollbar(self.w_text.get_vadjustment())
+		self.w_vscrollbar=GtkVScrollbar(self.w_text.vadj)
 		self.w_table.attach(self.w_vscrollbar,1,2,0,1,
 				    xoptions=FILL)
 		self.w_vscrollbar.show()
@@ -104,7 +105,7 @@ class Application:
 			print "File:New"
 			self.w_text.freeze()
 			self.w_text.set_point(0)
-			self.w_text.insert_defaults("*new file*")
+			self.w_text.insert(None, None, None, "*new file*")
 			self.w_text.thaw()
 			#self.w_text.queueDraw()
 		elif action == 2:

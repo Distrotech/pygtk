@@ -19,7 +19,8 @@ _gtkmodule_la_SOURCES = \
 
 # chmod hack here is because automake guys decided distdir should be
 # read only for the next version :(
-$(srcdir)/gtk.c: $(srcdir)/gtk.defs $(srcdir)/gtk-extrafuncs.defs $(srcdir)/gtk.override
+$(srcdir)/gtk.c: $(srcdir)/gtk.defs $(srcdir)/gdk.defs \
+		 $(srcdir)/gtk-extrafuncs.defs $(srcdir)/gtk.override
 	-chmod a+w $(srcdir)
 	cd $(srcdir) \
 	&& $(PYTHON) ../codegen/codegen.py gtk.defs gtk.override > gen-gtk.c \

@@ -1,5 +1,21 @@
 2000-05-06  James Henstridge  <james@daa.com.au>
 
+	* gtk/gdk.defs: filled in gdk.defs a bit more.
+
+	* gtk/gtk.defs ("gdk.defs"): include gdk.defs, and move all its
+	flags and enums there.
+
+	* gtk/gdk.defs: new file containing GDK function definitions.
+
+	* examples/ide/browse.py: same here.
+	* examples/neil/TAppli5.py: same here.
+	* examples/neil/TAppli4.py: same here.
+	* examples/neil/TAppli3.py: same here.
+	* examples/neil/TAppli2.py: same here.
+	* examples/neil/TAppli.py: updated for new pygtk 
+
+	* gtk/gtk.defs (GtkText.insert): default the length parameter to -1.
+
 	* gtk/gtk.override: specifically ignore certain gtk_accel_group
 	functions so that _new and _get_default are not ignored.
 	(_wrap_gtk_accel_group_new): override implementation so we don't

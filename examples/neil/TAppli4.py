@@ -4,12 +4,14 @@
 #
 
 import sys
+import ltihooks
 from gtk import *
 import GtkExtra
 
 class Application:		
 	def __init__(self, argv):
-		self.w_window=GtkWindow(title="Test Application")
+		self.w_window=GtkWindow()
+		self.w_window.set_title("Test Application")
 		self.w_window.set_border_width(10)
 		self.w_vbox=GtkVBox()
 
@@ -25,7 +27,7 @@ class Application:
 
 	def init_menu(self):
 		ag = GtkAccelGroup()
-		itemf = GtkItemFactory(GtkMenuBar, "<main>", ag)
+		itemf = GtkItemFactory(GtkMenuBar.get_type(), "<main>", ag)
 		self.w_window.add_accel_group(ag)
 		file_cb = self.process_file
 		edit_cb = self.process_edit

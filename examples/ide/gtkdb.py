@@ -5,13 +5,15 @@ import bdb
 import repr
 import string
 import linecache # for linecache.getlines(filename)
+import ltihooks
 from gtk import *
 import GtkExtra
 
 class GtkDb(GtkWindow, bdb.Bdb):
 	def __init__(self):
 		GtkWindow.__init__(self)
-		bdb.Bdb.__init__(self)
+		# XXXX Hack ...
+		bdb.Bdb.__dict__['__init__'](self)
 		self.realize()
 
 		self.set_title("GtkDb")
