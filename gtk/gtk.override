@@ -1,0 +1,24 @@
+ignore gtk_init gtk_init_check gtk_exit gtk_set_locale
+%%
+ignore gtk_object_new gtk_object_newv gtk_object_query_args
+  gtk_object_add_arg_type gtk_object_args_collect gtk_object_arg_get_info
+  gtk_widget_new gtk_widget_newv
+%%
+ignore gtk_true gtk_false gtk_key_snooper_install gtk_key_snooper_remove
+  gtk_get_current_event gtk_get_event_widget gtk_propagate_event
+%%
+override gtk_main
+static PyObject *
+_wrap_gtk_main(PyObject *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ":main"))
+	return NULL;
+
+    pygtk_unblock_threads();
+    gtk_main();
+    pygtk_block_threads();
+    if (PyErr_Occurred())
+	return NULL;
+    Py_INCREF(Py_None);
+    return Py_None;
+}

@@ -575,9 +575,10 @@
 (object InputDialog
   (in-module Gtk)
   (parent Dialog (Gtk))
-  (c-namd GtkInputDialog)
+  (c-name GtkInputDialog)
   (field (type-and-name GtkWidget* close_button))
   (field (type-and-name GtkWidget* save_button))
+)
 
 (object ColorSelectionDialog
   (in-module Gtk)
@@ -1471,6 +1472,7 @@
 
 (function gtk_accel_label_new
   (c-name gtk_accel_label_new)
+  (is-constructor-of GtkAccelLabel)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* string))
 )
@@ -1505,6 +1507,7 @@
 
 (function gtk_adjustment_new
   (c-name gtk_adjustment_new)
+  (is-constructor-of GtkAdjustment)
   (return-type GtkObject*)
   (parameter (type-and-name gfloat value))
   (parameter (type-and-name gfloat lower))
@@ -1552,6 +1555,7 @@
 
 (function gtk_alignment_new
   (c-name gtk_alignment_new)
+  (is-constructor-of GtkAlignment)
   (return-type GtkWidget*)
   (parameter (type-and-name gfloat xalign))
   (parameter (type-and-name gfloat yalign))
@@ -1571,117 +1575,6 @@
 
 
 
-;; From /usr/include/gtk/gtkarg.h
-
-(function gtk_arg_new
-  (c-name gtk_arg_new)
-  (return-type GtkArg*)
-  (parameter (type-and-name GtkType arg_type))
-)
-
-(method copy
-  (of-object Arg (Gtk))
-  (c-name gtk_arg_copy)
-  (return-type GtkArg*)
-  (parameter (type-and-name GtkArg* dest_arg))
-)
-
-(method free
-  (of-object Arg (Gtk))
-  (c-name gtk_arg_free)
-  (return-type none)
-  (parameter (type-and-name gboolean free_contents))
-)
-
-(method reset
-  (of-object Arg (Gtk))
-  (c-name gtk_arg_reset)
-  (return-type none)
-)
-
-(method values_equal
-  (of-object Arg (Gtk))
-  (c-name gtk_arg_values_equal)
-  (return-type gboolean)
-  (parameter (type-and-name const-GtkArg* arg2))
-)
-
-(function gtk_args_collect
-  (c-name gtk_args_collect)
-  (return-type gchar*)
-  (parameter (type-and-name GtkType object_type))
-  (parameter (type-and-name GHashTable* arg_info_hash_table))
-  (parameter (type-and-name GSList** arg_list_p))
-  (parameter (type-and-name GSList** info_list_p))
-  (parameter (type-and-name const-gchar* first_arg_name))
-  (parameter (type-and-name va_list var_args))
-)
-
-(function gtk_args_collect_cleanup
-  (c-name gtk_args_collect_cleanup)
-  (return-type none)
-  (parameter (type-and-name GSList* arg_list))
-  (parameter (type-and-name GSList* info_list))
-)
-
-(function gtk_arg_get_info
-  (c-name gtk_arg_get_info)
-  (return-type gchar*)
-  (parameter (type-and-name GtkType object_type))
-  (parameter (type-and-name GHashTable* arg_info_hash_table))
-  (parameter (type-and-name const-gchar* arg_name))
-  (parameter (type-and-name GtkArgInfo** info_p))
-)
-
-(function gtk_arg_type_new_static
-  (c-name gtk_arg_type_new_static)
-  (return-type GtkArgInfo*)
-  (parameter (type-and-name GtkType base_class_type))
-  (parameter (type-and-name const-gchar* arg_name))
-  (parameter (type-and-name guint class_n_args_offset))
-  (parameter (type-and-name GHashTable* arg_info_hash_table))
-  (parameter (type-and-name GtkType arg_type))
-  (parameter (type-and-name guint arg_flags))
-  (parameter (type-and-name guint arg_id))
-)
-
-(function gtk_args_query
-  (c-name gtk_args_query)
-  (return-type GtkArg*)
-  (parameter (type-and-name GtkType class_type))
-  (parameter (type-and-name GHashTable* arg_info_hash_table))
-  (parameter (type-and-name guint32** arg_flags))
-  (parameter (type-and-name guint* n_args_p))
-)
-
-(function gtk_arg_name_strip_type
-  (c-name gtk_arg_name_strip_type)
-  (return-type gchar*)
-  (parameter (type-and-name const-gchar* arg_name))
-)
-
-(function gtk_arg_info_equal
-  (c-name gtk_arg_info_equal)
-  (return-type gint)
-  (parameter (type-and-name gconstpointer arg_info_1))
-  (parameter (type-and-name gconstpointer arg_info_2))
-)
-
-(function gtk_arg_info_hash
-  (c-name gtk_arg_info_hash)
-  (return-type guint)
-  (parameter (type-and-name gconstpointer arg_info))
-)
-
-(method to_valueloc
-  (of-object Arg (Gtk))
-  (c-name gtk_arg_to_valueloc)
-  (return-type none)
-  (parameter (type-and-name gpointer value_pointer))
-)
-
-
-
 ;; From /usr/include/gtk/gtkarrow.h
 
 (function gtk_arrow_get_type
@@ -1691,6 +1584,7 @@
 
 (function gtk_arrow_new
   (c-name gtk_arrow_new)
+  (is-constructor-of GtkArrow)
   (return-type GtkWidget*)
   (parameter (type-and-name GtkArrowType arrow_type))
   (parameter (type-and-name GtkShadowType shadow_type))
@@ -1715,6 +1609,7 @@
 
 (function gtk_aspect_frame_new
   (c-name gtk_aspect_frame_new)
+  (is-constructor-of GtkAspectFrame)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
   (parameter (type-and-name gfloat xalign))
@@ -1848,133 +1743,6 @@
 
 
 
-;; From /usr/include/gtk/gtkbindings.h
-
-(method init
-  (of-object PatternSpec (Gtk))
-  (c-name gtk_pattern_spec_init)
-  (return-type none)
-  (parameter (type-and-name const-gchar* pattern))
-)
-
-(method free_segs
-  (of-object PatternSpec (Gtk))
-  (c-name gtk_pattern_spec_free_segs)
-  (return-type none)
-)
-
-(function gtk_pattern_match
-  (c-name gtk_pattern_match)
-  (return-type gboolean)
-  (parameter (type-and-name GtkPatternSpec* pspec))
-  (parameter (type-and-name guint string_length))
-  (parameter (type-and-name const-gchar* string))
-  (parameter (type-and-name const-gchar* string_reversed))
-)
-
-(function gtk_pattern_match_string
-  (c-name gtk_pattern_match_string)
-  (return-type gboolean)
-  (parameter (type-and-name GtkPatternSpec* pspec))
-  (parameter (type-and-name const-gchar* string))
-)
-
-(function gtk_pattern_match_simple
-  (c-name gtk_pattern_match_simple)
-  (return-type gboolean)
-  (parameter (type-and-name const-gchar* pattern))
-  (parameter (type-and-name const-gchar* string))
-)
-
-(function gtk_binding_set_new
-  (c-name gtk_binding_set_new)
-  (return-type GtkBindingSet*)
-  (parameter (type-and-name const-gchar* set_name))
-)
-
-(function gtk_binding_set_by_class
-  (c-name gtk_binding_set_by_class)
-  (return-type GtkBindingSet*)
-  (parameter (type-and-name gpointer object_class))
-)
-
-(function gtk_binding_set_find
-  (c-name gtk_binding_set_find)
-  (return-type GtkBindingSet*)
-  (parameter (type-and-name const-gchar* set_name))
-)
-
-(function gtk_bindings_activate
-  (c-name gtk_bindings_activate)
-  (return-type gboolean)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name guint keyval))
-  (parameter (type-and-name guint modifiers))
-)
-
-(method activate
-  (of-object BindingSet (Gtk))
-  (c-name gtk_binding_set_activate)
-  (return-type gboolean)
-  (parameter (type-and-name guint keyval))
-  (parameter (type-and-name guint modifiers))
-  (parameter (type-and-name GtkObject* object))
-)
-
-(function gtk_binding_entry_clear
-  (c-name gtk_binding_entry_clear)
-  (return-type none)
-  (parameter (type-and-name GtkBindingSet* binding_set))
-  (parameter (type-and-name guint keyval))
-  (parameter (type-and-name guint modifiers))
-)
-
-(function gtk_binding_entry_add_signal
-  (c-name gtk_binding_entry_add_signal)
-  (return-type none)
-  (parameter (type-and-name GtkBindingSet* binding_set))
-  (parameter (type-and-name guint keyval))
-  (parameter (type-and-name guint modifiers))
-  (parameter (type-and-name const-gchar* signal_name))
-  (parameter (type-and-name guint n_args))
-  (varargs t)
-)
-
-(method add_path
-  (of-object BindingSet (Gtk))
-  (c-name gtk_binding_set_add_path)
-  (return-type none)
-  (parameter (type-and-name GtkPathType path_type))
-  (parameter (type-and-name const-gchar* path_pattern))
-  (parameter (type-and-name GtkPathPriorityType priority))
-)
-
-(function gtk_binding_entry_remove
-  (c-name gtk_binding_entry_remove)
-  (return-type none)
-  (parameter (type-and-name GtkBindingSet* binding_set))
-  (parameter (type-and-name guint keyval))
-  (parameter (type-and-name guint modifiers))
-)
-
-(function gtk_binding_entry_add_signall
-  (c-name gtk_binding_entry_add_signall)
-  (return-type none)
-  (parameter (type-and-name GtkBindingSet* binding_set))
-  (parameter (type-and-name guint keyval))
-  (parameter (type-and-name guint modifiers))
-  (parameter (type-and-name const-gchar* signal_name))
-  (parameter (type-and-name GSList* binding_args))
-)
-
-(function gtk_binding_parse_binding
-  (c-name gtk_binding_parse_binding)
-  (return-type guint)
-  (parameter (type-and-name GScanner* scanner))
-)
-
-
-
 ;; From /usr/include/gtk/gtkbox.h
 
 (function gtk_box_get_type
@@ -1987,9 +1755,9 @@
   (c-name gtk_box_pack_start)
   (return-type none)
   (parameter (type-and-name GtkWidget* child))
-  (parameter (type-and-name gboolean expand))
-  (parameter (type-and-name gboolean fill))
-  (parameter (type-and-name guint padding))
+  (parameter (type-and-name gboolean expand) (default "TRUE"))
+  (parameter (type-and-name gboolean fill) (default "TRUE"))
+  (parameter (type-and-name guint padding) (default "0"))
 )
 
 (method pack_end
@@ -1997,9 +1765,9 @@
   (c-name gtk_box_pack_end)
   (return-type none)
   (parameter (type-and-name GtkWidget* child))
-  (parameter (type-and-name gboolean expand))
-  (parameter (type-and-name gboolean fill))
-  (parameter (type-and-name guint padding))
+  (parameter (type-and-name gboolean expand) (default "TRUE"))
+  (parameter (type-and-name gboolean fill) (default "TRUE"))
+  (parameter (type-and-name guint padding) (default "0"))
 )
 
 (method pack_start_defaults
@@ -2134,6 +1902,7 @@
 
 (function gtk_calendar_new
   (c-name gtk_calendar_new)
+  (is-constructor-of GtkCalendar)
   (return-type GtkWidget*)
 )
 
@@ -5328,7 +5097,7 @@
 
 ;; From /usr/include/gtk/gtkmain.h
 
-(function gtk_check_version
+(function check_version
   (c-name gtk_check_version)
   (return-type gchar*)
   (parameter (type-and-name guint required_major))
@@ -5336,66 +5105,66 @@
   (parameter (type-and-name guint required_micro))
 )
 
-(function gtk_init
+(function init
   (c-name gtk_init)
   (return-type none)
   (parameter (type-and-name int* argc))
   (parameter (type-and-name char*** argv))
 )
 
-(function gtk_init_check
+(function init_check
   (c-name gtk_init_check)
   (return-type gboolean)
   (parameter (type-and-name int* argc))
   (parameter (type-and-name char*** argv))
 )
 
-(function gtk_exit
+(function exit
   (c-name gtk_exit)
   (return-type none)
   (parameter (type-and-name gint error_code))
 )
 
-(function gtk_set_locale
+(function set_locale
   (c-name gtk_set_locale)
   (return-type gchar*)
 )
 
-(function gtk_events_pending
+(function events_pending
   (c-name gtk_events_pending)
   (return-type gint)
 )
 
-(function gtk_main_do_event
+(function main_do_event
   (c-name gtk_main_do_event)
   (return-type none)
   (parameter (type-and-name GdkEvent* event))
 )
 
-(function gtk_main
+(function main
   (c-name gtk_main)
   (return-type none)
 )
 
-(function gtk_main_level
+(function main_level
   (c-name gtk_main_level)
   (return-type guint)
 )
 
-(function gtk_main_quit
+(function main_quit
   (c-name gtk_main_quit)
   (return-type none)
 )
 
-(function gtk_main_iteration
+(function main_iteration
   (c-name gtk_main_iteration)
   (return-type gint)
 )
 
-(function gtk_main_iteration_do
+(function main_iteration_do
   (c-name gtk_main_iteration_do)
   (return-type gint)
-  (parameter (type-and-name gboolean blocking))
+  (parameter (type-and-name gboolean blocking) (default "TRUE"))
 )
 
 (function gtk_true
@@ -5408,38 +5177,38 @@
   (return-type gint)
 )
 
-(function gtk_grab_add
+(function grab_add
   (c-name gtk_grab_add)
   (return-type none)
   (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_grab_get_current
+(function grab_get_current
   (c-name gtk_grab_get_current)
   (return-type GtkWidget*)
 )
 
-(function gtk_grab_remove
+(function grab_remove
   (c-name gtk_grab_remove)
   (return-type none)
   (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_init_add
+(function init_add
   (c-name gtk_init_add)
   (return-type none)
   (parameter (type-and-name GtkFunction function))
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_quit_add_destroy
+(function quit_add_destroy
   (c-name gtk_quit_add_destroy)
   (return-type none)
   (parameter (type-and-name guint main_level))
   (parameter (type-and-name GtkObject* object))
 )
 
-(function gtk_quit_add
+(function quit_add
   (c-name gtk_quit_add)
   (return-type guint)
   (parameter (type-and-name guint main_level))
@@ -5447,7 +5216,7 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_quit_add_full
+(function quit_add_full
   (c-name gtk_quit_add_full)
   (return-type guint)
   (parameter (type-and-name guint main_level))
@@ -5457,19 +5226,19 @@
   (parameter (type-and-name GtkDestroyNotify destroy))
 )
 
-(function gtk_quit_remove
+(function quit_remove
   (c-name gtk_quit_remove)
   (return-type none)
   (parameter (type-and-name guint quit_handler_id))
 )
 
-(function gtk_quit_remove_by_data
+(function quit_remove_by_data
   (c-name gtk_quit_remove_by_data)
   (return-type none)
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_timeout_add
+(function timeout_add
   (c-name gtk_timeout_add)
   (return-type guint)
   (parameter (type-and-name guint32 interval))
@@ -5477,7 +5246,7 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_timeout_add_full
+(function timeout_add_full
   (c-name gtk_timeout_add_full)
   (return-type guint)
   (parameter (type-and-name guint32 interval))
@@ -5487,20 +5256,20 @@
   (parameter (type-and-name GtkDestroyNotify destroy))
 )
 
-(function gtk_timeout_remove
+(function timeout_remove
   (c-name gtk_timeout_remove)
   (return-type none)
   (parameter (type-and-name guint timeout_handler_id))
 )
 
-(function gtk_idle_add
+(function idle_add
   (c-name gtk_idle_add)
   (return-type guint)
   (parameter (type-and-name GtkFunction function))
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_idle_add_priority
+(function idle_add_priority
   (c-name gtk_idle_add_priority)
   (return-type guint)
   (parameter (type-and-name gint priority))
@@ -5508,7 +5277,7 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_idle_add_full
+(function idle_add_full
   (c-name gtk_idle_add_full)
   (return-type guint)
   (parameter (type-and-name gint priority))
@@ -5518,19 +5287,19 @@
   (parameter (type-and-name GtkDestroyNotify destroy))
 )
 
-(function gtk_idle_remove
+(function idle_remove
   (c-name gtk_idle_remove)
   (return-type none)
   (parameter (type-and-name guint idle_handler_id))
 )
 
-(function gtk_idle_remove_by_data
+(function idle_remove_by_data
   (c-name gtk_idle_remove_by_data)
   (return-type none)
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_input_add_full
+(function input_add
   (c-name gtk_input_add_full)
   (return-type guint)
   (parameter (type-and-name gint source))
@@ -5541,297 +5310,41 @@
   (parameter (type-and-name GtkDestroyNotify destroy))
 )
 
-(function gtk_input_remove
+(function input_remove
   (c-name gtk_input_remove)
   (return-type none)
   (parameter (type-and-name guint input_handler_id))
 )
 
-(function gtk_key_snooper_install
+(function key_snooper_install
   (c-name gtk_key_snooper_install)
   (return-type guint)
   (parameter (type-and-name GtkKeySnoopFunc snooper))
   (parameter (type-and-name gpointer func_data))
 )
 
-(function gtk_key_snooper_remove
+(function key_snooper_remove
   (c-name gtk_key_snooper_remove)
   (return-type none)
   (parameter (type-and-name guint snooper_handler_id))
 )
 
-(function gtk_get_current_event
+(function get_current_event
   (c-name gtk_get_current_event)
   (return-type GdkEvent*)
 )
 
-(function gtk_get_event_widget
+(function get_event_widget
   (c-name gtk_get_event_widget)
   (return-type GtkWidget*)
   (parameter (type-and-name GdkEvent* event))
 )
 
-(function gtk_propagate_event
+(function propagate_event
   (c-name gtk_propagate_event)
   (return-type none)
   (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GdkEvent* event))
-)
-
-
-
-;; From /usr/include/gtk/gtkmarshal.h
-
-(function gtk_marshal_BOOL__POINTER
-  (c-name gtk_marshal_BOOL__POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_BOOL__POINTER_POINTER_INT_INT
-  (c-name gtk_marshal_BOOL__POINTER_POINTER_INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_BOOL__POINTER_INT_INT
-  (c-name gtk_marshal_BOOL__POINTER_INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_BOOL__POINTER_INT_INT_INT
-  (c-name gtk_marshal_BOOL__POINTER_INT_INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_BOOL__POINTER_POINTER_POINTER_POINTER
-  (c-name gtk_marshal_BOOL__POINTER_POINTER_POINTER_POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_INT__INT
-  (c-name gtk_marshal_INT__INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_INT__POINTER
-  (c-name gtk_marshal_INT__POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_INT__POINTER_CHAR_CHAR
-  (c-name gtk_marshal_INT__POINTER_CHAR_CHAR)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__BOOL
-  (c-name gtk_marshal_NONE__BOOL)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER
-  (c-name gtk_marshal_NONE__POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__C_CALLBACK
-  (c-name gtk_marshal_NONE__C_CALLBACK)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__C_CALLBACK_C_CALLBACK
-  (c-name gtk_marshal_NONE__C_CALLBACK_C_CALLBACK)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT
-  (c-name gtk_marshal_NONE__INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT_FLOAT
-  (c-name gtk_marshal_NONE__INT_FLOAT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT_FLOAT_BOOL
-  (c-name gtk_marshal_NONE__INT_FLOAT_BOOL)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT_INT
-  (c-name gtk_marshal_NONE__INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT_INT_POINTER
-  (c-name gtk_marshal_NONE__INT_INT_POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__NONE
-  (c-name gtk_marshal_NONE__NONE)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER_INT
-  (c-name gtk_marshal_NONE__POINTER_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER_POINTER
-  (c-name gtk_marshal_NONE__POINTER_POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER_POINTER_POINTER
-  (c-name gtk_marshal_NONE__POINTER_POINTER_POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER_INT_INT
-  (c-name gtk_marshal_NONE__POINTER_INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER_POINTER_INT_INT
-  (c-name gtk_marshal_NONE__POINTER_POINTER_INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER_INT_INT_POINTER_INT_INT
-  (c-name gtk_marshal_NONE__POINTER_INT_INT_POINTER_INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__POINTER_INT_POINTER
-  (c-name gtk_marshal_NONE__POINTER_INT_POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT_POINTER_INT_INT_INT_POINTER
-  (c-name gtk_marshal_NONE__INT_POINTER_INT_INT_INT_POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT_POINTER_INT_INT_INT
-  (c-name gtk_marshal_NONE__INT_POINTER_INT_INT_INT)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
-)
-
-(function gtk_marshal_NONE__INT_POINTER
-  (c-name gtk_marshal_NONE__INT_POINTER)
-  (return-type none)
-  (parameter (type-and-name GtkObject* object))
-  (parameter (type-and-name GtkSignalFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkArg* args))
 )
 
 
@@ -8316,7 +7829,6 @@
 (function gtk_socket_get_type
   (c-name gtk_socket_get_type)
   (return-type guint)
-  (parameter (type-and-name void ))
 )
 
 (method steal

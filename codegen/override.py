@@ -13,7 +13,7 @@ class Overrides:
 		if fp == None: return
 		# read all the components of the file ...
 		bufs = map(string.strip, string.split(fp.read(), '%%'))
-		if buf == ['']: return
+		if bufs == ['']: return
 		for buf in bufs:
 			self.__parse_override(buf)
 	def __parse_override(self, buffer):
@@ -32,7 +32,8 @@ class Overrides:
 			self.overrides[func] = rest
 
 	def is_ignored(self, name):
-		return self.ignores.has_key(name)
+		return self.ignores.has_key(name) or \
+		       len(name) > 9 and name[-9:] == '_get_type'
 	def is_overriden(self, name):
 		return self.overrides.has_key(name)
 	def override(self, name):

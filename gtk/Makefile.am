@@ -11,5 +11,11 @@ _gtkmodule_la_SOURCES = \
 	gtkmodule.c \
 	gtkobject-support.c \
 	gtk-types.c \
-	gtkobjects.c
+	gtk.c
+
+$(srcdir)/gtk.c: gtk.defs gtk.override
+	cd $(srcdir) \
+	&& $(PYTHON) ../codegen/codegen.py gtk.defs gtk.override > gen-gtk.c \
+	&& cp gen-gtk.c gtk.c \
+	&& rm -f gen-gtk.c
 

@@ -104,7 +104,7 @@ def write_function(funcobj, fp=sys.stdout):
 
     call = funccalltmpl % dict
     handler = argtypes.matcher.get(funcobj.ret)
-    dict['handleret'] = handler.write_return(funcobj, varlist) % {'func': call}
+    dict['handleret'] = handler.write_return(funcobj.ret, varlist) % {'func': call}
 
     fp.write(functmpl % dict)
 
@@ -141,7 +141,7 @@ def write_method(objname, methobj, fp=sys.stdout):
 
     call = methcalltmpl % dict
     handler = argtypes.matcher.get(methobj.ret)
-    dict['handleret'] = handler.write_return(methobj, varlist) % {'func': call}
+    dict['handleret'] = handler.write_return(methobj.ret, varlist) % {'func': call}
 
     fp.write(methtmpl % dict)
 

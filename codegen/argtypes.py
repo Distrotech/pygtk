@@ -1,6 +1,7 @@
 # -*- Mode: Python; py-indent-offset: 4 -*-
 import sys
 import string
+import traceback
 
 _conv_special_cases = {
     'GtkCList': '_GTK_CLIST',
@@ -57,11 +58,11 @@ class VarList:
     """Nicely format a C variable list"""
     def __init__(self):
 	self.vars = {}
-    def add(self, type, name):
-	if self.vars.has_key(type):
-	    self.vars[type] = self.vars[type] + (name,)
+    def add(self, ctype, name):
+	if self.vars.has_key(ctype):
+	    self.vars[ctype] = self.vars[ctype] + (name,)
 	else:
-	    self.vars[type] = (name,)
+	    self.vars[ctype] = (name,)
     def __str__(self):
 	ret = []
 	for type in self.vars.keys():
@@ -70,8 +71,10 @@ class VarList:
 	    ret.append(' ')
 	    ret.append(string.join(self.vars[type], ', '))
 	    ret.append(';\n')
-	if ret: ret.append('\n')
-	return string.join(ret, '')
+	if ret:
+            ret.append('\n')
+            return string.join(ret, '')
+	return ''
 
 class ArgType:
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
@@ -149,7 +152,7 @@ class IntArg(ArgType):
 	parselist.append('&' + pname)
 	arglist.append(pname)
 	return 'i'
-    def write_result(self, ptype, varlist):
+    def write_return(self, ptype, varlist):
 	return '    return PyInt_FromLong(%(func)s);'
 
 class DoubleArg(ArgType):
@@ -162,7 +165,7 @@ class DoubleArg(ArgType):
 	parselist.append('&' + pname)
 	arglist.append(pname)
 	return 'd'
-    def write_result(self, ptype, varlist):
+    def write_return(self, ptype, varlist):
 	return '    return PyFloat_FromDouble(%(func)s);'
 
 class FileArg(ArgType):
@@ -211,7 +214,7 @@ class FileArg(ArgType):
 		parselist.append('&' + pname)
 		arglist.append('PyFile_AsFile(' + pname + ')')
 	    return 'O!'
-    def write_result(self, ptype, varlist):
+    def write_return(self, ptype, varlist):
 	varlist.add('FILE', '*ret')
 	return '    ret = %(func)s;\n' + \
 	       '    if (ret)\n' + \
@@ -236,7 +239,7 @@ class EnumArg(ArgType):
 	extracode.append(self.enum % {'typecode':self.typecode, 'name':pname})
 	arglist.append(pname)
 	return 'O'
-    def write_result(self, ptype, varlist):
+    def write_return(self, ptype, varlist):
 	return '    return PyInt_FromLong(%(func)s);'
 
 class FlagsArg(ArgType):
@@ -256,7 +259,7 @@ class FlagsArg(ArgType):
 	extracode.append(self.enum % {'typecode':self.typecode, 'name':pname})
 	arglist.append(pname)
 	return 'O'
-    def write_result(self, ptype, varlist):
+    def write_return(self, ptype, varlist):
 	return '    return PyInt_FromLong(%(func)s);'
 
 class ObjectArg(ArgType):
@@ -325,7 +328,7 @@ class ObjectArg(ArgType):
 					       'type':self.objname}) 
 		arglist.append('%s(%s->obj)' % (self.cast, pname))
 	    return 'O'
-    def write_result(self, ptype, varlist):
+    def write_return(self, ptype, varlist):
 	return '    /* PyGtk_New handles NULL checking */\n' + \
 	       '    return PyGtk_New((GtkObject *)%(func)s);'
 
@@ -357,8 +360,8 @@ class BoxedArg(ArgType):
 	    parselist.append('&' + pname)
 	    arglist.append(self.getter + '(' + pname + ')')
 	    return 'O!'
-    def write_result(self, ptype, varlist):
-	varlist.add(ptype, '*ret')
+    def write_return(self, ptype, varlist):
+        varlist.add(ptype[:-1], '*ret')
 	return '    ret = %(func)s;\n' + \
 	       '    if (ret)\n' + \
 	       '        return ' + self.new + '(ret);\n' + \
@@ -376,7 +379,9 @@ class ArgMatcher:
     def register_flag(self, ptype):
 	self.register(ptype, FlagsArg(ptype))
     def register_object(self, ptype):
-	self.register(ptype+'*', ObjectArg(ptype))
+        oa = ObjectArg(ptype)
+        self.register(ptype, oa)  # in case I forget the * in the .defs
+	self.register(ptype+'*', oa)
     def register_boxed(self, ptype, pytype, getter, new):
 	self.register(ptype+'*', BoxedArg(pytype, getter, new))
 

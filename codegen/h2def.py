@@ -261,7 +261,7 @@ def write_func(fp, name, ret, args):
                 for arg in args[1:]:
                     if arg == '...':
                         fp.write('  (varargs t)\n')
-                    elif arg == 'void':
+                    elif arg in ('void', 'void '):
                         pass
                     else:
                         fp.write('  (parameter (type-and-name ' + arg + '))\n')

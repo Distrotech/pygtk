@@ -1,3 +1,19 @@
+2000-03-26  James Henstridge  <james@daa.com.au>
+
+	* codegen/codegen.py (write_method): fixes to codegen for doing
+	return types.
+
+	* codegen/argtypes.py (VarList.__str__): handle the case of no
+	variables in the list.
+
+	* codegen/override.py (Overrides.is_ignored): hack to add all the
+	_get_type functions to the list of ignored functions.
+
+	* codegen/argtypes.py: s/write_result/write_return/
+
+	* codegen/h2def.py (write_func): small fix up to parameter output
+	when there is no parameters.
+
 2000-03-25  James Henstridge  <james@daa.com.au>
 
 	* gtk/gtk.defs: first cut at defs file.  I am still cleaning it up
