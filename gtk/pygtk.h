@@ -257,6 +257,7 @@ struct _PyGtk_FunctionStruct *_PyGtk_API;
 #define pygtk_register_boxed (_PyGtk_API->register_boxed)
 #define pygtk_enum_get_value (_PyGtk_API->enum_get_value)
 #define pygtk_flag_get_value (_PyGtk_API->flag_get_value)
+#define pygtk_no_constructor (_PyGtk_API->no_constructor)
 
 /* some variables */
 #define PyGtk_FatalExceptions (_PyGtk_API->fatalExceptions)

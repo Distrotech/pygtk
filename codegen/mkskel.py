@@ -38,14 +38,14 @@ module_init_template = \
 
 override_template = \
 '/* -*- Mode: C; c-basic-offset: 4 -*- */\n' + \
-'%%\n' + \
+'%%%%\n' + \
 'headers\n' + \
 '/* include any required headers here */\n' + \
-'%%\n' + \
+'%%%%\n' + \
 'init\n' + \
 '    /* include any code here that needs to be executed before the\n' + \
 '     * extension classes get initialised */\n' + \
-'%%\n' + \
+'%%%%\n' + \
 '\n' + \
 '/* you should add appropriate ignore, ignore-glob and\n' + \
 ' * override sections here */\n'

@@ -1,3 +1,10 @@
+2000-06-21  James Henstridge  <james@daa.com.au>
+
+	* gtk/libglade.override, gtk/libglade.defs, gtk/libglademodule.c:
+	start of libglade module.
+
+	* codegen/mkskel.py: fix up skeleton generator a bit.
+
 2000-06-20  James Henstridge  <james@daa.com.au>
 
 	* examples/...: updated a few examples.

@@ -1,0 +1,19 @@
+/* -*- Mode: C; c-basic-offset: 4 -*- */
+%%
+headers
+/* we define this here, as pygtk is imported in libglademodule.c */
+#define NO_IMPORT_PYGTK
+#include "pygtk.h"
+
+#include <gtk/gtk.h>
+#include <glade/glade.h>
+%%
+init
+    /* include any code here that needs to be executed before the
+     * extension classes get initialised */
+%%
+ignore-glob
+  *_get_type
+%%
+ignore
+  glade_xml_new
