@@ -47,6 +47,17 @@ consttmpl = 'static PyObject *\n' + \
 
 methdeftmpl = '    { "%(name)s", (PyCFunction)%(cname)s, %(flags)s },\n'
 
+getattrtmpl = 'static PyObject *\n' + \
+              '%(getattr)s(PyGtk_Object *self, char *attr)\n' + \
+              '{\n' + \
+              '%(attrchecks)s' + \
+              '    return pygtk_getattr(self, attr);\n' + \
+              '}\n\n'
+attrchecktmpl = '    if (!strcmp(attr, "%(attr)s")) {\n' + \
+                '%(varlist)s' + \
+                '%(code)s\n' + \
+                '    }\n'
+
 typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
 	   '    0,				/* ob_size */\n' + \
@@ -175,6 +186,30 @@ def write_constructor(objname, funcobj, fp=sys.stdout):
     dict['arglist']   = string.join(arglist, ', ')
     fp.write(consttmpl % dict)
 
+def write_getattr(parser, objobj, fp=sys.stdout):
+    uline = argtypes._to_upper_str(objobj.c_name)[1:]
+    attrchecks = ''
+    for ftype, fname in objobj.fields:
+        try:
+            varlist = argtypes.VarList()
+            handler = argtypes.matcher.get(ftype)
+            code = handler.write_return(ftype, varlist) % \
+                   {'func': uline + '(self->obj)->' + fname}
+            if code:
+                # indent code ...
+                code = '    ' + string.replace(code, '\n', '\n    ')
+            attrchecks = attrchecks + attrchecktmpl % { 'attr': fname,
+                                                        'varlist': varlist,
+                                                        'code': code }
+        except:
+            sys.stderr.write("couldn't write check for " + objobj.c_name +
+                             '.' + fname + '\n')
+	    #traceback.print_exc()
+    funcname = '_wrap_' + string.lower(uline) + '_getattr'
+    fp.write(getattrtmpl % {'getattr':    funcname,
+                            'attrchecks': attrchecks })
+    return funcname
+
 def write_class(parser, objobj, overrides, fp=sys.stdout):
     fp.write('\n/* ----------- ' + objobj.c_name + ' ----------- */\n\n')
     constructor = parser.find_constructor(objobj, overrides)
@@ -228,7 +263,10 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
 
     # write the type template
     dict = { 'class': objobj.c_name }
-    dict['getattr'] = 'pygtk_getattr'
+    if objobj.fields:
+        dict['getattr'] = write_getattr(parser, objobj, fp)
+    else:
+        dict['getattr'] = 'pygtk_getattr'
     if objobj.c_name == 'GtkObject':
         dict['methods'] = '{ _PyGtkObject_methods, &base_object_method_chain }'
     else:

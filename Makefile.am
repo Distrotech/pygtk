@@ -9,6 +9,7 @@ ExtensionClass_la_SOURCES = \
 	ExtensionClass.h \
 	ExtensionClass.c
 
+noinst_PYTHON = ltihooks.py
 
 EXTRA_DIST = \
 	pygtk.spec \

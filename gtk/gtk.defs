@@ -2110,11 +2110,11 @@
   (c-name gtk_aspect_frame_new)
   (is-constructor-of GtkAspectFrame)
   (return-type GtkWidget*)
-  (parameter (type-and-name const-gchar* label))
-  (parameter (type-and-name gfloat xalign))
-  (parameter (type-and-name gfloat yalign))
-  (parameter (type-and-name gfloat ratio))
-  (parameter (type-and-name gboolean obey_child))
+  (parameter (type-and-name const-gchar* label) (null-ok) (default "NULL"))
+  (parameter (type-and-name gfloat xalign) (default "0.5"))
+  (parameter (type-and-name gfloat yalign) (default "0.5"))
+  (parameter (type-and-name gfloat ratio) (default "1.0"))
+  (parameter (type-and-name gboolean obey_child) (default "TRUE"))
 )
 
 (method set
@@ -2503,11 +2503,13 @@
 
 (function gtk_check_menu_item_new
   (c-name gtk_check_menu_item_new)
+  (is-constructor-of GtkCheckMenuItem)
   (return-type GtkWidget*)
 )
 
 (function gtk_check_menu_item_new_with_label
   (c-name gtk_check_menu_item_new_with_label)
+  (is-constructor-of GtkCheckMenuItem)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )
@@ -4458,7 +4460,7 @@
 (method get_text
   (of-object Entry (Gtk))
   (c-name gtk_entry_get_text)
-  (return-type gchar*)
+  (return-type static_string)
 )
 
 (method select_region
@@ -4729,7 +4731,7 @@
   (of-object Frame (Gtk))
   (c-name gtk_frame_set_label)
   (return-type none)
-  (parameter (type-and-name const-gchar* label))
+  (parameter (type-and-name const-gchar* label) (null-ok))
 )
 
 (method set_label_align
@@ -4847,8 +4849,8 @@
   (c-name gtk_hbox_new)
   (is-constructor-of GtkHBox)
   (return-type GtkWidget*)
-  (parameter (type-and-name gboolean homogeneous))
-  (parameter (type-and-name gint spacing))
+  (parameter (type-and-name gboolean homogeneous) (default "FALSE"))
+  (parameter (type-and-name gint spacing) (default "0"))
 )
 
 
@@ -4894,7 +4896,7 @@
   (c-name gtk_hscale_new)
   (is-constructor-of GtkHScale)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* adjustment))
+  (parameter (type-and-name GtkAdjustment* adjustment) (null-ok))
 )
 
 
@@ -4910,7 +4912,7 @@
   (c-name gtk_hscrollbar_new)
   (is-constructor-of GtkHScrollbar)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* adjustment))
+  (parameter (type-and-name GtkAdjustment* adjustment) (null-ok))
 )
 
 
@@ -5321,8 +5323,8 @@
   (c-name gtk_layout_new)
   (is-constructor-of GtkLayout)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* hadjustment))
-  (parameter (type-and-name GtkAdjustment* vadjustment))
+  (parameter (type-and-name GtkAdjustment* hadjustment) (null-ok))
+  (parameter (type-and-name GtkAdjustment* vadjustment) (null-ok))
 )
 
 (method put
@@ -6820,11 +6822,11 @@
   (parameter (type-and-name GtkSideType side))
   (parameter (type-and-name GtkAnchorType anchor))
   (parameter (type-and-name GtkPackerOptions options))
-  (parameter (type-and-name guint border_width))
-  (parameter (type-and-name guint pad_x))
-  (parameter (type-and-name guint pad_y))
-  (parameter (type-and-name guint i_pad_x))
-  (parameter (type-and-name guint i_pad_y))
+  (parameter (type-and-name guint border_width) (default "0"))
+  (parameter (type-and-name guint pad_x) (default "0"))
+  (parameter (type-and-name guint pad_y) (default "0"))
+  (parameter (type-and-name guint i_pad_x) (default "0"))
+  (parameter (type-and-name guint i_pad_y) (default "0"))
 )
 
 (method set_child_packing
@@ -6835,11 +6837,11 @@
   (parameter (type-and-name GtkSideType side))
   (parameter (type-and-name GtkAnchorType anchor))
   (parameter (type-and-name GtkPackerOptions options))
-  (parameter (type-and-name guint border_width))
-  (parameter (type-and-name guint pad_x))
-  (parameter (type-and-name guint pad_y))
-  (parameter (type-and-name guint i_pad_x))
-  (parameter (type-and-name guint i_pad_y))
+  (parameter (type-and-name guint border_width) (default "0"))
+  (parameter (type-and-name guint pad_x) (default "0"))
+  (parameter (type-and-name guint pad_y) (default "0"))
+  (parameter (type-and-name guint i_pad_x) (default "0"))
+  (parameter (type-and-name guint i_pad_y) (default "0"))
 )
 
 (method reorder_child
@@ -6908,8 +6910,8 @@
   (c-name gtk_paned_pack1)
   (return-type none)
   (parameter (type-and-name GtkWidget* child))
-  (parameter (type-and-name gboolean resize))
-  (parameter (type-and-name gboolean shrink))
+  (parameter (type-and-name gboolean resize) (default "FALSE"))
+  (parameter (type-and-name gboolean shrink) (default "TRUE"))
 )
 
 (method pack2
@@ -6917,8 +6919,8 @@
   (c-name gtk_paned_pack2)
   (return-type none)
   (parameter (type-and-name GtkWidget* child))
-  (parameter (type-and-name gboolean resize))
-  (parameter (type-and-name gboolean shrink))
+  (parameter (type-and-name gboolean resize) (default "TRUE"))
+  (parameter (type-and-name gboolean shrink) (default "TRUE"))
 )
 
 (method set_position
@@ -7074,13 +7076,13 @@
   (parameter (type-and-name gboolean expand))
 )
 
-(function gtk_preview_set_gamma
+(function preview_set_gamma
   (c-name gtk_preview_set_gamma)
   (return-type none)
   (parameter (type-and-name double gamma))
 )
 
-(function gtk_preview_set_color_cube
+(function preview_set_color_cube
   (c-name gtk_preview_set_color_cube)
   (return-type none)
   (parameter (type-and-name guint nred_shades))
@@ -7089,13 +7091,13 @@
   (parameter (type-and-name guint ngray_shades))
 )
 
-(function gtk_preview_set_install_cmap
+(function preview_set_install_cmap
   (c-name gtk_preview_set_install_cmap)
   (return-type none)
   (parameter (type-and-name gint install_cmap))
 )
 
-(function gtk_preview_set_reserved
+(function preview_set_reserved
   (c-name gtk_preview_set_reserved)
   (return-type none)
   (parameter (type-and-name gint nreserved))
@@ -7108,22 +7110,22 @@
   (parameter (type-and-name GdkRgbDither dither))
 )
 
-(function gtk_preview_get_visual
+(function preview_get_visual
   (c-name gtk_preview_get_visual)
   (return-type GdkVisual*)
 )
 
-(function gtk_preview_get_cmap
+(function preview_get_cmap
   (c-name gtk_preview_get_cmap)
   (return-type GdkColormap*)
 )
 
-(function gtk_preview_get_info
+(function preview_get_info
   (c-name gtk_preview_get_info)
   (return-type GtkPreviewInfo*)
 )
 
-(function gtk_preview_reset
+(function preview_reset
   (c-name gtk_preview_reset)
   (return-type none)
 )
@@ -7244,8 +7246,9 @@
 
 (function gtk_progress_bar_new_with_adjustment
   (c-name gtk_progress_bar_new_with_adjustment)
+  (is-constructor-of GtkProgressBar)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* adjustment))
+  (parameter (type-and-name GtkAdjustment* adjustment) (null-ok) (default "NULL"))
 )
 
 (method set_bar_style
@@ -7728,8 +7731,8 @@
   (c-name gtk_scrolled_window_new)
   (is-constructor-of GtkScrolledWindow)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* hadjustment))
-  (parameter (type-and-name GtkAdjustment* vadjustment))
+  (parameter (type-and-name GtkAdjustment* hadjustment) (null-ok) (default "NULL"))
+  (parameter (type-and-name GtkAdjustment* vadjustment) (null-ok) (default "NULL"))
 )
 
 (method set_hadjustment
@@ -8292,9 +8295,9 @@
   (c-name gtk_spin_button_new)
   (is-constructor-of GtkSpinButton)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* adjustment))
-  (parameter (type-and-name gfloat climb_rate))
-  (parameter (type-and-name guint digits))
+  (parameter (type-and-name GtkAdjustment* adjustment) (null-ok) (default "NULL"))
+  (parameter (type-and-name gfloat climb_rate) (default "0.0"))
+  (parameter (type-and-name guint digits) (default "0"))
 )
 
 (method set_adjustment
@@ -9120,9 +9123,9 @@
   (c-name gtk_table_new)
   (is-constructor-of GtkTable)
   (return-type GtkWidget*)
-  (parameter (type-and-name guint rows))
-  (parameter (type-and-name guint columns))
-  (parameter (type-and-name gboolean homogeneous))
+  (parameter (type-and-name guint rows) (default "1"))
+  (parameter (type-and-name guint columns) (default "1"))
+  (parameter (type-and-name gboolean homogeneous) (default "FALSE"))
 )
 
 (method resize
@@ -9142,10 +9145,10 @@
   (parameter (type-and-name guint right_attach))
   (parameter (type-and-name guint top_attach))
   (parameter (type-and-name guint bottom_attach))
-  (parameter (type-and-name GtkAttachOptions xoptions))
-  (parameter (type-and-name GtkAttachOptions yoptions))
-  (parameter (type-and-name guint xpadding))
-  (parameter (type-and-name guint ypadding))
+  (parameter (type-and-name GtkAttachOptions xoptions) (default "GTK_EXPAND|GTK_FILL"))
+  (parameter (type-and-name GtkAttachOptions yoptions) (default "GTK_EXPAND|GTK_FILL"))
+  (parameter (type-and-name guint xpadding) (default "0"))
+  (parameter (type-and-name guint ypadding) (default "0"))
 )
 
 (method attach_defaults
@@ -9224,8 +9227,8 @@
   (c-name gtk_text_new)
   (is-constructor-of GtkText)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* hadj))
-  (parameter (type-and-name GtkAdjustment* vadj))
+  (parameter (type-and-name GtkAdjustment* hadj) (null-ok) (default "NULL"))
+  (parameter (type-and-name GtkAdjustment* vadj) (null-ok) (default "NULL"))
 )
 
 (method set_editable
@@ -10042,8 +10045,8 @@
   (c-name gtk_vbox_new)
   (is-constructor-of GtkVBox)
   (return-type GtkWidget*)
-  (parameter (type-and-name gboolean homogeneous))
-  (parameter (type-and-name gint spacing))
+  (parameter (type-and-name gboolean homogeneous) (defualt "FALSE"))
+  (parameter (type-and-name gint spacing) (default "0"))
 )
 
 
@@ -10059,8 +10062,8 @@
   (c-name gtk_viewport_new)
   (is-constructor-of GtkViewport)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* hadjustment))
-  (parameter (type-and-name GtkAdjustment* vadjustment))
+  (parameter (type-and-name GtkAdjustment* hadjustment) (null-ok) (default "NULL"))
+  (parameter (type-and-name GtkAdjustment* vadjustment) (null-ok) (default "NULL"))
 )
 
 (method get_hadjustment
@@ -10139,7 +10142,7 @@
   (c-name gtk_vscale_new)
   (is-constructor-of GtkVScale)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* adjustment))
+  (parameter (type-and-name GtkAdjustment* adjustment) (null-ok) (default "NULL"))
 )
 
 
@@ -10150,7 +10153,7 @@
   (c-name gtk_vscrollbar_new)
   (is-constructor-of GtkVScrollbar)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkAdjustment* adjustment))
+  (parameter (type-and-name GtkAdjustment* adjustment) (null-ok) (default "NULL"))
 )
 
 
@@ -10840,7 +10843,7 @@
   (c-name gtk_window_new)
   (is-constructor-of GtkWindow)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkWindowType type))
+  (parameter (type-and-name GtkWindowType type) (default "GTK_WINDOW_TOPLEVEL"))
 )
 
 (method set_title

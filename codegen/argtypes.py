@@ -126,6 +126,23 @@ class StringArg(ArgType):
 		   '    Py_INCREF(Py_None);\n' + \
 		   '    return Py_None;'
 
+class UCharArg(ArgType):
+    # allows strings with embedded NULLs.
+    def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
+		    extracode, arglist):
+	if pdflt:
+	    varlist.add('guchar', '*' + pname + ' = "' + pdflt + '"')
+	else:
+	    varlist.add('guchar', '*' + pname)
+        varlist.add('int', pname + '_len')
+	parselist.append('&' + pname)
+        parselist.append('&' + pname + '_len')
+	arglist.append(pname)
+	if pnull:
+	    return 'z#'
+	else:
+	    return 's#'
+
 class CharArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
 		    extracode, arglist):
@@ -265,22 +282,22 @@ class FlagsArg(ArgType):
 class ObjectArg(ArgType):
     # should change these checks to more typesafe versions that check
     # a little further down in the class heirachy.
-    nulldflt = '    if (py_%(name)s == Py_None)\n' + \
+    nulldflt = '    if ((PyObject *)py_%(name)s == Py_None)\n' + \
 	       '        %(name)s = NULL;\n' + \
 	       '    else if (py_%(name)s && PyGtk_Check(py_%(name)s))\n' + \
-	       '        %(name)s = %(cast)s(%(name)s->obj);\n' + \
+	       '        %(name)s = %(cast)s(py_%(name)s->obj);\n' + \
 	       '    else if (py_%(name)s) {\n' + \
 	       '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s or None");\n' + \
 	       '        return NULL;\n' + \
 	       '    }\n'
     null = '    if (py_%(name)s && PyGtk_Check(py_%(name)s))\n' + \
-	   '        %(name)s = %(cast)s(%(name)s->obj);\n' + \
-	   '    else if (py_%(name)s != Py_None) {\n' + \
+	   '        %(name)s = %(cast)s(py_%(name)s->obj);\n' + \
+	   '    else if ((PyObject *)py_%(name)s != Py_None) {\n' + \
 	   '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s or None");\n' + \
 	   '        return NULL;\n' + \
 	   '    }\n'
     dflt = '    if (py_%(name)s && PyGtk_Check(py_%(name)s))\n' + \
-	   '        %(name)s = %(cast)s(%(name)s->obj);\n' + \
+	   '        %(name)s = %(cast)s(py_%(name)s->obj);\n' + \
 	   '    else if (py_%(name)s) {\n' + \
 	   '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s");\n' + \
 	   '        return NULL;\n' + \
@@ -309,7 +326,7 @@ class ObjectArg(ArgType):
 		extracode.append(self.null % {'name':pname,
 					      'cast':self.cast,
 					      'type':self.objname}) 
-		arglist.append(pname)
+            arglist.append(pname)
 	    return 'O'
 	else:
 	    if pdflt:
@@ -402,6 +419,10 @@ matcher.register('const-gchar*', arg)
 matcher.register('string', arg)
 matcher.register('static_string', arg)
 
+arg = UCharArg()
+matcher.register('unsigned-char*', arg)
+matcher.register('guchar*', arg)
+
 arg = CharArg()
 matcher.register('char', arg)
 matcher.register('gchar', arg)
@@ -418,6 +439,12 @@ matcher.register('long', arg)
 matcher.register('glong', arg)
 matcher.register('gulong', arg)
 matcher.register('gboolean', arg)
+
+matcher.register('guint16', arg)
+matcher.register('gint16', arg)
+matcher.register('guint32', arg)
+matcher.register('gint32', arg)
+matcher.register('GtkType', arg)
 
 arg = DoubleArg()
 matcher.register('double', arg)

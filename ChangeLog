@@ -1,5 +1,26 @@
 2000-03-28  James Henstridge  <james@daa.com.au>
 
+	* gtk/gtk.override (_wrap_gtk_radio_menu_item_new): fixed bug in
+	constructor that would cause segfault when creating instances :(
+
+	* codegen/codegen.py (write_getattr): implemented object field
+	accessors through a __getattr__ method for the class.  Doesn't
+	handle attributes inheritted from parent classes properly yet.
+
+	* ltihooks.py: install ltihooks when it is imported.  This is
+	generally what you would be importing it for.
+
+	* codegen/argtypes.py (ObjectArg): fixed up template code a bit.
+
+	* gtk/gtk.override: added some more functions to ignore.
+
+	* codegen/argtypes.py: add a few more integer types to the matcher.
+	(UCharArg.write_param): new matcher for uchar arrays that doesn't
+	barf on strings with embedded NULLs.
+
+	* gtk/gtk.defs (gtk_check_menu_item_new): added is-constructor-of
+	clause.
+
 	* codegen/codegen.py (write_class): allow overriding the constructor.
 
 	* codegen/parser.py (DefsParser.find_constructor): look at the

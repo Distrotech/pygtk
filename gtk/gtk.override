@@ -16,6 +16,9 @@ ignore-glob
   gtk_timeout_add_*
   gtk_idle_add_*
   gtk_accelerator_*
+  gtk_accel_group_*
+  gtk_accel_groups_*
+  gtk_target_list_*
 %%
 ignore
   gtk_init
@@ -29,8 +32,11 @@ ignore
   gtk_signal_handler_block_by_func
   gtk_signal_handler_block_by_data
   gtk_signal_handler_unblock_by_func
-  gtk_signal_handler_unblock_by_data 
+  gtk_signal_handler_unblock_by_data
   gtk_signal_handler_pending_by_func
+  gtk_signal_query
+  gtk_quit_remove_by_data
+  gtk_idle_remove_by_data
   gtk_object_weakref
   gtk_object_weakunref
   gtk_object_get
@@ -58,6 +64,27 @@ ignore
   gtk_container_query_child_args
   gtk_container_child_args_collect
   gtk_container_child_arg_get_info
+  gtk_container_foreach
+  gtk_container_foreach_full
+  gtk_container_forall
+  gtk_container_child_getv
+  gtk_container_child_setv
+  gtk_container_add_with_args
+  gtk_container_addv
+  gtk_container_child_set
+  gtk_container_arg_set
+  gtk_container_arg_get
+  gtk_progress_bar_new
+  gtk_window_add_embedded_xid
+  gtk_window_remove_embedded_xid
+  gtk_range_trough_click
+  gtk_range_default_htrough_click
+  gtk_range_default_vtrough_click
+  gtk_tooltips_data_get
+  gtk_type_check_object_cast
+  gtk_type_check_class_cast
+  gtk_type_register_enum
+  gtk_type_register_flags
 %%
 ignore gtk_object_new gtk_object_newv gtk_object_query_args
   gtk_object_add_arg_type gtk_object_args_collect gtk_object_arg_get_info
@@ -557,6 +584,15 @@ _wrap_gtk_radio_menu_item_new(PyGtk_Object *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "|Oz:GtkRadioMenuItem.__init__",
 			  &py_group, &text))
 	return NULL;
+    if (py_group == Py_None)
+	group = NULL;
+    else if (PyGtk_Check(py_group))
+	group = GTK_RADIO_MENU_ITEM(PyGtk_Get(py_group));
+    else {
+	PyErr_SetString(PyExc_TypeError,
+			"first argument must be a GtkRadioMenuItem or None");
+	return NULL;
+    }
     /* various configs for create radio buttons ... */
     if (text == NULL) {
 	if (group == NULL)
