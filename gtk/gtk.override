@@ -2840,3 +2840,43 @@ _wrap_gtk_drag_begin(PyGtk_Object *self, PyObject *args, PyObject *kwargs)
 ignore
   gtk_drag_source_handle_event gtk_drag_dest_handle_event
   gtk_selection_request gtk_selection_notify gtk_selection_property_notify
+  gtk_selection_incr_event
+%%
+override gtk_selection_add_targets kwargs
+static PyObject *
+_wrap_gtk_selection_add_targets(PyGtk_Object *self, PyObject *args,
+				PyObject *kwargs)
+{
+    static char *kwlist[] = { "selection", "targets", NULL };
+    PyObject *py_targets;
+    GtkTargetEntry *targets;
+    int selection, n_targets, i;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+				     "iO:GtkWidget.selection_add_targets",
+				     kwlist, &selection, &py_targets))
+	return NULL;
+    if (!PySequence_Check(py_targets)) {
+	PyErr_SetString(PyExc_TypeError, "targets must be a sequence");
+	return NULL;
+    }
+    n_targets = PySequence_Length(py_targets);
+    targets = g_new(GtkTargetEntry, n_targets);
+    for (i = 0; i < n_targets; i++) {
+	PyObject *item = PySequence_GetItem(py_targets, i);
+	Py_DECREF(item);
+	if (!PyArg_ParseTuple(item, "zii", &targets[i].target,
+			      &targets[i].flags, &targets[i].info)) {
+	    PyErr_Clear();
+	    PyErr_SetString(PyExc_TypeError,
+			    "list items should be of form (string,int,int)");
+	    g_free(targets);
+	    return NULL;
+	}
+    }
+    gtk_selection_add_targets(GTK_WIDGET(self->obj), (GdkAtom)selection,
+			      targets, n_targets);
+    g_free(targets);
+    Py_INCREF(Py_None);
+    return Py_None;
+}

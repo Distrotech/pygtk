@@ -1,3 +1,16 @@
+2000-06-20  James Henstridge  <james@daa.com.au>
+
+	* examples/...: updated a few examples.
+
+	* gtk/__init__.py: import ltihooks here, so I don't have to
+	explicitely import it when testing out examples.  The import can
+	probably go once I start installing the new pygtk.
+
+	* codegen/mkskel.py (write_skels): a short script to generate
+	some skeletons to help people start writing their extension.
+
+	* gtk/gtk.override: implementation of GtkWidget.selection_add_targets.
+
 2000-06-19  James Henstridge  <james@daa.com.au>
 
 	* gtk/gtk.override: ignore some more internal functions.

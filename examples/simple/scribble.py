@@ -3,7 +3,6 @@
 #this is a simple translation of the scribble example that comes with GTK+
 
 import sys
-import ltihooks
 import gtk
 
 pixmap = None

@@ -8,6 +8,7 @@ noinst_PYTHON = \
 	mergedefs.py \
 	override.py \
 	parser.py \
-	scmexpr.py
+	scmexpr.py \
+	mkskel.py
 
 EXTRA_DIST = README.defs

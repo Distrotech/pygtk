@@ -8,7 +8,6 @@
 
 # If this file is run straight, it will let you browse the gtk module.
 
-import ltihooks
 from gtk import *
 
 class BrowseTreeItem(GtkTreeItem):

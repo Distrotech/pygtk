@@ -5,7 +5,6 @@ import bdb
 import repr
 import string
 import linecache # for linecache.getlines(filename)
-import ltihooks
 from gtk import *
 import GtkExtra
 

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import ltihooks
-
 import gtk, gtk.imlib
 
 def close(win, _event=None):

@@ -4,7 +4,6 @@
 #
 
 import sys
-import ltihooks
 from gtk import *
 import GtkExtra
 				

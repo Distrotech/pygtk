@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import ltihooks
 from gtk import *
 import GtkExtra
 

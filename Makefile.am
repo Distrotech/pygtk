@@ -37,11 +37,8 @@ EXTRA_DIST = \
 	examples/ide/edit.xpm \
 	examples/ide/run.xpm \
 	examples/ide/quit.xpm \
-	examples/simple/hello1.py \
 	examples/simple/hello2.py \
-	examples/simple/simple1.py \
 	examples/simple/simple2.py \
-	examples/simple/tooltip1.py \
 	examples/simple/tooltip2.py \
 	examples/simple/scribble.py \
 	examples/simple/dnd.py \

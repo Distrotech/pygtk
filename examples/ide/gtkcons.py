@@ -29,7 +29,6 @@
 
 import sys, string, traceback
 #sys.path.append('/home/james/.gimp/plug-ins')
-import ltihooks
 from gtk import *
 
 stdout = sys.stdout

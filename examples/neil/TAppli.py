@@ -6,7 +6,6 @@
 
 import sys
 import time
-import ltihooks
 from gtk import *
 
 class Application:		

@@ -134,7 +134,8 @@ def popsite_leave(w, context, time):
 def source_drag_data_delete(w, context, data):
 	print 'Delete the data!'
 def create_pixmap(w, xpm):
-	return create_pixmap_from_xpm_d(w, None, xpm)
+	return pixmap_colormap_create_from_xpm_d(None, w.get_colormap(),
+						 None, xpm)
 def main():
 	global trashcan_open, trashcan_open_mask
 	global trashcan_closed, trashcan_closed_mask
