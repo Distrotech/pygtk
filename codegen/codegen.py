@@ -177,11 +177,15 @@ def write_constructor(objname, funcobj, fp=sys.stdout):
 
 def write_class(parser, objobj, overrides, fp=sys.stdout):
     fp.write('\n/* ----------- ' + objobj.c_name + ' ----------- */\n\n')
-    constructor = parser.find_constructor(objobj)
+    constructor = parser.find_constructor(objobj, overrides)
     methods = []
     if constructor:
 	try:
-	    write_constructor(objobj.c_name, constructor, fp)
+            if overrides.is_overriden(constructor.c_name):
+                fp.write(overrides.override(constructor.c_name))
+                fp.write('\n\n')
+            else:
+                write_constructor(objobj.c_name, constructor, fp)
 	    methods.append(methdeftmpl %
 			   { 'name':  '__init__',
 			     'cname': '_wrap_' + constructor.c_name,

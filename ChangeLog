@@ -1,3 +1,19 @@
+2000-03-28  James Henstridge  <james@daa.com.au>
+
+	* codegen/codegen.py (write_class): allow overriding the constructor.
+
+	* codegen/parser.py (DefsParser.find_constructor): look at the
+	ignores when picking the constructor.
+
+	* gtk/gtk.defs: tag new constructors.
+
+	* gtk/gtk.override: added routines for adding idle, timeout, input
+	and quit handlers.  Converted for varargs where appropriate.  Also
+	added GtkWidget methods.
+	Added constructors for button and items, where there are variants on
+	the constructor (eg. with or without label).  I don't know how to get
+	the code generator to handle these itself.
+
 2000-03-27  James Henstridge  <james@daa.com.au>
 
 	* gtk/gtk.override: added some ignore globs, and added a few more

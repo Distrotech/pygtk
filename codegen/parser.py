@@ -61,10 +61,11 @@ class DefsParser(IncludeParser):
 	for func in self.functions:
 	    func.write_defs(fp)
 
-    def find_constructor(self, obj):
+    def find_constructor(self, obj, overrides):
         for func in self.functions:
             if isinstance(func, FunctionDef) and \
-               func.is_constructor_of == obj.c_name:
+               func.is_constructor_of == obj.c_name and \
+               not overrides.is_ignored(func.c_name):
                 return func
 
     def find_methods(self, obj):

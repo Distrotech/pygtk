@@ -2338,11 +2338,13 @@
 
 (function gtk_button_new
   (c-name gtk_button_new)
+  (is-constructor-of GtkButton)
   (return-type GtkWidget*)
 )
 
 (function gtk_button_new_with_label
   (c-name gtk_button_new_with_label)
+  (is-constructor-of GtkButton)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )
@@ -2479,11 +2481,13 @@
 
 (function gtk_check_button_new
   (c-name gtk_check_button_new)
+  (is-constructor-of GtkCheckButton)
   (return-type GtkWidget*)
 )
 
 (function gtk_check_button_new_with_label
   (c-name gtk_check_button_new_with_label)
+  (is-constructor-of GtkCheckButton)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )
@@ -5577,11 +5581,13 @@
 
 (function gtk_list_item_new
   (c-name gtk_list_item_new)
+  (is-constructor-of GtkListItem)
   (return-type GtkWidget*)
 )
 
 (function gtk_list_item_new_with_label
   (c-name gtk_list_item_new_with_label)
+  (is-constructor-of GtkListItem)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )
@@ -6047,11 +6053,13 @@
 
 (function gtk_menu_item_new
   (c-name gtk_menu_item_new)
+  (is-constructor-of GtkMenuItem)
   (return-type GtkWidget*)
 )
 
 (function gtk_menu_item_new_with_label
   (c-name gtk_menu_item_new_with_label)
+  (is-constructor-of GtkMenuItem)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )
@@ -7293,26 +7301,28 @@
 
 (function gtk_radio_button_new
   (c-name gtk_radio_button_new)
+  (is-constructor-of GtkRadioButton)
   (return-type GtkWidget*)
   (parameter (type-and-name GSList* group))
 )
 
-(method new_from_widget
-  (of-object RadioButton (Gtk))
+(function gtk_radio_button_new_from_widget
   (c-name gtk_radio_button_new_from_widget)
+  (is-constructor-of GtkRadioButton)
   (return-type GtkWidget*)
 )
 
 (function gtk_radio_button_new_with_label
   (c-name gtk_radio_button_new_with_label)
+  (is-constructor-of GtkRadioButton)
   (return-type GtkWidget*)
   (parameter (type-and-name GSList* group))
   (parameter (type-and-name const-gchar* label))
 )
 
-(method new_with_label_from_widget
-  (of-object RadioButton (Gtk))
+(function gtk_radio_button_new_with_label_from_widget
   (c-name gtk_radio_button_new_with_label_from_widget)
+  (is-constructor-of GtkRadioButton)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )
@@ -7341,12 +7351,14 @@
 
 (function gtk_radio_menu_item_new
   (c-name gtk_radio_menu_item_new)
+  (is-constructor-of GtkRadioMenuItem)
   (return-type GtkWidget*)
   (parameter (type-and-name GSList* group))
 )
 
 (function gtk_radio_menu_item_new_with_label
   (c-name gtk_radio_menu_item_new_with_label)
+  (is-constructor-of GtkRadioMenuItem)
   (return-type GtkWidget*)
   (parameter (type-and-name GSList* group))
   (parameter (type-and-name const-gchar* label))
@@ -9354,11 +9366,13 @@
 
 (function gtk_toggle_button_new
   (c-name gtk_toggle_button_new)
+  (is-constructor-of GtkToggleButton)
   (return-type GtkWidget*)
 )
 
 (function gtk_toggle_button_new_with_label
   (c-name gtk_toggle_button_new_with_label)
+  (is-constructor-of GtkToggleButton)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )
@@ -9770,11 +9784,13 @@
 
 (function gtk_tree_item_new
   (c-name gtk_tree_item_new)
+  (is-constructor-of GtkTreeItem)
   (return-type GtkWidget*)
 )
 
 (function gtk_tree_item_new_with_label
   (c-name gtk_tree_item_new_with_label)
+  (is-constructor-of GtkTreeItem)
   (return-type GtkWidget*)
   (parameter (type-and-name const-gchar* label))
 )

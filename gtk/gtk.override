@@ -1,3 +1,5 @@
+/* -*- Mode: C; c-basic-offset: 4 -*- */
+%%
 ignore-glob
   *_get_type
   gtk_marshal_*
@@ -9,11 +11,10 @@ ignore-glob
   gtk_signal_emit*
   gtk_draw_*
   gtk_paint_*
-  gtk_init_add*
-  gtk_quit_add*
-  gtk_timeout_add*
-  gtk_idle_add*
-  gtk_input_add*
+  gtk_init_add_*
+  gtk_quit_add_*
+  gtk_timeout_add_*
+  gtk_idle_add_*
   gtk_accelerator_*
 %%
 ignore
@@ -77,6 +78,504 @@ _wrap_gtk_main(PyObject *self, PyObject *args)
     pygtk_block_threads();
     if (PyErr_Occurred())
 	return NULL;
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_main_iteration
+static PyObject *
+_wrap_gtk_main_iteration(PyObject *self, PyObject *args)
+{
+    int block = 1, ret;
+
+    if(!PyArg_ParseTuple(args,"|i:main_iteration", &block)) 
+        return NULL;
+    pygtk_unblock_threads();
+    ret = gtk_main_iteration_do(block);
+    pygtk_block_threads();
+    return PyInt_FromLong(ret);
+}
+%%
+override gtk_timeout_add
+static PyObject *
+_wrap_gtk_timeout_add(PyObject *self, PyObject *args)
+{
+    guint32 interval;
+    PyObject *first, *callback, *cbargs = NULL, *data;
+    gint len;
+
+    len = PyTuple_Size(args);
+    if (len < 2) {
+	PyErr_SetString(PyExc_TypeError,
+			"timeout_add requires at least 2 args");
+	return NULL;
+    }
+    first = PySequence_GetSlice(args, 0, 2);
+    if (!PyArg_ParseTuple(first, "iO:timeout_add", &interval, &callback)) {
+	Py_DECREF(first);
+        return NULL;
+    }
+    Py_DECREF(first);
+    if (!PyCallable_Check(callback)) {
+        PyErr_SetString(PyExc_TypeError, "second arg not callable");
+        return NULL;
+    }
+    cbargs = PySequence_GetSlice(args, 2, len);
+
+    if (cbargs == NULL)
+      return NULL;
+    data = Py_BuildValue("(ON)", callback, cbargs);
+    if (data == NULL)
+      return NULL;
+    return PyInt_FromLong(gtk_timeout_add_full(interval, NULL,
+        (GtkCallbackMarshal)pygtk_handler_marshal,
+        data, (GtkDestroyNotify)pygtk_destroy_notify));
+}
+%%
+override gtk_idle_add
+static PyObject *
+_wrap_gtk_idle_add(PyObject *self, PyObject *args)
+{
+    PyObject *first, *callback, *cbargs = NULL, *data;
+    gint len;
+
+    len = PyTuple_Size(args);
+    if (len < 1) {
+	PyErr_SetString(PyExc_TypeError,
+			"idle_add requires at least 1 arg");
+	return NULL;
+    }
+    first = PySequence_GetSlice(args, 0, 1);
+    if (!PyArg_ParseTuple(first, "O:idle_add", &callback)) {
+	Py_DECREF(first);
+        return NULL;
+    }
+    Py_DECREF(first);
+    if (!PyCallable_Check(callback)) {
+        PyErr_SetString(PyExc_TypeError, "first arg not callable");
+        return NULL;
+    }
+    cbargs = PySequence_GetSlice(args, 1, len);
+
+    if (cbargs == NULL)
+      return NULL;
+    data = Py_BuildValue("(ON)", callback, cbargs);
+    if (data == NULL)
+      return NULL;
+    return PyInt_FromLong(gtk_idle_add_full(GTK_PRIORITY_DEFAULT, NULL,
+        (GtkCallbackMarshal)pygtk_handler_marshal,
+        data, (GtkDestroyNotify)pygtk_destroy_notify));
+}
+%%
+override gtk_quit_add
+static PyObject *
+_wrap_gtk_quit_add(PyObject *self, PyObject *args)
+{
+    gint main_level;
+    PyObject *first, *callback, *cbargs = NULL, *data;
+    gint len;
+
+    len = PyTuple_Size(args);
+    if (len < 2) {
+	PyErr_SetString(PyExc_TypeError,
+			"quit_add requires at least 2 args");
+	return NULL;
+    }
+    first = PySequence_GetSlice(args, 0, 2);
+    if (!PyArg_ParseTuple(first, "iO:quit_add", &main_level, &callback)) {
+	Py_DECREF(first);
+        return NULL;
+    }
+    Py_DECREF(first);
+    if (!PyCallable_Check(callback)) {
+        PyErr_SetString(PyExc_TypeError, "second arg not callable");
+        return NULL;
+    }
+    cbargs = PySequence_GetSlice(args, 2, len);
+
+    if (cbargs == NULL)
+      return NULL;
+    data = Py_BuildValue("(ON)", callback, cbargs);
+    if (data == NULL)
+      return NULL;
+    return PyInt_FromLong(gtk_quit_add_full(main_level, NULL,
+        (GtkCallbackMarshal)pygtk_handler_marshal,
+        data, (GtkDestroyNotify)pygtk_destroy_notify));
+}
+%%
+override gtk_input_add_full
+static PyObject *
+_wrap_gtk_input_add_full(PyObject *self, PyObject *args)
+{
+    int source;
+    GdkInputCondition condition;
+    PyObject *callback;
+
+    if (!PyArg_ParseTuple(args, "iiO:input_add", &source, &condition,
+                          &callback))
+        return NULL;
+    if (!PyCallable_Check(callback)) {
+        PyErr_SetString(PyExc_TypeError, "3rd arg not callable.");
+        return NULL;
+    }
+    Py_INCREF(callback);
+    return PyInt_FromLong(gtk_input_add_full(source, condition, NULL,
+			(GtkCallbackMarshal)pygtk_input_marshal, callback,
+			(GtkDestroyNotify)pygtk_destroy_notify));
+}
+%%
+override gtk_widget_draw
+static PyObject *
+_wrap_gtk_widget_draw(PyGtk_Object *self, PyObject *args)
+{
+    GdkRectangle rect;
+
+    if (!PyArg_ParseTuple(args,"(hhhh):GtkWidget.draw",
+                         &(rect.x), &(rect.y), &(rect.width), &(rect.height)))
+        return NULL;
+    gtk_widget_draw(GTK_WIDGET(self->obj), &rect);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_widget_size_request
+static PyObject *
+_wrap_gtk_widget_size_request(PyGtk_Object *self, PyObject *args)
+{
+    GtkRequisition requisition;
+
+    if (!PyArg_ParseTuple(args,":GtkWidget.size_request"))
+        return NULL;
+    gtk_widget_size_request(GTK_WIDGET(self->obj), &requisition);
+    return Py_BuildValue("(ii)", requisition.width, requisition.height);
+}
+%%
+override gtk_widget_size_allocate
+static PyObject *
+_wrap_gtk_widget_size_allocate(PyGtk_Object *self, PyObject *args) 
+{
+    GtkAllocation allocation;
+
+    if(!PyArg_ParseTuple(args,"(hhhh):GtkWidget.size_allocate",
+                         &(allocation.x), &(allocation.y),
+                         &(allocation.width), &(allocation.height)))
+        return NULL;
+    gtk_widget_size_allocate(GTK_WIDGET(self->obj), &allocation);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_widget_get_child_requisition
+static PyObject *
+_wrap_gtk_widget_get_child_requisition(PyGtk_Object *self, PyObject *args)
+{
+    GtkRequisition requisition;
+
+    if (!PyArg_ParseTuple(args,":GtkWidget.get_child_requisition"))
+        return NULL;
+    gtk_widget_get_child_requisition(GTK_WIDGET(self->obj), &requisition);
+    return Py_BuildValue("(ii)", requisition.width, requisition.height);
+}
+%%
+override gtk_widget_intersect
+static PyObject *
+_wrap_gtk_widget_intersect(PyGtk_Object *self, PyObject *args)
+{
+    GdkRectangle area;
+    GdkRectangle intersect;
+
+    if(!PyArg_ParseTuple(args,"(hhhh):GtkWidget.intersect",
+                         &(area.x), &(area.y), &(area.width), &(area.height))) 
+        return NULL;
+    if (gtk_widget_intersect(GTK_WIDGET(self->obj), &area, &intersect))
+        return Py_BuildValue("(iiii)", (int)intersect.x, (int)intersect.y,
+                             (int)intersect.width, (int)intersect.height);
+    else {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+}
+%%
+override gtk_widget_get_pointer
+static PyObject *
+_wrap_gtk_widget_get_pointer(PyGtk_Object *self, PyObject *args)
+{
+    int x, y;
+
+    if (!PyArg_ParseTuple(args, ":GtkWidget.get_pointer"))
+	return NULL;
+    gtk_widget_get_pointer(GTK_WIDGET(self->obj), &x, &y);
+    return Py_BuildValue("(ii)", x, y);
+}
+%%
+override gtk_container_children
+static PyObject *
+_wrap_gtk_container_children(PyGtk_Object *self, PyObject *args)
+{
+    GList *list, *tmp;
+    PyObject *py_list;
+    PyObject *gtk_obj;
+
+    if(!PyArg_ParseTuple(args,":GtkContainer.children"))
+        return NULL;
+    list = gtk_container_children(GTK_CONTAINER(self->obj));
+
+    if ((py_list = PyList_New(0)) == NULL) {
+	g_list_free(list);
+	return NULL;
+    }
+    for (tmp = list; tmp != NULL; tmp = tmp->next) {
+	gtk_obj = PyGtk_New(GTK_OBJECT(tmp->data));
+	if (gtk_obj == NULL) {
+	    g_list_free(list);
+	    Py_DECREF(py_list);
+	    return NULL;
+	}
+	PyList_Append(py_list, gtk_obj);
+	Py_DECREF(gtk_obj);
+    }
+    g_list_free(list);
+    return py_list;
+}
+%%
+ignore gtk_button_new_with_label
+%%
+override gtk_button_new
+static PyObject *
+_wrap_gtk_button_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, "|z:GtkButton.__init__", &text))
+	return NULL;
+    if (text)
+	self->obj = (GtkObject *)gtk_button_new_with_label(text);
+    else
+	self->obj = (GtkObject *)gtk_button_new();
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkButton object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_toggle_button_new_with_label
+%%
+override gtk_toggle_button_new
+static PyObject *
+_wrap_gtk_toggle_button_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, "|z:GtkToggleButton.__init__", &text))
+	return NULL;
+    if (text)
+	self->obj = (GtkObject *)gtk_toggle_button_new_with_label(text);
+    else
+	self->obj = (GtkObject *)gtk_toggle_button_new();
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkToggleButton object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_check_button_new_with_label
+%%
+override gtk_check_button_new
+static PyObject *
+_wrap_gtk_check_button_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, "|z:GtkCheckButton.__init__", &text))
+	return NULL;
+    if (text)
+	self->obj = (GtkObject *)gtk_check_button_new_with_label(text);
+    else
+	self->obj = (GtkObject *)gtk_check_button_new();
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkCheckButton object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore-glob gtk_radio_button_new_*
+%%
+override gtk_radio_button_new
+static PyObject *
+_wrap_gtk_radio_button_new(PyGtk_Object *self, PyObject *args)
+{
+    PyObject *py_group = Py_None;
+    gchar *label = NULL;
+    GtkRadioButton *group;
+
+    if (!PyArg_ParseTuple(args, "|Oz:GtkRadioButton.__init__", &py_group,
+			  &label))
+	return NULL;
+    if (py_group == Py_None)
+	group = NULL;
+    else if (PyGtk_Check(py_group))
+	group = GTK_RADIO_BUTTON(PyGtk_Get(py_group));
+    else {
+	PyErr_SetString(PyExc_TypeError,
+			"first argument must be a GtkRadioButton or None");
+	return NULL;
+    }
+    /* various configs for create radio buttons ... */
+    if (label == NULL) {
+	if (group == NULL)
+	    self->obj = (GtkObject *)gtk_radio_button_new(NULL);
+	else
+	    self->obj = (GtkObject *)gtk_radio_button_new(group->group);
+    } else {
+	if (group == NULL)
+	    self->obj = (GtkObject *)gtk_radio_button_new_with_label(NULL,
+								     label);
+	else
+	    self->obj = (GtkObject *)gtk_radio_button_new_with_label
+		(group->group, label);
+    }
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkRadioButton object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_list_item_new_with_label
+%%
+override gtk_list_item_new
+static PyObject *
+_wrap_gtk_list_item_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, "|z:GtkListItem.__init__", &text))
+	return NULL;
+    if (text)
+	self->obj = (GtkObject *)gtk_list_item_new_with_label(text);
+    else
+	self->obj = (GtkObject *)gtk_list_item_new();
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkListItem object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_tree_item_new_with_label
+%%
+override gtk_tree_item_new
+static PyObject *
+_wrap_gtk_tree_item_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, "|z:GtkTreeItem.__init__", &text))
+	return NULL;
+    if (text)
+	self->obj = (GtkObject *)gtk_tree_item_new_with_label(text);
+    else
+	self->obj = (GtkObject *)gtk_tree_item_new();
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkTreeItem object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_menu_item_new_with_label
+%%
+override gtk_menu_item_new
+static PyObject *
+_wrap_gtk_menu_item_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, "|z:GtkMenuItem.__init__", &text))
+	return NULL;
+    if (text)
+	self->obj = (GtkObject *)gtk_menu_item_new_with_label(text);
+    else
+	self->obj = (GtkObject *)gtk_menu_item_new();
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkMenuItem object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_check_menu_item_new_with_label
+%%
+override gtk_check_menu_item_new
+static PyObject *
+_wrap_gtk_check_menu_item_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+
+    if (!PyArg_ParseTuple(args, "|z:GtkCheckMenuItem.__init__", &text))
+	return NULL;
+    if (text)
+	self->obj = (GtkObject *)gtk_check_menu_item_new_with_label(text);
+    else
+	self->obj = (GtkObject *)gtk_check_menu_item_new();
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkCheckMenuItem object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+ignore gtk_radio_menu_item_new_with_label
+%%
+override gtk_radio_menu_item_new
+static PyObject *
+_wrap_gtk_radio_menu_item_new(PyGtk_Object *self, PyObject *args)
+{
+    gchar *text = NULL;
+    PyObject *py_group = Py_None;
+    GtkRadioMenuItem *group;
+
+    if (!PyArg_ParseTuple(args, "|Oz:GtkRadioMenuItem.__init__",
+			  &py_group, &text))
+	return NULL;
+    /* various configs for create radio buttons ... */
+    if (text == NULL) {
+	if (group == NULL)
+	    self->obj = (GtkObject *)gtk_radio_menu_item_new(NULL);
+	else
+	    self->obj = (GtkObject *)gtk_radio_menu_item_new(group->group);
+    } else {
+	if (group == NULL)
+	    self->obj = (GtkObject *)gtk_radio_menu_item_new_with_label(NULL,
+									text);
+	else
+	    self->obj = (GtkObject *)gtk_radio_menu_item_new_with_label
+		(group->group, text);
+    }
+    if (!self->obj) {
+	PyErr_SetString(PyExc_RuntimeError, "could not create GtkRadioMenuItem object");
+	return NULL;
+    }
+    pygtk_register_wrapper((PyObject *)self);
     Py_INCREF(Py_None);
     return Py_None;
 }
