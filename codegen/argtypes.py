@@ -437,9 +437,9 @@ matcher.register_boxed('GdkEvent', 'PyGdkEvent_Type',
 		       'PyGdkEvent_Get', 'PyGdkEvent_New')
 matcher.register_boxed('GdkWindow', 'PyGdkWindow_Type',
 		       'PyGdkWindow_Get', 'PyGdkWindow_New')
-matcher.register('GdkPixmap', matcher.get('GdkWindow*'))
-matcher.register('GdkBitmap', matcher.get('GdkWindow*'))
-matcher.register('GdkDrawable', matcher.get('GdkWindow*'))
+matcher.register('GdkPixmap*', matcher.get('GdkWindow*'))
+matcher.register('GdkBitmap*', matcher.get('GdkWindow*'))
+matcher.register('GdkDrawable*', matcher.get('GdkWindow*'))
 matcher.register_boxed('GdkGC', 'PyGdkGC_Type',
 		       'PyGdkGC_Get', 'PyGdkGC_New')
 matcher.register_boxed('GdkColormap', 'PyGdkColormap_Type',

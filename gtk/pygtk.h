@@ -164,78 +164,7 @@ typedef struct {
 /* this section is dependent on whether we are being included from gtkmodule.c
  * or not.  A similar source level interface should be provided in both
  * instances. */
-#ifdef _INSIDE_PYGTK_
-extern PyExtensionClass PyGtkObject_Type;
-extern PyTypeObject PyGtkAccelGroup_Type;
-extern PyTypeObject PyGtkStyle_Type;
-extern PyTypeObject PyGdkFont_Type;
-extern PyTypeObject PyGdkColor_Type;
-extern PyTypeObject PyGdkEvent_Type;
-extern PyTypeObject PyGdkWindow_Type;
-extern PyTypeObject PyGdkGC_Type;
-extern PyTypeObject PyGdkColormap_Type;
-extern PyTypeObject PyGdkDragContext_Type;
-extern PyTypeObject PyGtkSelectionData_Type;
-extern PyTypeObject PyGdkAtom_Type;
-extern PyTypeObject PyGdkCursor_Type;
-extern PyTypeObject PyGtkCTreeNode_Type;
-
-/* check the type of a PyObject */
-#define PyGtk_Check(v) (ExtensionClassSubclassInstanceCheck(v,&PyGtkObject_Type))
-#define PyGtkAccelGroup_Check(v) ((v)->ob_type == &PyGtkAccelGroup_Type)
-#define PyGtkStyle_Check(v) ((v)->ob_type == &PyGtkStyle_Type)
-#define PyGdkFont_Check(v) ((v)->ob_type == &PyGdkFont_Type)
-#define PyGdkColor_Check(v) ((v)->ob_type == &PyGdkColor_Type)
-#define PyGdkEvent_Check(v) ((v)->ob_type == &PyGdkEvent_Type)
-#define PyGdkWindow_Check(v) ((v)->ob_type == &PyGdkWindow_Type)
-#define PyGdkBitmap_Check(v) ((v)->ob_type == &PyGdkWindow_Type)
-#define PyGdkGC_Check(v) ((v)->ob_type == &PyGdkGC_Type)
-#define PyGdkColormap_Check(v) ((v)->ob_type == &PyGdkColormap_Type)
-#define PyGdkDragContext_Check(v) ((v)->ob_type == &PyGdkDragContext_Type)
-#define PyGtkSelectionData_Check(v) ((v)->ob_type == &PyGtkSelectionData_Type)
-#define PyGdkAtom_Check(v) ((v)->ob_type == &PyGdkAtom_Type)
-#define PyGdkCursor_Check(v) ((v)->ob_type == &PyGdkCursor_Type)
-#define PyGtkCTreeNode_Check(v) ((v)->ob_type == &PyGtkCTreeNode_Type)
-
-/* constructors for PyObject wrappers ... */
-static PyObject *PyGtk_New(GtkObject *obj);
-static PyObject *PyGtkAccelGroup_New(GtkAccelGroup *obj);
-static PyObject *PyGtkStyle_New(GtkStyle *style);
-static PyObject *PyGdkFont_New(GdkFont *font);
-static PyObject *PyGdkColor_New(GdkColor *colour);
-static PyObject *PyGdkEvent_New(GdkEvent *event);
-static PyObject *PyGdkWindow_New(GdkWindow *window);
-static PyObject *PyGdkGC_New(GdkGC *gc);
-static PyObject *PyGdkColormap_New(GdkColormap *colourmap);
-static PyObject *PyGdkDragContext_New(GdkDragContext *ctx);
-static PyObject *PyGtkSelectionData_New(GtkSelectionData *data);
-static PyObject *PyGdkAtom_New(GdkAtom atom);
-static PyObject *PyGdkCursor_New(GdkCursor *cursor);
-static PyObject *PyGtkCTreeNode_New(GtkCTreeNode *node);
-
-/* miscelaneous functions */
-static void PyGtk_BlockThreads(void);
-static void PyGtk_UnblockThreads(void);
-static void PyGtk_DestroyNotify(gpointer data);
-static void PyGtk_CallbackMarshal(GtkObject *o, gpointer d, guint nargs,
-				  GtkArg *args);
-static PyObject *GtkArgs_AsTuple(int nparams, GtkArg *args);
-static int GtkArgs_FromSequence(GtkArg *args, int nparams, PyObject *seq);
-static int GtkArg_FromPyObject(GtkArg *arg, PyObject *obj);
-static PyObject *GtkArg_AsPyObject(GtkArg *arg);
-static void GtkRet_FromPyObject(GtkArg *ret, PyObject *py_ret);
-static PyObject *GtkRet_AsPyObject(GtkArg *arg);
-static GtkArg *PyDict_AsGtkArgs(PyObject *dict, GtkType type, gint *nargs);
-
-static void PyGtk_RegisterBoxed(GtkType boxed_type,
-				PyObject *(*fromarg)(gpointer boxed),
-				int (*toarg)(gpointer *boxed, PyObject *obj));
-gint PyGtkEnum_get_value(GtkType enum_type, PyObject *obj, int *val);
-gint PyGtkFlag_get_value(GtkType enum_type, PyObject *obj, int *val);
-
-static gboolean PyGtk_FatalExceptions = FALSE;
-
-#else
+#ifndef _INSIDE_PYGTK_
 
 /* for multi file extensions, define one of these in all but the main file
  * of the module */

@@ -3,8 +3,71 @@
 /* this module provides some of the base functionality of the GtkObject
  * wrapper system */
 
-#define _INSIDE_PYGTK_
-#include "pygtk.h"
+#include "pygtk-private.h"
+
+/* ----------------- Thread stuff -------------------- */
+/* The threading hacks are based on ones supplied by Duncan Grisby
+ * of AT&T Labs Cambridge.  Since then they have been modified a bit. */
+
+/* The threading code has been enhanced to be a little better with multiple
+ * threads accessing GTK+.  Here are some notes on the changes by
+ * Paul Fisher:
+ *
+ * If threading is enabled, we create a recursive version of Python's
+ * global interpreter mutex using TSD.  This scheme makes it possible,
+ * although rather hackish, for any thread to make a call into PyGTK,
+ * as long as the GDK lock is held (that is, Python code is wrapped
+ * around a threads_{enter,leave} pair).
+ *
+ * A viable alternative would be to wrap each and every GTK call, at
+ * the Python/C level, with Py_{BEGIN,END}_ALLOW_THREADS.  However,
+ * given the nature of Python threading, this option is not
+ * particularly appealing.
+ */
+
+
+#ifdef WITH_THREAD
+static GStaticPrivate pythreadstate_key = G_STATIC_PRIVATE_INIT;
+static GStaticPrivate counter_key = G_STATIC_PRIVATE_INIT;
+
+/* The global Python lock will be grabbed by Python when entering a
+ * Python/C function; thus, the initial lock count will always be one.
+ */
+#  define INITIAL_LOCK_COUNT 1
+#  define PyGTK_BLOCK_THREADS                                              \
+   {                                                                       \
+     gint counter = GPOINTER_TO_INT(g_static_private_get(&counter_key));   \
+     if (counter == -INITIAL_LOCK_COUNT) {                                 \
+       PyThreadState *_save;                                               \
+       _save = g_static_private_get(&pythreadstate_key);                   \
+       Py_BLOCK_THREADS;                                                   \
+     }                                                                     \
+     counter++;                                                            \
+     g_static_private_set(&counter_key, GINT_TO_POINTER(counter), NULL);   \
+   }
+
+#  define PyGTK_UNBLOCK_THREADS                                            \
+   {                                                                       \
+     gint counter = GPOINTER_TO_INT(g_static_private_get(&counter_key));   \
+     counter--;                                                            \
+     if (counter == -INITIAL_LOCK_COUNT) {                                 \
+       PyThreadState *_save;                                               \
+       Py_UNBLOCK_THREADS;                                                 \
+       g_static_private_set(&pythreadstate_key, _save, NULL);              \
+     }                                                                     \
+     g_static_private_set(&counter_key, GINT_TO_POINTER(counter), NULL);   \
+   }
+
+
+#else /* !WITH_THREADS */
+#  define PyGTK_BLOCK_THREADS
+#  define PyGTK_UNBLOCK_THREADS
+#endif
+
+void pygtk_block_threads(void) { PyGTK_BLOCK_THREADS }
+void pygtk_unblock_threads(void) { PyGTK_UNBLOCK_THREADS }
+
+/* ------------------- object support */
 
 void
 pygtk_destroy_notify(gpointer user_data)
@@ -88,7 +151,7 @@ pygtk_dealloc(PyGtk_Object *self)
 }
 
 /* standard getattr method */
-void
+PyObject *
 pygtk_getattr(PyGtk_Object *self, char *attr)
 {
     return Py_FindAttrString((PyObject *)self, attr);
@@ -330,7 +393,7 @@ pygtk_arg_from_pyobject(GtkArg *arg, PyObject *obj)
     case GTK_TYPE_FOREIGN:
 	Py_INCREF(obj);
 	GTK_VALUE_FOREIGN(*arg).data = obj;
-	GTK_VALUE_FOREIGN(*arg).notify = PyGtk_DestroyNotify;
+	GTK_VALUE_FOREIGN(*arg).notify = pygtk_destroy_notify;
 	break;
     case GTK_TYPE_SIGNAL:
 	if (PyCallable_Check(obj)) {
@@ -344,9 +407,9 @@ pygtk_arg_from_pyobject(GtkArg *arg, PyObject *obj)
 	if (PyCallable_Check(obj)) {
 	    Py_INCREF(obj);
 	    GTK_VALUE_CALLBACK(*arg).marshal =
-		(GtkCallbackMarshal)PyGtk_CallbackMarshal;
+		(GtkCallbackMarshal)pygtk_callback_marshal;
 	    GTK_VALUE_CALLBACK(*arg).data = obj;
-	    GTK_VALUE_CALLBACK(*arg).notify = PyGtk_DestroyNotify;
+	    GTK_VALUE_CALLBACK(*arg).notify = pygtk_destroy_notify;
 	} else
 	    return -1;
 	break;
@@ -766,7 +829,7 @@ pygtk_args_from_sequence(GtkArg *args, int nparams, PyObject *seq)
 
 
 /* generic callback marshal */
-static void
+void
 pygtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args)
 {
     PyObject *tuple = data, *func, *extra=NULL, *obj=NULL, *ret, *a, *params;
@@ -822,7 +885,7 @@ pygtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args)
     PyGTK_UNBLOCK_THREADS
 }
 
-static void
+void
 pygtk_signal_marshal(GtkObject *object, gpointer user_data,
 		    int nparams, GtkArg *args, GtkType *arg_types,
 		    GtkType return_type)
@@ -864,17 +927,11 @@ pygtk_signal_marshal(GtkObject *object, gpointer user_data,
     PyGTK_UNBLOCK_THREADS
 }
 
-static
-void PyGtk_SignalDestroy(/*gpointer*/ PyObject *func) {
-    PyGTK_BLOCK_THREADS
-    Py_DECREF(func);
-    PyGTK_UNBLOCK_THREADS
-}
-
 /* simple callback handler -- this one actually looks at the return type */
 /* used for timeout and idle functions */
-static void PyGtk_HandlerMarshal(gpointer a, PyObject *func, int nargs,
-                                                          GtkArg *args) {
+void
+pygtk_handler_marshal(gpointer a, PyObject *func, int nargs, GtkArg *args)
+{
     PyObject *ret;
 
     PyGTK_BLOCK_THREADS
@@ -904,7 +961,7 @@ static void PyGtk_HandlerMarshal(gpointer a, PyObject *func, int nargs,
 }
 
 /* callback for input handlers */
-static void
+void
 pygtk_input_marshal(gpointer a, PyObject *func, int nargs, GtkArg *args)
 {
     PyObject *tuple, *ret;
@@ -926,7 +983,7 @@ pygtk_input_marshal(gpointer a, PyObject *func, int nargs, GtkArg *args)
     PyGTK_UNBLOCK_THREADS
 }
 
-static GtkArg *
+GtkArg *
 pygtk_dict_as_args(PyObject *dict, GtkType type, gint *nargs)
 {
     PyObject *key, *item;
@@ -968,7 +1025,7 @@ pygtk_dict_as_args(PyObject *dict, GtkType type, gint *nargs)
     return arg;
 }
 
-static GtkArg *
+GtkArg *
 pygtk_dict_as_container_args(PyObject *dict, GtkType type, gint *nargs)
 {
     PyObject *key, *item;
@@ -1007,6 +1064,73 @@ pygtk_dict_as_container_args(PyObject *dict, GtkType type, gint *nargs)
 	pos++;
     }
    return arg;
+}
+
+/* return 1 on failure */
+gint
+pygtk_enum_get_value(GtkType enum_type, PyObject *obj, int *val)
+{
+    if (PyInt_Check(obj)) {
+	*val = PyInt_AsLong(obj);
+	return 0;
+    } else if (PyString_Check(obj)) {
+	GtkEnumValue *info = gtk_type_enum_find_value(enum_type,
+						      PyString_AsString(obj));
+	if (!info) {
+	    PyErr_SetString(PyExc_TypeError, "couldn't translate string");
+	    return 1;
+	}
+	*val = info->value;
+	return 0;
+    }
+    PyErr_SetString(PyExc_TypeError,"enum values must be integers or strings");
+    return 1;
+}
+
+gint
+pygtk_flag_get_value(GtkType flag_type, PyObject *obj, int *val)
+{
+    if (PyInt_Check(obj)) {
+	*val = PyInt_AsLong(obj);
+	return 0;
+    } else if (PyString_Check(obj)) {
+	GtkFlagValue *info = gtk_type_flags_find_value(flag_type,
+						       PyString_AsString(obj));
+	if (!info) {
+	    PyErr_SetString(PyExc_TypeError, "couldn't translate string");
+	    return 1;
+	}
+	*val = info->value;
+	return 0;
+    } else if (PyTuple_Check(obj)) {
+	int i, len;
+	PyObject *item;
+	len = PyTuple_Size(obj);
+	*val = 0;
+	for (i = 0; i < len; i++) {
+	    item = PyTuple_GetItem(obj, i);
+	    if (PyInt_Check(item))
+		*val |= PyInt_AsLong(item);
+	    else if (PyString_Check(item)) {
+		GtkFlagValue *info = gtk_type_flags_find_value(flag_type,
+						PyString_AsString(item));
+		if (!info) {
+		    PyErr_SetString(PyExc_TypeError,
+				    "couldn't translate string");
+		    return 1;
+		}
+		*val |= info->value;
+	    } else {
+		PyErr_SetString(PyExc_TypeError,
+				"tuple components must be ints or strings");
+		return 1;
+	    }
+	}
+	return 0;
+    }
+    PyErr_SetString(PyExc_TypeError,
+		    "flag values must be ints, strings or tuples");
+    return 1;
 }
 
 
@@ -1077,13 +1201,17 @@ _wrap_gtk_signal_connect_object(PyGtk_Object *self, PyObject *args)
     PyObject *func, *extra = NULL, *other, *data;
     int signum;
 
-    if (!PyArg_ParseTuple(args, "sOO!|O!:GtkObject.connect_object",
-			  &name, &func, &PyGtk_Type, &other,
+    if (!PyArg_ParseTuple(args, "sOO|O!:GtkObject.connect_object",
+			  &name, &func, &other,
 			  &PyTuple_Type, &extra))
         return NULL;
     if (!PyCallable_Check(func)) {
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
+    }
+    if (!PyGtk_Check(other)) {
+	PyErr_SetString(PyExc_TypeError, "forth argument must be a GtkObject");
+	return NULL;
     }
     
     if (extra)
@@ -1110,13 +1238,17 @@ _wrap_gtk_signal_connect_object_after(PyGtk_Object *self, PyObject *args)
     PyObject *func, *extra = NULL, *other, *data;
     int signum;
 
-    if (!PyArg_ParseTuple(args, "sOO!|O!:GtkObject.connect_object_after",
-			  &name, &func, &PyGtk_Type, &other,
+    if (!PyArg_ParseTuple(args, "sOO|O!:GtkObject.connect_object_after",
+			  &name, &func, &other,
 			  &PyTuple_Type, &extra))
         return NULL;
     if (!PyCallable_Check(func)) {
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
+    }
+    if (!PyGtk_Check(other)) {
+	PyErr_SetString(PyExc_TypeError, "forth argument must be a GtkObject");
+	return NULL;
     }
 
     if (extra)
@@ -1126,9 +1258,9 @@ _wrap_gtk_signal_connect_object_after(PyGtk_Object *self, PyObject *args)
 
     data = Py_BuildValue("(ONO)", func, extra, other);
 
-    signum = gtk_signal_connect_full(PyGtk_Get(obj), name, NULL,
-				     (GtkCallbackMarshal)PyGtk_CallbackMarshal,
-				     data, PyGtk_DestroyNotify, FALSE, TRUE);
+    signum = gtk_signal_connect_full(self->obj, name, NULL,
+				(GtkCallbackMarshal)pygtk_callback_marshal,
+				data, pygtk_destroy_notify, FALSE, TRUE);
     return PyInt_FromLong(signum);
 }
 
@@ -1177,7 +1309,7 @@ _wrap_gtk_signal_emitv_by_name(PyGtk_Object *self, PyObject *args)
     guint signal_id, i, nparams;
     GtkSignalQuery *query;
     GtkArg *params;
-    PyObject *py_params;
+    PyObject *ret, *py_params;
     gchar *name, buf[sizeof(GtkArg)]; /* large enough to hold any return value */
 
     if (!PyArg_ParseTuple(args, "sO:GtkObject.emit", &name, &py_params))
@@ -1208,13 +1340,13 @@ _wrap_gtk_signal_emitv_by_name(PyGtk_Object *self, PyObject *args)
     return NULL;
   }
   gtk_signal_emitv(self->obj, signal_id, params);
-  obj = pygtk_ret_as_pyobject(&params[nparams]);
+  ret = pygtk_ret_as_pyobject(&params[nparams]);
   g_free(params);
-  if (obj == NULL) {
+  if (ret == NULL) {
       Py_INCREF(Py_None);
-      obj = Py_None;
+      ret = Py_None;
   }
-  return obj;
+  return ret;
 }
 
 static PyObject *
@@ -1274,7 +1406,7 @@ _wrap_gtk_object_set_data(PyGtk_Object *self, PyObject *args)
 }
 
 static PyObject *
-_wrap_gtk_object_get_data(PyObject *self, PyObject *args)
+_wrap_gtk_object_get_data(PyGtk_Object *self, PyObject *args)
 {
 	char *key;
 	PyObject *data;

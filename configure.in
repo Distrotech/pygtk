@@ -2,7 +2,10 @@ AC_INIT
 
 dnl for gnome-python:
 
-AM_INIT_AUTOMAKE(pygtk, 0.6.4)
+AM_INIT_AUTOMAKE(pygtk, 0.7.0)
+
+AM_DISABLE_STATIC
+AM_PROG_LIBTOOL
 
 AM_PATH_PYTHON
 AM_INIT_PYEXEC_MOD
@@ -26,6 +29,6 @@ CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
 AC_CHECK_HEADER(arrayobject.h, AC_DEFINE(HAVE_NUMPY))
 CPPFLAGS="$save_CPPFLAGS"
 
-AC_OUTPUT(Makefile generate/Makefile pyglade/Makefile)
+AC_OUTPUT(Makefile gtk/Makefile generate/Makefile pyglade/Makefile)
 
 

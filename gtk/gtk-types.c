@@ -1,7 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*- */
 #include <gtk/gtk.h>
-#define _INSIDE_PYGTK_
-#include "pygtk.h"
+#include "pygtk-private.h"
 
 PyObject *
 PyGtkAccelGroup_New(GtkAccelGroup *obj)
@@ -743,7 +742,7 @@ PyTypeObject PyGdkColor_Type = {
     NULL
 };
 
-static PyObject *
+PyObject *
 PyGdkEvent_New(GdkEvent *obj)
 {
     PyGdkEvent_Object *self;
