@@ -19,5 +19,5 @@ load_font = font_load
 load_fontset = fontset_load
 
 # for importing ...
-__all__ = ['_gtk', 'GTK', 'GDK' ]
+__all__ = ['_gtk', 'GTK', 'GDK', 'imlib' ]
 

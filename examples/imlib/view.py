@@ -1,43 +1,41 @@
 #!/usr/bin/env python
 
-from gtk import *
-import GdkImlib
+import ltihooks
+
+import gtk, gtk.imlib
 
 def close(win, _event=None):
 	win.hide()
 	win.destroy()
 
-def resize(win, event):
-	im = win.get_data('user_data')
+def resize(win, event, im, pix):
 	# note that render must be called once before each call to make_pixmap
 	im.render(event.width, event.height)
-	pix = win.children()[0]
-	win.remove(pix)
-	pix = im.make_pixmap()
-	pix.show()
-	win.add(pix)
+	pixmap, mask = im.get_pixmap()
+	pix.set(pixmap, mask)
 
 def open_img(_b):
         file = fs.get_filename()
 	try:
-		im = GdkImlib.Image(file)
+		im = gtk.imlib.GdkImlibImage(file)
 	except RuntimeError: return
-	win = GtkWindow()
+	win = gtk.GtkWindow()
 	win.connect('destroy', close)
 	win.connect('delete_event', close)
-	win.connect('configure_event', resize)
 	win.set_title(file)
-	win.set_data('user_data', im)
+	win.set_policy(gtk.TRUE, gtk.TRUE, gtk.FALSE)
 	im.render()
-	pix = im.make_pixmap()
+	pixmap, mask = im.get_pixmap()
+	pix = gtk.GtkPixmap(pixmap, mask)
+	win.connect('configure_event', resize, im, pix)
 	pix.show()
 	win.add(pix)
 	win.show()
 
-fs = GtkFileSelection()
+fs = gtk.GtkFileSelection()
 fs.set_title('Image Viewer')
-fs.connect('destroy', mainquit)
-fs.connect('delete_event', mainquit)
+fs.connect('destroy', gtk.mainquit)
+fs.connect('delete_event', gtk.mainquit)
 
 label = fs.ok_button.children()[0]
 label.set_text('View')
@@ -45,8 +43,8 @@ fs.ok_button.connect('clicked', open_img)
 
 label = fs.cancel_button.children()[0]
 label.set_text('Quit')
-fs.cancel_button.connect('clicked', mainquit)
+fs.cancel_button.connect('clicked', gtk.mainquit)
 
 fs.show()
 
-mainloop()
+gtk.mainloop()

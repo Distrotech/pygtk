@@ -1,5 +1,17 @@
 2000-05-12  James Henstridge  <james@daa.com.au>
 
+	* gtk/__init__.py (__all__): add imlib to module list.
+
+	* examples/imlib/view.py: ported over to using new pygtk.
+
+	* gtk/imlibmodule.c: make sure we don't use the ExtensionClass version
+	of Py_FindMethod, as it doesn't have the same semantics.
+
+	* gtk/pygtk.h (init_pygtk): as pygtk.h causes ExtensionClass to be
+	imported, make sure ExtensionClass is inited for this file as well.
+
+	* gtk/imlibmodule.c: port of the imlib module over to new pygtk.
+
 	* codegen/argtypes.py: added support for GdkVisual to code generator.
 
 	* gtk/gtkobject-support.c: added support for GdkVisual for marshalling

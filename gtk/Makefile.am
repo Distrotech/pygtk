@@ -1,11 +1,15 @@
 
-INCLUDES = -I$(top_srcdir) $(PYTHON_INCLUDES) $(GTK_CFLAGS)
+INCLUDES = -I$(top_srcdir) $(PYTHON_INCLUDES) $(GTK_CFLAGS) $(GDK_IMLIB_CFLAGS)
+
+if BUILD_IMLIB
+imlibmodule = imlibmodule.la
+endif
 
 pysitedir = $(PYTHON_SITE)
 pysite_PYTHON = __init__.py GTK.py GDK.py
 
 pyexecdir = $(PYTHON_SITE_EXEC)
-pyexec_LTLIBRARIES = _gtkmodule.la
+pyexec_LTLIBRARIES = _gtkmodule.la $(imlibmodule)
 
 _gtkmodule_la_LDFLAGS = -module -avoid-version
 _gtkmodule_la_LIBADD = $(GTK_LIBS)
@@ -16,6 +20,12 @@ _gtkmodule_la_SOURCES = \
 	gtkobject-support.c \
 	gtk-types.c \
 	gtk.c
+
+imlibmodule_la_LDFLAGS = -module -avoid-version
+imlibmodule_la_LIBADD = $(GDK_IMLIB_LIBS)
+imlibmodule_la_SOURCES = \
+	pygdkimlib.h \
+	imlibmodule.c
 
 # chmod hack here is because automake guys decided distdir should be
 # read only for the next version :(

@@ -25,5 +25,9 @@
 /* define if Numeric Python support is to be used */
 #undef HAVE_NUMPY
 
+#undef HAVE_ARRAYOBJECT_H
+#undef HAVE_EXTENSIONS_ARRAYOBJECT_H
+#undef HAVE_NUMERIC_ARRAYOBJECT_H
+
 @BOTTOM@
 #endif /* !_PYGTK_CONFIG_H_ */

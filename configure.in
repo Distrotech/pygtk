@@ -29,10 +29,23 @@ AM_PATH_LIBGLADE(build_libglade=true, build_libglade=false)
 AM_CONDITIONAL(BUILD_LIBGLADE, $build_libglade)
 
 dnl checks to see if Numeric Python is installed.
-save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
-AC_CHECK_HEADER(arrayobject.h, AC_DEFINE(HAVE_NUMPY))
-CPPFLAGS="$save_CPPFLAGS"
+AC_ARG_ENABLE(numpy,
+[  --disable-numpy            Disable numeric python features],,
+enable_numpy=yes)
+if test "x$enable_numpy" != xno; then
+  save_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
+  AC_CHECK_HEADER(arrayobject.h,
+    [AC_DEFINE(HAVE_NUMPY)
+     AC_DEFINE(HAVE_ARRAYOBJECT_H)],
+    [AC_CHECK_HEADER(Extensions/arrayobject.h,
+      [AC_DEFINE(HAVE_NUMPY)
+       AC_DEFINE(HAVE_EXTENSIONS_ARRAYOBJECT_H)],
+      [AC_CHECK_HEADER(Numeric/arrayobject.h,
+        [AC_DEFINE(HAVE_NUMPY)
+         AC_DEFINE(HAVE_NUMERIC_ARRAYOBJECT_H)])])])
+  CPPFLAGS="$save_CPPFLAGS"
+fi
 
 AC_OUTPUT(Makefile codegen/Makefile gtk/Makefile)
 

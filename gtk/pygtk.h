@@ -278,6 +278,7 @@ struct _PyGtk_FunctionStruct *_PyGtk_API;
 	Py_FatalError("could not import _gtk"); \
 	return; \
     } \
+    ExtensionClassImported; \
 }
 
 #endif
