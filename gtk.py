@@ -1907,7 +1907,7 @@ class GtkScrolledWindow(GtkBin):
 			'hscrollbar': _gtk.gtk_scrolled_window_get_hscrollbar,
 			'vscrollbar': _gtk.gtk_scrolled_window_get_vscrollbar
 		}
-		if attrs.has_attr(attr):
+		if attrs.has_key(attr):
 			return _obj2inst(attrs[attr](self._o))
 		else:
 			return GtkBin.__getattr__(self, attr)

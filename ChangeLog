@@ -1,3 +1,8 @@
+2002-11-12  Christian Reis    <kiko@async.com.br>
+
+	* gtk.py: Fix typo In GtkScrolledWindow - has_attr() was being
+	used as a method of the `attrs' has, changed to has_key().
+
 2002-11-11  Christian Reis    <kiko@async.com.br>
 
 	* gtkmodule.c, gtk.py: implement GtkCList.set_focus_row to allow
