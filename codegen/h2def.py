@@ -328,12 +328,14 @@ if __name__ == '__main__':
         print 'Must specify at least one input file name'
         sys.exit(-1)
 
-    # read all the object definitions in 
-    objdefs = [('GtkObject', None)]
+    # read all the object definitions in
+    objdefs = []
     enums = []
     for filename in args:
         buf = open(filename).read()
         find_obj_defs(buf, objdefs)
+        if len(filename) > 11 and filename[-11:] == 'gtkobject.h':
+            objdefs.append(('GtkObject', None))
         find_enum_defs(buf, enums)
     objdefs = sort_obj_defs(objdefs)
     write_obj_defs(objdefs,None)

@@ -12,10 +12,9 @@ functmpl = 'static PyObject *\n' + \
 	   '    if (!PyArg_ParseTuple(args, "%(typecodes)s:%(name)s"%(parselist)s))\n' + \
 	   '        return NULL;\n' + \
 	   '%(extracode)s\n' + \
-	   '    %(cname)s(%(arglist)s);\n' + \
-	   '    Py_INCREF(Py_None);\n' + \
-	   '    return Py_None;\n' + \
+	   '%(handleret)s\n' + \
 	   '}\n\n'
+funccalltmpl = '%(cname)s(%(arglist)s)'
 
 methtmpl = 'static PyObject *\n' + \
 	   '_wrap_%(cname)s(PyGtk_Object *self, PyObject *args)\n' + \
@@ -24,10 +23,9 @@ methtmpl = 'static PyObject *\n' + \
 	   '    if (!PyArg_ParseTuple(args, "%(typecodes)s:%(class)s.%(name)s"%(parselist)s))\n' + \
 	   '        return NULL;\n' + \
 	   '%(extracode)s\n' + \
-	   '    %(cname)s(%(cast)s(self->obj)%(arglist)s);\n' + \
-	   '    Py_INCREF(Py_None);\n' + \
-	   '    return Py_None;\n' + \
+	   '%(handleret)s' + \
 	   '}\n\n'
+methcalltmpl = '%(cname)s(%(cast)s(self->obj)%(arglist)s)'
 
 consttmpl = 'static PyObject *\n' + \
 	    '_wrap_%(cname)s(PyGtk_Object *self, PyObject *args)\n' + \
@@ -46,7 +44,7 @@ consttmpl = 'static PyObject *\n' + \
 	    '    return Py_None;\n' + \
 	    '}\n\n'
 
-methdeftmpl = '    { "%(name)s", %(cname)s, %(flags)s },\n'
+methdeftmpl = '    { "%(name)s", (PyCFunction)%(cname)s, %(flags)s },\n'
 
 typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
@@ -86,7 +84,6 @@ def write_function(funcobj, fp=sys.stdout):
 	'varlist': varlist,
     }
 
-    # handle return type ...
     for ptype, pname, pdflt, pnull in funcobj.params:
 	if pdflt and '|' not in parsestr:
 	    parsestr = parsestr + '|'
@@ -98,6 +95,11 @@ def write_function(funcobj, fp=sys.stdout):
     dict['parselist'] = string.join(parselist, ', ')
     dict['extracode'] = string.join(extracode, '')
     dict['arglist']   = string.join(arglist, ', ')
+
+    call = funccalltmpl % dict
+    handler = argtypes.matcher.get(funcobj.ret)
+    dict['handleret'] = handler.write_return(funcobj, varlist) % {'func': call}
+
     fp.write(functmpl % dict)
 
 def write_method(objname, methobj, fp=sys.stdout):
@@ -127,6 +129,11 @@ def write_method(objname, methobj, fp=sys.stdout):
     dict['parselist'] = string.join(parselist, ', ')
     dict['extracode'] = string.join(extracode, '')
     dict['arglist']   = string.join(arglist, ', ')
+
+    call = methcalltmpl % dict
+    handler = argtypes.matcher.get(methobj.ret)
+    dict['handleret'] = handler.write_return(methobj, varlist) % {'func': call}
+
     fp.write(methtmpl % dict)
 
 def write_constructor(objname, funcobj, fp=sys.stdout):
@@ -156,7 +163,7 @@ def write_constructor(objname, funcobj, fp=sys.stdout):
     dict['parselist'] = string.join(parselist, ', ')
     dict['extracode'] = string.join(extracode, '')
     dict['arglist']   = string.join(arglist, ', ')
-    fp.write(functmpl % dict)
+    fp.write(consttmpl % dict)
 
 def write_class(parser, objobj, fp=sys.stdout):
     fp.write('\n/* ----------- ' + objobj.c_name + ' ----------- */\n\n')

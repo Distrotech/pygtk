@@ -80,8 +80,15 @@ class ArgType:
 	Variables can be defined in varlist, and extra code can be
 	appended to extracode"""
 	raise RuntimeError, "this is an abstract class"
-    def write_ret(self):
+    def write_return(self, ptype, varlist):
+	"""Returns a pattern containing %(func)s that will do the return"""
 	raise RuntimeError, "this is an abstract class"
+
+class NoneArg(ArgType):
+    def write_return(self, ptype, varlist):
+	return '    %(func)s;\n' + \
+	       '    Py_INCREF(Py_None);\n' + \
+	       '    return Py_None;'
 
 class StringArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
@@ -96,6 +103,25 @@ class StringArg(ArgType):
 	    return 'z'
 	else:
 	    return 's'
+    def write_return(self, ptype, varlist):
+	if ptype in ('const-gchar*', 'const-char*', 'static_string'):
+	    varlist.add('const gchar', '*ret')
+	    return '    ret = %(func)s;\n' + \
+		   '    if (ret)\n' + \
+		   '        return PyString_FromString(ret);\n' + \
+		   '    Py_INCREF(Py_None);\n' + \
+		   '    return Py_None;'
+	else:
+	    # have to free result ...
+	    varlist.add('gchar', '*ret')
+	    return '    ret = %(func)s;\n' + \
+		   '    if (ret) {\n' + \
+		   '        PyObject *py_ret = PyString_FromString(ret);\n' + \
+		   '        g_free(ret);\n' + \
+		   '        return py_ret;\n' + \
+		   '    }\n' + \
+		   '    Py_INCREF(Py_None);\n' + \
+		   '    return Py_None;'
 
 class CharArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
@@ -107,6 +133,11 @@ class CharArg(ArgType):
 	parselist.append('&' + pname)
 	arglist.append(pname)
 	return 'c'
+    def write_return(self, ptype, varlist):
+	varlist.add('gchar', 'ret[2]')
+	return '    ret[0] = %(func)s;\n' + \
+	       "    ret[1] = '\0';\n" + \
+	       '    return PyString_FromString(ret);'
 
 class IntArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
@@ -118,6 +149,8 @@ class IntArg(ArgType):
 	parselist.append('&' + pname)
 	arglist.append(pname)
 	return 'i'
+    def write_result(self, ptype, varlist):
+	return '    return PyInt_FromLong(%(func)s);'
 
 class DoubleArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
@@ -129,6 +162,8 @@ class DoubleArg(ArgType):
 	parselist.append('&' + pname)
 	arglist.append(pname)
 	return 'd'
+    def write_result(self, ptype, varlist):
+	return '    return PyFloat_FromDouble(%(func)s);'
 
 class FileArg(ArgType):
     nulldflt = '    if (py_%(name)s == Py_None)\n' + \
@@ -176,6 +211,13 @@ class FileArg(ArgType):
 		parselist.append('&' + pname)
 		arglist.append('PyFile_AsFile(' + pname + ')')
 	    return 'O!'
+    def write_result(self, ptype, varlist):
+	varlist.add('FILE', '*ret')
+	return '    ret = %(func)s;\n' + \
+	       '    if (ret)\n' + \
+	       '        return PyFile_FromFile(ret, "", "", fclose);\n' + \
+	       '    Py_INCREF(Py_None);\n' + \
+	       '    return Py_None;'
 
 class EnumArg(ArgType):
     enum = '    if (pygtk_enum_get_value(%(typecode)s, py_%(name)s, (gint *)&%(name)s))\n' + \
@@ -194,6 +236,8 @@ class EnumArg(ArgType):
 	extracode.append(self.enum % {'typecode':self.typecode, 'name':pname})
 	arglist.append(pname)
 	return 'O'
+    def write_result(self, ptype, varlist):
+	return '    return PyInt_FromLong(%(func)s);'
 
 class FlagsArg(ArgType):
     flag = '    if (pygtk_flag_get_value(%(typecode)s, py_%(name)s, (gint *)&%(name)s))\n' + \
@@ -212,6 +256,8 @@ class FlagsArg(ArgType):
 	extracode.append(self.enum % {'typecode':self.typecode, 'name':pname})
 	arglist.append(pname)
 	return 'O'
+    def write_result(self, ptype, varlist):
+	return '    return PyInt_FromLong(%(func)s);'
 
 class ObjectArg(ArgType):
     # should change these checks to more typesafe versions that check
@@ -279,6 +325,9 @@ class ObjectArg(ArgType):
 					       'type':self.objname}) 
 		arglist.append('%s(%s->obj)' % (self.cast, pname))
 	    return 'O'
+    def write_result(self, ptype, varlist):
+	return '    /* PyGtk_New handles NULL checking */\n' + \
+	       '    return PyGtk_New((GtkObject *)%(func)s);'
 
 class BoxedArg(ArgType):
     # haven't done support for default args.  Is it needed?
@@ -295,7 +344,7 @@ class BoxedArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, varlist, parselist,
 		    extracode, arglist):
 	if pnull:
-	    varlist.add(ptype, pname)
+	    varlist.add(ptype, '*' + pname)
 	    varlist.add('PyObject', '*py_' + pname + ' = Py_None')
 	    parselist.append('&py_' + pname)
 	    extracode.append(self.null % {'name':pname, 'get':self.getter,
@@ -308,6 +357,13 @@ class BoxedArg(ArgType):
 	    parselist.append('&' + pname)
 	    arglist.append(self.getter + '(' + pname + ')')
 	    return 'O!'
+    def write_result(self, ptype, varlist):
+	varlist.add(ptype, '*ret')
+	return '    ret = %(func)s;\n' + \
+	       '    if (ret)\n' + \
+	       '        return ' + self.new + '(ret);\n' + \
+	       '    Py_INCREF(Py_None);\n' + \
+	       '    return Py_None;'
 
 class ArgMatcher:
     def __init__(self):
@@ -328,6 +384,10 @@ class ArgMatcher:
 	return self.argtypes[ptype]
 
 matcher = ArgMatcher()
+
+arg = NoneArg()
+matcher.register(None, arg)
+matcher.register('none', arg)
 
 arg = StringArg()
 matcher.register('char*', arg)
