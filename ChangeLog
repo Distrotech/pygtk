@@ -1,5 +1,8 @@
 2003-12-22  James Henstridge  <james@daa.com.au>
 
+	* gtk/gtk.override (ignore): ignore gtk_plug_construct on all
+	architectures.
+
 	* gtk/gdk.defs (gdk_pixmap_foreign_new): caller owns return
 	value (bug #129754).
 	(window_foreign_new): same here.
