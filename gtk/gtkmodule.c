@@ -8,9 +8,7 @@
 void _pygtk_register_boxed_types(PyObject *moddict);
 void register_classes(PyObject *d);
 
-static PyMethodDef gtk_functions[] = {
-    { NULL, NULL }
-};
+extern PyMethodDef gtk_functions[];
 
 DL_EXPORT(void)
 init_gtk(void)

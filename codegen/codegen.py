@@ -215,6 +215,25 @@ def write_class(parser, objobj, fp=sys.stdout):
         dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
     fp.write(typetmpl % dict)
 
+def write_functions(parser, fp=sys.stdout):
+    fp.write('\n/* ----------- functions ----------- */\n\n')
+    functions = []
+    for func in parser.find_functions():
+	try:
+	    write_function(func, fp)
+	    functions.append(methdeftmpl % { 'name':  func.name,
+                                             'cname': '_wrap_' + func.c_name,
+                                             'flags': 'METH_VARARGS'})
+	except:
+	    sys.stderr.write('Could not write function ' + func.name + '\n')
+	    traceback.print_exc()
+    # write the PyMethodDef structure
+    functions.append('    { NULL, NULL, 0 }\n')
+    fp.write('PyMethodDef gtk_functions[] = {\n')
+    fp.write(string.join(functions, ''))
+    fp.write('};\n\n')
+
+
 def write_source(parser, fp=sys.stdout):
     fp.write('/* -*- Mode: C; c-basic-offset: 4 -*- */\n\n')
     fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n#include "pygtk-private.h"\n\n')
@@ -223,8 +242,11 @@ def write_source(parser, fp=sys.stdout):
         fp.write('PyExtensionClass Py' + obj.c_name + '_Type;\n')
     fp.write('\n')
     for obj in parser.objects:
-        write_class(parser, obj)
+        write_class(parser, obj, fp)
         fp.write('\n')
+
+    write_functions(parser, fp)
+
     fp.write('/* intialise stuff extension classes */\n')
     fp.write('void\nregister_classes(PyObject *d)\n{\n')
     fp.write('    ExtensionClassImported;\n');
