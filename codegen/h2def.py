@@ -239,7 +239,7 @@ get_type_pat = re.compile(r'(const-)?([A-Za-z0-9]+)\*?\s+')
 get_mod_pat = re.compile('([A-Z][a-z]+)([A-Za-z0-9]+)')
 
 def write_func(fp, name, ret, args):
-    if len(args) > 1:
+    if len(args) >= 1:
         # methods must have at least one argument
         munged_name = string.replace(name, '_', '')
         m = get_type_pat.match(args[0])

@@ -1,3 +1,12 @@
+2000-03-18  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtkobject-support.c (pygtk_{enum,flag}_get_value): fix bug where
+	having default enum/flag arguments would cause a crash if the argument
+	was not specified.
+
+	* codegen/h2def.py (write_func): fixed bug for finding methods where
+	there is just the object argument.
+
 2000-03-03  James Henstridge  <james@daa.com.au>
 
 	The following is from Paul Clifford <paul@plasma.demon.co.uk>

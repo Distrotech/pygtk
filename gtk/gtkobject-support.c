@@ -1078,6 +1078,9 @@ pygtk_dict_as_container_args(PyObject *dict, GtkType type, gint *nargs)
 gint
 pygtk_enum_get_value(GtkType enum_type, PyObject *obj, int *val)
 {
+    /* used for default arguments */
+    if (!obj)
+	return 0;
     if (PyInt_Check(obj)) {
 	*val = PyInt_AsLong(obj);
 	return 0;
@@ -1098,6 +1101,9 @@ pygtk_enum_get_value(GtkType enum_type, PyObject *obj, int *val)
 gint
 pygtk_flag_get_value(GtkType flag_type, PyObject *obj, int *val)
 {
+    /* used for default arguments */
+    if (!obj)
+	return 0;
     if (PyInt_Check(obj)) {
 	*val = PyInt_AsLong(obj);
 	return 0;
@@ -1384,6 +1390,7 @@ _wrap_gtk_object_get(PyGtk_Object *self, PyObject *args)
 
     if (!PyArg_ParseTuple(args, "s:GtkObject.get", &name))
         return NULL;
+    garg.type = GTK_TYPE_INVALID;
     garg.name = name;
     gtk_object_getv(self->obj, 1, &garg);
 
