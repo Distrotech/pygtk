@@ -1,5 +1,12 @@
 2000-06-18  James Henstridge  <james@daa.com.au>
 
+	* examples/simple/hello1.py:
+	* examples/simple/simple1.py:
+	* examples/tooltip1.py: removed examples that were designed to work
+	with old procedural API.
+
+	* examples/simple/scribble.py (main): updated to work with new gtk.
+
 	* gtk/gtkmodule.c (init_gtk): change names of some functions.
 
 	* gtk/gtk.override: add a headers section to include the required

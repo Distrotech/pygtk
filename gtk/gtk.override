@@ -312,6 +312,18 @@ _wrap_gtk_accel_group_new(PyGtk_Object *self, PyObject *args)
     return ret;
 }
 %%
+override gtk_widget_get_window
+static PyObject *
+_wrap_gtk_widget_get_window(PyGtk_Object *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ":GtkWidget.get_window"))
+	return NULL;
+    if (GTK_WIDGET(self->obj)->window)
+	return PyGdkWindow_New(GTK_WIDGET(self->obj)->window);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
 override gtk_widget_draw kwargs
 static PyObject *
 _wrap_gtk_widget_draw(PyGtk_Object *self, PyObject *args, PyObject *kwargs)

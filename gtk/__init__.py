@@ -17,6 +17,7 @@ mainiteration = main_iteration
 
 load_font = font_load
 load_fontset = fontset_load
+create_pixmap = pixmap_new
 
 # for importing ...
 __all__ = ['_gtk', 'GTK', 'GDK', 'imlib' ]
