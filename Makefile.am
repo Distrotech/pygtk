@@ -47,7 +47,6 @@ EXTRA_DIST = \
   pygtk.spec \
   pygtk-2.0.pc.in \
   MAPPING \
-  ExtensionClass.stx \
   pango.defs \
   pango.override \
   examples/gobject/signal.py \
