@@ -1,3 +1,10 @@
+2004-02-28  Christian Reis    <kiko@async.com.br>
+
+	* gtk.py: Fix for bug 112395: Clean up __getattr__ and add
+	__eq__/__nonzero__ to GtkObject. Standardizes and clarifies
+	__getattr__ through the object hierarchy, and offers additional
+	'special' methods to speed up simple widget comparisons.
+
 2002-11-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* pygtk.py (_get_available_versions): If the directory doesn't
