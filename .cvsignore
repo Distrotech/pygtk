@@ -30,4 +30,7 @@ py-compile
 *_impl.c
 *.pyc
 *.pyo
+*.lo
 .deps
+.libs
+

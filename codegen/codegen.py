@@ -51,7 +51,7 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
 	   '    0,				/* ob_size */\n' + \
 	   '    "%(class)s",			/* tp_name */\n' + \
-	   '    sizeof(PyGtk_Type),     	/* tp_basicsize */\n' + \
+	   '    sizeof(PyGtk_Object),     	/* tp_basicsize */\n' + \
 	   '    0,				/* tp_itemsize */\n' + \
 	   '    /* methods */\n' + \
 	   '    (destructor)pygtk_dealloc,	/* tp_dealloc */\n' + \
@@ -64,6 +64,8 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    0,				/* tp_as_sequence */\n' + \
 	   '    0,				/* tp_as_mapping */\n' + \
 	   '    (hashfunc)pygtk_hash,		/* tp_hash */\n' + \
+           '    (ternaryfunc)0,			/* tp_call */\n' + \
+           '    (reprfunc)0,			/* tp_str */\n' + \
 	   '    (getattrofunc)0,		/* tp_getattro */\n' + \
 	   '    (setattrofunc)0,		/* tp_setattro */\n' + \
 	   '    /* Space for future expansion */\n' + \
@@ -191,7 +193,7 @@ def write_class(parser, objobj, fp=sys.stdout):
 	try:
 	    write_method(objobj.c_name, meth, fp)
 	    methods.append(methdeftmpl % { 'name':  meth.name,
-					   'cname': meth.c_name,
+					   'cname': '_wrap_' + meth.c_name,
 					   'flags': 'METH_VARARGS'})
 	except:
 	    sys.stderr.write('Could not write method ' + objobj.c_name +
@@ -208,17 +210,17 @@ def write_class(parser, objobj, fp=sys.stdout):
     dict = { 'class': objobj.c_name }
     dict['getattr'] = 'pygtk_getattr'
     if objobj.c_name == 'GtkObject':
-        dict['methods'] = '{ _PyGtkObject_methods, base_object_method_chain }'
+        dict['methods'] = '{ _PyGtkObject_methods, &base_object_method_chain }'
     else:
         dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
     fp.write(typetmpl % dict)
 
 def write_source(parser, fp=sys.stdout):
     fp.write('/* -*- Mode: C; c-basic-offset: 4 -*- */\n\n')
-    fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n\n')
+    fp.write('#include <Python.h>\n#include <ExtensionClass.h>\n#include "pygtk-private.h"\n\n')
     fp.write('/* ---------- forward type declarations ---------- */\n')
     for obj in parser.objects:
-        fp.write('PyExtensionClass *Py' + obj.c_name + '_Type;\n')
+        fp.write('PyExtensionClass Py' + obj.c_name + '_Type;\n')
     fp.write('\n')
     for obj in parser.objects:
         write_class(parser, obj)

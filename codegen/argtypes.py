@@ -282,7 +282,7 @@ class ObjectArg(ArgType):
 	   '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s");\n' + \
 	   '        return NULL;\n' + \
 	   '    }\n'
-    check = '    if (!PyGtk_Check(%(name)s))\n' + \
+    check = '    if (!PyGtk_Check(%(name)s)) {\n' + \
 	    '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s");\n' + \
 	    '        return NULL;\n' + \
 	    '    }\n'
