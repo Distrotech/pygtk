@@ -209,7 +209,7 @@ struct _PyGtk_FunctionStruct *_PyGtk_API;
 #define PyGtkCTreeNode_Type     *(_PyGtk_API->gtkCTreeNode_type)
 
 /* type checking routines */
-#define PyGtk_Check(v) (ExtensionClassSubclassInstance_Check(v,_PyGtk_API->gtkobject_type))
+#define PyGtk_Check(v,base) (ExtensionClassSubclassInstance_Check(v,base))
 #define PyGtkAccelGroup_Check(v) ((v)->ob_type == _PyGtk_API->gtkAccelGroup_type)
 #define PyGtkStyle_Check(v) ((v)->ob_type == _PyGtk_API->gtkStyle_type)
 #define PyGdkFont_Check(v) ((v)->ob_type == _PyGtk_API->gdkFont_type)

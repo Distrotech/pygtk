@@ -30,7 +30,7 @@ extern PyTypeObject PyGdkCursor_Type;
 extern PyTypeObject PyGtkCTreeNode_Type;
 
 /* check the type of a PyObject */
-#define PyGtk_Check(v) (ExtensionClassSubclassInstance_Check(v,&PyGtkObject_Type))
+#define PyGtk_Check(v,base) (ExtensionClassSubclassInstance_Check(v,base))
 #define PyGtkAccelGroup_Check(v) ((v)->ob_type == &PyGtkAccelGroup_Type)
 #define PyGtkStyle_Check(v) ((v)->ob_type == &PyGtkStyle_Type)
 #define PyGdkFont_Check(v) ((v)->ob_type == &PyGdkFont_Type)

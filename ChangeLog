@@ -1,5 +1,19 @@
 2000-06-23  James Henstridge  <james@daa.com.au>
 
+	* gtk/libglade.override: import PyGtkWidget_Type so that new
+	PyGtk_Check's work correctly.
+
+	* gtk/gtkobject-support.c: fix uses of PyGtk_Check.
+
+	* gtk/gtk.override: change all uses of PyGtk_Check to take the
+	extra type parameter.
+
+	* codegen/argtypes.py (ObjectArg.__init__): check correct subclass
+	in generated code.
+
+	* gtk/pygtk.h (PyGtk_Check): function to check for subclasses of a
+	particular GtkObject type.
+
 	* examples/glade/glade.py (win): update glade example to use libglade.
 
 	* gtk/gtk.override (_wrap_gtk_widget_draw): implementation.

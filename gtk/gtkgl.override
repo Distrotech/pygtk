@@ -78,7 +78,7 @@ _wrap_gtk_gl_area_share_new(PyGtk_Object *self, PyObject *args,
 	attr_list[i] = PyInt_AsLong(item);
     }
     attr_list[len] = GDK_GL_NONE; /* sentinel */
-    if (PyGtk_Check(py_share))
+    if (PyGtk_Check(py_share, &PyGtkGLArea_Type))
 	share = GTK_GL_AREA(PyGtk_Get(py_share));
     else if (py_share != Py_None) {
 	PyErr_SetString(PyExc_TypeError, "share must be a GtkGLArea or None");

@@ -383,7 +383,7 @@ pygtk_arg_from_pyobject(GtkArg *arg, PyObject *obj)
 	Py_DECREF(tmp);
 	break;
     case GTK_TYPE_OBJECT:
-	if (PyGtk_Check(obj))
+	if (PyGtk_Check(obj, &PyGtkObject_Type))
 	    GTK_VALUE_OBJECT(*arg) = PyGtk_Get(obj);
 	else
 	    return -1;
@@ -704,7 +704,7 @@ pygtk_ret_from_pyobject(GtkArg *ret, PyObject *py_ret)
 	}
 	break;
     case GTK_TYPE_OBJECT:
-	if (PyGtk_Check(py_ret))
+	if (PyGtk_Check(py_ret, &PyGtkObject_Type))
 	    *GTK_RETLOC_OBJECT(*ret) = PyGtk_Get(py_ret);
 	else
 	    *GTK_RETLOC_OBJECT(*ret) = NULL;
@@ -1374,7 +1374,7 @@ _wrap_gtk_signal_connect_object(PyGtk_Object *self, PyObject *args)
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
     }
-    if (!PyGtk_Check(other)) {
+    if (!PyGtk_Check(other, &PyGtkObject_Type)) {
 	PyErr_SetString(PyExc_TypeError, "forth argument must be a GtkObject");
 	return NULL;
     }
@@ -1417,7 +1417,7 @@ _wrap_gtk_signal_connect_object_after(PyGtk_Object *self, PyObject *args)
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
     }
-    if (!PyGtk_Check(other)) {
+    if (!PyGtk_Check(other, &PyGtkObject_Type)) {
 	PyErr_SetString(PyExc_TypeError, "forth argument must be a GtkObject");
 	return NULL;
     }

@@ -9,7 +9,9 @@ headers
 #include <glade/glade.h>
 
 static PyExtensionClass *_PyGtkData_Type;
+static PyExtensionClass *_PyGtkWidget_Type;
 #define PyGtkData_Type (*_PyGtkData_Type)
+#define PyGtkWidget_Type (*_PyGtkWidget_Type)
 %%
 init
 {
@@ -19,6 +21,8 @@ init
 
 	_PyGtkData_Type =
 	    (PyExtensionClass *)PyDict_GetItemString(module_dict, "GtkData");
+	_PyGtkWidget_Type =
+	    (PyExtensionClass *)PyDict_GetItemString(module_dict, "GtkWidget");
     } else {
 	Py_FatalError("could not import gtk._gtk");
 	return;

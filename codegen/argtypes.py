@@ -285,25 +285,25 @@ class ObjectArg(ArgType):
     # a little further down in the class heirachy.
     nulldflt = '    if ((PyObject *)py_%(name)s == Py_None)\n' + \
 	       '        %(name)s = NULL;\n' + \
-	       '    else if (py_%(name)s && PyGtk_Check(py_%(name)s))\n' + \
+	       '    else if (py_%(name)s && PyGtk_Check(py_%(name)s, &Py%(type)s_Type))\n' + \
 	       '        %(name)s = %(cast)s(py_%(name)s->obj);\n' + \
 	       '    else if (py_%(name)s) {\n' + \
 	       '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s or None");\n' + \
 	       '        return NULL;\n' + \
 	       '    }\n'
-    null = '    if (py_%(name)s && PyGtk_Check(py_%(name)s))\n' + \
+    null = '    if (py_%(name)s && PyGtk_Check(py_%(name)s, &Py%(type)s_Type))\n' + \
 	   '        %(name)s = %(cast)s(py_%(name)s->obj);\n' + \
 	   '    else if ((PyObject *)py_%(name)s != Py_None) {\n' + \
 	   '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s or None");\n' + \
 	   '        return NULL;\n' + \
 	   '    }\n'
-    dflt = '    if (py_%(name)s && PyGtk_Check(py_%(name)s))\n' + \
+    dflt = '    if (py_%(name)s && PyGtk_Check(py_%(name)s, &Py%(type)s_Type))\n' + \
 	   '        %(name)s = %(cast)s(py_%(name)s->obj);\n' + \
 	   '    else if (py_%(name)s) {\n' + \
 	   '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s");\n' + \
 	   '        return NULL;\n' + \
 	   '    }\n'
-    check = '    if (!PyGtk_Check(%(name)s)) {\n' + \
+    check = '    if (!PyGtk_Check(%(name)s, &Py%(type)s_Type)) {\n' + \
 	    '        PyErr_SetString(PyExc_TypeError, "%(name)s should be a %(type)s");\n' + \
 	    '        return NULL;\n' + \
 	    '    }\n'
