@@ -74,7 +74,7 @@ noconstructor = 'static PyObject *\n' + \
 typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
 	   '    0,				/* ob_size */\n' + \
-	   '    "%(class)s",			/* tp_name */\n' + \
+	   '    "%(classname)s",		/* tp_name */\n' + \
 	   '    sizeof(PyGObject),		/* tp_basicsize */\n' + \
 	   '    0,				/* tp_itemsize */\n' + \
 	   '    /* methods */\n' + \
@@ -102,7 +102,7 @@ typetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 interfacetypetmpl = 'PyExtensionClass Py%(class)s_Type = {\n' + \
 	   '    PyObject_HEAD_INIT(NULL)\n' + \
 	   '    0,				/* ob_size */\n' + \
-	   '    "%(class)s",			/* tp_name */\n' + \
+	   '    "%(classname)s",		/* tp_name */\n' + \
 	   '    sizeof(PyPureMixinObject),	/* tp_basicsize */\n' + \
 	   '    0,				/* tp_itemsize */\n' + \
 	   '    /* methods */\n' + \
@@ -430,7 +430,7 @@ def write_class(parser, objobj, overrides, fp=sys.stdout):
     fp.write('};\n\n')
 
     # write the type template
-    dict = { 'class': objobj.c_name }
+    dict = { 'class': objobj.c_name, 'classname': objobj.name }
     dict['getattr'] = write_getattr(parser, objobj, castmacro, overrides, fp)
     dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
     fp.write(typetmpl % dict)
@@ -467,7 +467,8 @@ def write_interface(parser, interface, overrides, fp=sys.stdout):
     fp.write('};\n\n')
 
     # write the type template
-    dict = { 'class': interface.c_name, 'getattr': '0' }
+    dict = { 'class': interface.c_name, 'classname': interface.name,
+             'getattr': '0' }
     dict['methods'] = 'METHOD_CHAIN(_Py' + dict['class'] + '_methods)'
     fp.write(interfacetypetmpl % dict)
 
@@ -735,13 +736,13 @@ def write_source(parser, overrides, prefix, fp=sys.stdout):
         bases = bases + obj.implements
         uclass = string.lower(string.replace(obj.typecode, '_TYPE_', '_', 1))
         if bases:
-            fp.write('    pygobject_register_class(d, "' + obj.name +
+            fp.write('    pygobject_register_class(d, "' + obj.c_name +
                      '", ' + uclass + '_get_type, &Py' + obj.c_name +
                      '_Type, Py_BuildValue("(' + 'O' * len(bases) + ')", ' +
                      string.join(map(lambda s: '&Py'+s+'_Type', bases), ', ') +
                      '));\n')
         else:
-            fp.write('    pygobject_register_class(d, "' + obj.name +
+            fp.write('    pygobject_register_class(d, "' + obj.c_name +
                      '", ' + uclass + '_get_type, &Py' + obj.c_name +
                      '_Type, NULL);\n')
     fp.write('}\n')

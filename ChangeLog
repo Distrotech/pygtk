@@ -1,3 +1,14 @@
+2001-09-12  James Henstridge  <james@daa.com.au>
+
+	* codegen/codegen.py (write_class, write_interface): set the short
+	name as the class name here.
+
+	* gobjectmodule.c (pygobject_register_class): pass ec->tp_name as
+	the name for the class passed to PyExtensionClass_Export*.
+
+	* codegen/codegen.py (write_source): pass the C name to
+	pygobject_register_class again.
+
 2001-09-11  James Henstridge  <james@daa.com.au>
 
 	* gtk/__init__.py (create_pixmap): few fixups to get things to
