@@ -196,7 +196,7 @@ PyGtkAccelGroup_Hash(PyGtkAccelGroup_Object *self)
 }
 
 PyTypeObject PyGtkAccelGroup_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GtkAccelGroup",
     sizeof(PyGtkAccelGroup_Object),
@@ -347,7 +347,7 @@ static PySequenceMethods PyGtkStyleHelper_SeqMethods = {
     (intintobjargproc)0
 };
 static PyTypeObject PyGtkStyleHelper_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GtkStyleHelper",
     sizeof(PyGtkStyleHelper_Object),
@@ -530,7 +530,7 @@ PyGtkStyle_SetAttr(PyGtkStyle_Object *self, char *key, PyObject *value)
 }
 
 PyTypeObject PyGtkStyle_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GtkStyle",
     sizeof(PyGtkStyle_Object),
@@ -640,7 +640,7 @@ PyGdkFont_Hash(PyGdkFont_Object *self)
 }
 
 PyTypeObject PyGdkFont_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkFont",
     sizeof(PyGdkFont_Object),
@@ -722,7 +722,7 @@ PyGdkColor_Repr(PyGdkColor_Object *self)
 }
 
 PyTypeObject PyGdkColor_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkColor",
     sizeof(PyGdkColor_Object),
@@ -1127,7 +1127,7 @@ PyGdkEvent_Hash(PyGdkEvent_Object *self)
 }
 
 PyTypeObject PyGdkEvent_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkEvent",
     sizeof(PyGdkEvent_Object),
@@ -1617,7 +1617,7 @@ PyGdkWindow_GetAttr(PyGdkWindow_Object *self, char *key)
 }
 
 PyTypeObject PyGdkWindow_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkWindow",
     sizeof(PyGdkWindow_Object),
@@ -1815,7 +1815,7 @@ PyGdkGC_Hash(PyGdkGC_Object *self)
 }
 
 PyTypeObject PyGdkGC_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkGC",
     sizeof(PyGdkGC_Object),
@@ -1935,7 +1935,7 @@ static PySequenceMethods PyGdkColormap_Sequence = {
 };
 
 PyTypeObject PyGdkColormap_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkColormap",
     sizeof(PyGdkColormap_Object),
@@ -2031,7 +2031,7 @@ PyGdkDragContext_GetAttr(PyGdkDragContext_Object *self, char *key)
 }
 
 PyTypeObject PyGdkDragContext_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkDragContext",
     sizeof(PyGdkDragContext_Object),
@@ -2124,7 +2124,7 @@ PyGtkSelectionData_GetAttr(PyGtkSelectionData_Object *self, char *key)
 }
 
 PyTypeObject PyGtkSelectionData_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GtkSelectionData",
     sizeof(PyGtkSelectionData_Object),
@@ -2276,7 +2276,7 @@ static PyNumberMethods PyGdkAtom_Number = {
 };
 
 PyTypeObject PyGdkAtom_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkAtom",
     sizeof(PyGdkAtom_Object),
@@ -2354,7 +2354,7 @@ static PyObject *PyGdkCursor_GetAttr(PyGdkCursor_Object *self, char *attr)
 }
 
 PyTypeObject PyGdkCursor_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GdkCursor",
     sizeof(PyGdkCursor_Object),
@@ -2440,7 +2440,7 @@ PyGtkCTreeNode_GetAttr(PyGtkCTreeNode_Object *self, char *key)
 }
 
 PyTypeObject PyGtkCTreeNode_Type = {
-    PyObject_HEAD_INIT(&PyType_Type)
+    PyObject_HEAD_INIT(NULL)
     0,
     "GtkCTreeNode",
     sizeof(PyGtkCTreeNode_Object),
@@ -2460,3 +2460,28 @@ PyTypeObject PyGtkCTreeNode_Type = {
     0L,0L,0L,0L,
     NULL
 };
+
+/* We have to set ob_type here because stupid win32 does not allow you
+ * to use variables from another dll in a global variable initialisation.
+ */
+void
+_pygtk_register_boxed_types(PyObject *moddict)
+{
+#define register_tp(x) Py##x##_Type.ob_type = &PyType_Type; \
+    PyDict_SetItemString(moddict, #x "Type", (PyObject *)&Py##x##_Type);
+
+    register_tp(GtkAccelGroup);
+    register_tp(GtkStyle);
+    PyGtkStyleHelper_Type.ob_type = &PyType_Type;
+    register_tp(GdkFont);
+    register_tp(GdkColor);
+    register_tp(GdkEvent);
+    register_tp(GdkWindow);
+    register_tp(GdkGC);
+    register_tp(GdkColormap);
+    register_tp(GdkDragContext);
+    register_tp(GtkSelectionData);
+    register_tp(GdkAtom);
+    register_tp(GdkCursor);
+    register_tp(GtkCTreeNode);
+}
