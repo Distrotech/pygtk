@@ -43,6 +43,13 @@ class GtkObject:
 	def set(self, dict):
 		_filtprops(dict)
 		_gtk.gtk_object_set(self._o, dict)
+	def __nonzero__(self):
+		return 1
+	def __eq__(self, other):
+		if not hasattr(other, '_o'):
+			# GtkObjects *always* have _o
+			return 0
+		return self._o == other._o
 	def __getitem__(self, key):
 		ret = _gtk.gtk_object_get(self._o, key)
 		if type(ret) == _gtk.GtkObjectType:
@@ -65,39 +72,16 @@ class GtkObject:
 	def __hash__(self):
 		return hash(self._o)
 	def __getattr__(self, attr):
-		# this function allows setting attributes on an object so that
-		# they will always be available with the object.  Due to
-		# reference counting problems, we can't always pass the
-		# same GtkObject instance to a callback.
-		#if attr[0] == '_' or not self.__dict__.has_key('_o'):
-		#	raise AttributeError, attr
-		#dict = self.get_data('Python-Attributes')
-		#if dict and dict.has_key(attr):
-		#	return dict[attr]
-		raise AttributeError, attr
-	#def __setattr__(self, attr, value):
-	#	if attr[0] == '_' or self.__dict__.has_key(attr) or \
-	#	   not self.__dict__.has_key('_o'):
-	#		self.__dict__[attr] = value
-	#	dict = self.get_data('Python-Attributes')
-	#	if not dict:
-	#		dict = {}
-	#		self.set_data('Python-Attributes', dict)
-	#	dict[attr] = value
-	#def __delattr__(self, attr):
-	#	if self.__dict__.has_key(attr):
-	#		del self.__dict__[attr]
-	#		return
-	#	if not self.__dict__.has_key('_o'):
-	#		raise AttributeError, \
-	#		      'delete non-existing instance attribute'
-	#	dict = self.get_data('Python-Attributes')
-	#	if dict and dict.has_key(attr):
-	#		del dict[attr]
-	#	else:
-	#		raise AttributeError, \
-	#		      'delete non-existing instance attribute'
-			
+		# Normally, you wouldn't need to define __getattr__ in a
+		# base class such as GtkObject; however, because we
+		# *need* to chain __getattr__ up through the class
+		# hierarchy (given the fact that certain attributes are
+		# implemented via function lookups, and that they need
+		# to work for all classes in the inheritance chain) it's
+		# best to be consistent across all classes and allow
+		# them to upcall their parents' __getattr__.
+		raise AttributeError, "%s instance has no attribute '%s'" \
+			% (self.__class__.__name__, attr)
 	def flags(self, mask=None):
 		if mask:
 			return _gtk.GTK_OBJECT_FLAGS(self._o) & mask
@@ -872,7 +856,7 @@ class GtkWindow(GtkBin):
 			'window_has_focus' :  _gtk.gtk_window_get_window_has_focus,
 			'window_has_pointer_focus' :
 				_gtk.gtk_window_get_window_has_pointer_focus
-        }
+		}
 		if attrs.has_key(attr):
 			ret = attrs[attr](self._o)
 			# avoid spurious None checks
@@ -882,12 +866,6 @@ class GtkWindow(GtkBin):
 				return _obj2inst(ret)
 			else:
 				return ret
-		#else:
-		#	ret = _gtk.gtk_object_get(self._o, key)
-		#	if type(ret) == _gtk.GtkObjectType:
-		#		return _obj2inst(ret)
-		#	else:
-		#		return ret
 		return GtkBin.__getattr__(self, attr)
 	def activate_focus(self, obj=None):
 		_gtk.gtk_window_activate_focus(self._o)
@@ -1861,7 +1839,9 @@ class GtkPaned(GtkContainer):
 			'handle_size': _gtk.gtk_paned_get_handle_size,
 			'gutter_size': _gtk.gtk_paned_get_gutter_size,
 		}
-		return attrs[attr](self._o)
+		if attrs.has_key(attr):
+			return attrs[attr](self._o)
+		return GtkContainer.__getattr__(self, attr)
 	def add1(self, child):
 		_gtk.gtk_paned_add1(self._o, child._o)
 	def add2(self, child):
@@ -1909,8 +1889,7 @@ class GtkScrolledWindow(GtkBin):
 		}
 		if attrs.has_key(attr):
 			return _obj2inst(attrs[attr](self._o))
-		else:
-			return GtkBin.__getattr__(self, attr)
+		return GtkBin.__getattr__(self, attr)
 	def get_hadjustment(self):
 		return _obj2inst(_gtk.gtk_scrolled_window_get_hadjustment(
 			self._o))
@@ -2558,8 +2537,7 @@ class GtkRuler(GtkWidget):
 	def __getattr__(self, attr):
 		if attr == 'position':
 			return _gtk.gtk_ruler_get_position(self._o)
-		else:
-			return GtkWidget.__getattr__(self, attr)
+		return GtkWidget.__getattr__(self, attr)
 	def set_metric(self, metric):
 		_gtk.gtk_ruler_set_metric(self._o, metric)
 	def set_range(self, lo, up, pos, max):
