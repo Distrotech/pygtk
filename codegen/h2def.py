@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- Mode: Python; py-indent-offset: 4 -*-
 # Search through a header file looking for function prototypes.
 # For each prototype, generate a scheme style definition.
 # GPL'ed

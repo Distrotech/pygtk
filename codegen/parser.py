@@ -1,3 +1,4 @@
+# -*- Mode: Python; py-indent-offset: 4 -*-
 import os, sys
 import scmexpr
 from definitions import *
@@ -59,3 +60,18 @@ class DefsParser(IncludeParser):
 	    enum.write_defs(fp)
 	for func in self.functions:
 	    func.write_defs(fp)
+
+    def find_constructor(self, obj):
+        for func in self.functions:
+            if isinstance(func, FunctionDef) and \
+               func.is_constructor_of == obj.c_name:
+                return func
+
+    def find_methods(self, obj):
+        objname = obj.name, obj.module
+        return filter(lambda func, on=objname: isinstance(func, MethodDef) and
+                      func.of_object == on, self.functions)
+
+    def find_functions(self):
+        return filter(lambda func: isinstance(func, FunctionDef) and
+                      not func.is_constructor_of, self.functions)

@@ -1,3 +1,4 @@
+# -*- Mode: Python; py-indent-offset: 4 -*-
 import sys
 
 class Definition:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- Mode: Python; py-indent-offset: 4 -*-
 
 import sys
 import parser
