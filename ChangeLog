@@ -1,3 +1,11 @@
+2001-09-22  James Henstridge  <james@daa.com.au>
+
+	* gobjectmodule.c (pygobject_register_class): set type->ob_type.
+	(pyg_register_boxed): same here.
+	(pyg_register_interface): same here.
+	(initgobject): set the ob_type member of PyGInterface_Type and
+	PyGBoxed_Type.
+
 2001-09-21  James Henstridge  <james@daa.com.au>
 
 	* gobjectmodule.c (pygobject_register_class): convert to use
