@@ -354,7 +354,8 @@ def write_constructor(objname, castmacro, funcobj, fp=sys.stdout):
 						  extracode, arglist)
     dict['typecodes'] = parsestr
     dict['parselist'] = string.join(parselist, ', ')
-    dict['extracode'] = string.join(extracode, '')
+    dict['extracode'] = string.replace(string.join(extracode, ''),
+                                       'return NULL;', 'return -1;')
     dict['arglist']   = string.join(arglist, ', ')
     fp.write(consttmpl % dict)
 
@@ -575,7 +576,8 @@ def write_boxed_constructor(objname, typecode, funcobj, fp=sys.stdout):
 						  extracode, arglist)
     dict['typecodes'] = parsestr
     dict['parselist'] = string.join(parselist, ', ')
-    dict['extracode'] = string.join(extracode, '')
+    dict['extracode'] = string.replace(string.join(extracode, ''),
+                                       'return NULL;', 'return -1;')
     dict['arglist']   = string.join(arglist, ', ')
     fp.write(boxedconsttmpl % dict)
 
