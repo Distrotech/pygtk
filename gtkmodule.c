@@ -3363,6 +3363,11 @@ static int GtkArgs_FromSequence(GtkArg *args, int nparams, PyObject *seq) {
     return -1;
   for (i = 0; i < nparams; i++) {
     item = PySequence_GetItem(seq, i);
+    if (item==NULL) {
+        PyErr_SetString(PyExc_AssertionError, 
+                        "Tried to grab an argument that didn't exist!");
+        return -1;
+    }
     Py_DECREF(item);
     if (GtkArg_FromPyObject(&args[i], item)) {
       gchar buf[512];
@@ -3808,7 +3813,7 @@ static PyObject *_wrap_gtk_signal_handler_unblock_by_data(PyObject *self, PyObje
 }
 
 static PyObject *_wrap_gtk_signal_emitv_by_name(PyObject *self, PyObject *args) {
-  guint signal_id, i, nparams;
+  guint signal_id, i, nparams, npy_params;
   GtkSignalQuery *query;
   GtkArg *params;
   PyObject *obj, *py_params;
@@ -3830,6 +3835,14 @@ static PyObject *_wrap_gtk_signal_emitv_by_name(PyObject *self, PyObject *args) 
   query = gtk_signal_query(signal_id);
   params = g_new(GtkArg, query->nparams + 1);
   nparams = query->nparams;
+  npy_params = PySequence_Size(py_params);
+  if (npy_params != nparams) {
+	gchar err[100];
+	g_snprintf(err, 100, "incorrect number of arguments supplied to emit: \
+expected %d, found %d", nparams, npy_params);
+	PyErr_SetString(PyExc_TypeError, err);
+	return NULL;
+  }
   for (i = 0; i < nparams; i++) {
     params[i].type = query->params[i];
     params[i].name = NULL;
@@ -3838,7 +3851,7 @@ static PyObject *_wrap_gtk_signal_emitv_by_name(PyObject *self, PyObject *args) 
   params[i].name = NULL;
   params[i].d.pointer_data = buf; /* buffer to hold return value */
   g_free(query);
-  if (GtkArgs_FromSequence(params, nparams, py_params)) {
+  if (GtkArgs_FromSequence(params, nparams, py_params) < 0) {
     g_free(params);
     return NULL;
   }

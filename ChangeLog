@@ -1,3 +1,10 @@
+2002-11-27  Christian Reis    <kiko@async.com.br>
+	
+	* gtkmodule.c: check return value of GtkArgs_FromSequence() and
+	change _wrap_gtk_signal_emitv_by_name to check if the expected
+	number of parameters to emit() is the same as the number of
+	parameters received in the call, which fixes crasher bug #96907.
+
 2002-11-12  Christian Reis    <kiko@async.com.br>
 
 	* gtk.py: Fix typo In GtkScrolledWindow - has_attr() was being
