@@ -1,4 +1,62 @@
-ignore gtk_init gtk_init_check gtk_exit gtk_set_locale
+ignore-glob
+  *_get_type
+  gtk_marshal_*
+  gtk_arg_*
+  gtk_args_*
+  gtk_signal_connect*
+  gtk_signal_add_emission_hook*
+  gtk_signal_new*
+  gtk_signal_emit*
+  gtk_draw_*
+  gtk_paint_*
+  gtk_init_add*
+  gtk_quit_add*
+  gtk_timeout_add*
+  gtk_idle_add*
+  gtk_input_add*
+  gtk_accelerator_*
+%%
+ignore
+  gtk_init
+  gtk_init_check
+  gtk_exit
+  gtk_set_locale
+  gtk_signal_set_funcs
+  gtk_signal_lookup
+  gtk_signal_disconnect_by_func
+  gtk_signal_disconnect_by_data
+  gtk_signal_handler_block_by_func
+  gtk_signal_handler_block_by_data
+  gtk_signal_handler_unblock_by_func
+  gtk_signal_handler_unblock_by_data 
+  gtk_signal_handler_pending_by_func
+  gtk_object_weakref
+  gtk_object_weakunref
+  gtk_object_get
+  gtk_object_getv
+  gtk_object_set
+  gtk_object_setv
+  gtk_object_set_data
+  gtk_object_set_data_full
+  gtk_object_get_data
+  gtk_object_set_user_data
+  gtk_object_get_user_data
+  gtk_object_set_data_by_id
+  gtk_object_set_data_by_id_full
+  gtk_object_get_data_by_id
+  gtk_object_remove_data_by_id
+  gtk_object_remove_no_notify_by_id
+  gtk_object_arg_set
+  gtk_object_arg_get
+  gtk_widget_get
+  gtk_widget_getv
+  gtk_widget_set
+  gtk_widget_setv
+  gtk_container_get_toplevels
+  gtk_container_add_child_arg_type
+  gtk_container_query_child_args
+  gtk_container_child_args_collect
+  gtk_container_child_arg_get_info
 %%
 ignore gtk_object_new gtk_object_newv gtk_object_query_args
   gtk_object_add_arg_type gtk_object_args_collect gtk_object_arg_get_info

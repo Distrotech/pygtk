@@ -4,11 +4,12 @@
 # provides implementations of functions where the code generator could not
 # do its job correctly.
 
-import sys, string
+import sys, string, fnmatch
 
 class Overrides:
 	def __init__(self, fp=sys.stdin):
 		self.ignores = {}
+		self.glob_ignores = []
 		self.overrides = {}
 		if fp == None: return
 		# read all the components of the file ...
@@ -27,13 +28,21 @@ class Overrides:
 		if words[0] == 'ignore':
 			for func in words[1:]: self.ignores[func] = 1
 			for func in string.split(rest): self.ignores[func] = 1
+		elif words[0] == 'ignore-glob':
+			for func in words[1:]: self.glob_ignores.append(func)
+			for func in string.split(rest):
+				self.glob_ignores.append(func)
 		elif words[0] == 'override':
 			func = words[1]
 			self.overrides[func] = rest
 
 	def is_ignored(self, name):
-		return self.ignores.has_key(name) or \
-		       len(name) > 9 and name[-9:] == '_get_type'
+		if self.ignores.has_key(name):
+			return 1
+		for glob in self.glob_ignores:
+			if fnmatch.fnmatchcase(name, glob):
+				return 1
+		return 0
 	def is_overriden(self, name):
 		return self.overrides.has_key(name)
 	def override(self, name):

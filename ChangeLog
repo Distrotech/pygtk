@@ -1,5 +1,11 @@
 2000-03-27  James Henstridge  <james@daa.com.au>
 
+	* gtk/gtk.override: added some ignore globs, and added a few more
+	functions to the ignores list.
+
+	* codegen/override.py (Overrides.is_ignored): add globbing support
+	for the overrides file.
+
 	* gtk/gtkobject-support.c (_wrap_gtk_signal_connect*): handle varargs
 	nicer.  Now it should have the same behaviour as in pygtk-0.6.x.
 	(_wrap_gtk_signal_emitv_by_name): make GtkObject.emit a proper varargs
