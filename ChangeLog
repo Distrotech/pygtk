@@ -1,3 +1,24 @@
+2001-09-11  James Henstridge  <james@daa.com.au>
+
+	* gtk/libglade.override (init): same here.
+
+	* gtk/gtk.override (init): same here.
+
+	* gtk/gdk.override (init): use short class names here.
+
+	* gtk/gtkmodule.c (init_gtk): initialise both the gtk._gtk and
+	gtk.gdk modules.
+
+	* gtk/gtk.defs: don't include gdk.defs
+
+	* gtk/gtk.override: remove all GDK override wrappers.
+
+	* gtk/gdk.override: new file taking the overrides for GDK
+	functions.
+
+	* codegen/codegen.py (write_source): register only the short name
+	of the GObject, interface or boxed type.
+
 2001-09-10  Johan Dahlin  <zilch.am@home.se>
 
 	* autogen.sh: add check and usage for AUTOMAKE and ACLOCAL.
