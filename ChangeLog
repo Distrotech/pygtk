@@ -1,3 +1,7 @@
+2002-11-03  Christian Reis    <kiko@async.com.br>
+
+    * gtkmodule.c, gtk.py: wrap gtk_radio_button_group() (bug #93772)
+
 2002-08-23  James Henstridge  <james@daa.com.au>
 
 	* NEWS: add news items.
