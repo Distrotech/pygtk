@@ -1,3 +1,10 @@
+2000-03-27  James Henstridge  <james@daa.com.au>
+
+	* gtk/gtkobject-support.c (_wrap_gtk_signal_connect*): handle varargs
+	nicer.  Now it should have the same behaviour as in pygtk-0.6.x.
+	(_wrap_gtk_signal_emitv_by_name): make GtkObject.emit a proper varargs
+	function, rather than taking a tuple as the signal arguments.
+
 2000-03-26  James Henstridge  <james@daa.com.au>
 
 	* codegen/codegen.py (typetmpl): set the EXTENSIONCLASS_INSTDICT_FLAG

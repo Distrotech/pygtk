@@ -1188,21 +1188,28 @@ static PyObject *
 _wrap_gtk_signal_connect(PyGtk_Object *self, PyObject *args)
 {
     char *name;
-    PyObject *func, *extra = NULL, *data;
-    int signum;
+    PyObject *first, *func, *extra = NULL, *data;
+    int signum, len;
 
-    if (!PyArg_ParseTuple(args, "sO|O!:GtkObject.connect",
-			  &name, &func, &PyTuple_Type, &extra))
+    len = PyTuple_Size(args);
+    if (len < 2) {
+	PyErr_SetString(PyExc_TypeError,
+			"GtkObject.connect requires at least 2 arguments");
+	return NULL;
+    }
+    first = PySequence_GetSlice(args, 0, 2);
+    if (!PyArg_ParseTuple(first, "sO:GtkObject.connect",
+			  &name, &func)) {
+	Py_DECREF(first);
         return NULL;
+    }
+    Py_DECREF(first);
     if (!PyCallable_Check(func)) {
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
     }
 
-    if (extra)
-      Py_INCREF(extra);
-    else
-      extra = PyTuple_New(0);
+    extra = PySequence_GetSlice(args, 2, len);
 
     if (extra == NULL)
       return NULL;
@@ -1217,20 +1224,27 @@ static PyObject *
 _wrap_gtk_signal_connect_after(PyGtk_Object *self, PyObject *args)
 {
     char *name;
-    PyObject *func, *extra = NULL, *data;
-    int signum;
+    PyObject *first, *func, *extra = NULL, *data;
+    int signum, len;
 
-    if (!PyArg_ParseTuple(args, "sO|O!:GtkObject.connect_after",
-                    &name, &func, &PyTuple_Type, &extra))
+    len = PyTuple_Size(args);
+    if (len < 2) {
+	PyErr_SetString(PyExc_TypeError,
+		"GtkObject.connect_after requires at least 2 arguments");
+	return NULL;
+    }
+    first = PySequence_GetSlice(args, 0, 2);
+    if (!PyArg_ParseTuple(first, "sO:GtkObject.connect_after",
+			  &name, &func)) {
+	Py_DECREF(first);
         return NULL;
+    }
+    Py_DECREF(first);
     if (!PyCallable_Check(func)) {
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
     }
-    if (extra)
-        Py_INCREF(extra);
-    else
-        extra = PyTuple_New(0);
+    extra = PySequence_GetSlice(args, 2, len);
 
     if (extra == NULL)
       return NULL;
@@ -1246,13 +1260,22 @@ static PyObject *
 _wrap_gtk_signal_connect_object(PyGtk_Object *self, PyObject *args)
 {
     char *name;
-    PyObject *func, *extra = NULL, *other, *data;
-    int signum;
+    PyObject *first, *func, *extra = NULL, *other, *data;
+    int signum, len;
 
-    if (!PyArg_ParseTuple(args, "sOO|O!:GtkObject.connect_object",
-			  &name, &func, &other,
-			  &PyTuple_Type, &extra))
+    len = PyTuple_Size(args);
+    if (len < 3) {
+	PyErr_SetString(PyExc_TypeError,
+		"GtkObject.connect_object requires at least 3 arguments");
+	return NULL;
+    }
+    first = PySequence_GetSlice(args, 0, 3);
+    if (!PyArg_ParseTuple(first, "sOO:GtkObject.connect_object",
+			  &name, &func, &other)) {
+	Py_DECREF(first);
         return NULL;
+    }
+    Py_DECREF(first);
     if (!PyCallable_Check(func)) {
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
@@ -1262,10 +1285,7 @@ _wrap_gtk_signal_connect_object(PyGtk_Object *self, PyObject *args)
 	return NULL;
     }
     
-    if (extra)
-	Py_INCREF(extra);
-    else
-	extra = PyTuple_New(0);
+    extra = PySequence_GetSlice(args, 3, len);
     
     if (extra == NULL)
       return NULL;
@@ -1283,13 +1303,22 @@ static PyObject *
 _wrap_gtk_signal_connect_object_after(PyGtk_Object *self, PyObject *args)
 {
     char *name;
-    PyObject *func, *extra = NULL, *other, *data;
-    int signum;
+    PyObject *first, *func, *extra = NULL, *other, *data;
+    int signum, len;
 
-    if (!PyArg_ParseTuple(args, "sOO|O!:GtkObject.connect_object_after",
-			  &name, &func, &other,
-			  &PyTuple_Type, &extra))
+    len = PyTuple_Size(args);
+    if (len < 3) {
+	PyErr_SetString(PyExc_TypeError,
+	    "GtkObject.connect_object_after requires at least 3 arguments");
+	return NULL;
+    }
+    first = PySequence_GetSlice(args, 0, 3);
+    if (!PyArg_ParseTuple(args, "sOO:GtkObject.connect_object_after",
+			  &name, &func, &other)) {
+	Py_DECREF(first);
         return NULL;
+    }
+    Py_DECREF(first);
     if (!PyCallable_Check(func)) {
         PyErr_SetString(PyExc_TypeError, "third argument must be callable");
         return NULL;
@@ -1298,12 +1327,10 @@ _wrap_gtk_signal_connect_object_after(PyGtk_Object *self, PyObject *args)
 	PyErr_SetString(PyExc_TypeError, "forth argument must be a GtkObject");
 	return NULL;
     }
+    extra = PySequence_GetSlice(args, 3, len);
 
-    if (extra)
-	Py_INCREF(extra);
-    else
-	extra = PyTuple_New(0);
-
+    if (extra == NULL)
+      return NULL;
     data = Py_BuildValue("(ONO)", func, extra, other);
 
     signum = gtk_signal_connect_full(self->obj, name, NULL,
@@ -1354,47 +1381,63 @@ _wrap_gtk_signal_handler_unblock_by_data(PyGtk_Object *self, PyObject *args)
 static PyObject *
 _wrap_gtk_signal_emitv_by_name(PyGtk_Object *self, PyObject *args)
 {
-    guint signal_id, i, nparams;
+    guint signal_id, i, nparams, len;
     GtkSignalQuery *query;
     GtkArg *params;
-    PyObject *ret, *py_params;
+    PyObject *first, *ret, *py_params;
     gchar *name, buf[sizeof(GtkArg)]; /* large enough to hold any return value */
 
-    if (!PyArg_ParseTuple(args, "sO:GtkObject.emit", &name, &py_params))
-	return NULL;
-    if (!PySequence_Check(py_params)) {
-	PyErr_SetString(PyExc_TypeError, "third argument not a sequence");
+    len = PyTuple_Size(args);
+    if (len < 1) {
+	PyErr_SetString(PyExc_TypeError,"GtkObject.emit needs at least 1 arg");
 	return NULL;
     }
-    
+    first = PySequence_GetSlice(args, 0, 1);
+    if (!PyArg_ParseTuple(first, "s:GtkObject.emit", &name)) {
+	Py_DECREF(first);
+	return NULL;
+    }
+    Py_DECREF(first);
+
     signal_id = gtk_signal_lookup(name, GTK_OBJECT_TYPE(self->obj));
     if (signal_id <= 0) {
-	PyErr_SetString(PyExc_KeyError, "can't find signal in classes ancestry");
+	PyErr_SetString(PyExc_KeyError,
+			"can't find signal in classes ancestry");
 	return NULL;
     }
-  query = gtk_signal_query(signal_id);
-  params = g_new(GtkArg, query->nparams + 1);
-  nparams = query->nparams;
-  for (i = 0; i < nparams; i++) {
-    params[i].type = query->params[i];
+    query = gtk_signal_query(signal_id);
+
+    if (len < query->nparams + 1) {
+	PyErr_SetString(PyExc_TypeError,"too few arguments to GtkObject.emit");
+	g_free(query);
+	return NULL;
+    }
+
+    py_params = PySequence_GetSlice(args, 1, len);
+    params = g_new(GtkArg, query->nparams + 1);
+    nparams = query->nparams;
+    for (i = 0; i < nparams; i++) {
+	params[i].type = query->params[i];
+	params[i].name = NULL;
+    }
+    params[i].type = query->return_val;
     params[i].name = NULL;
-  }
-  params[i].type = query->return_val;
-  params[i].name = NULL;
-  params[i].d.pointer_data = buf; /* buffer to hold return value */
-  g_free(query);
-  if (pygtk_args_from_sequence(params, query->nparams, py_params)) {
+    params[i].d.pointer_data = buf; /* buffer to hold return value */
+    g_free(query);
+    if (pygtk_args_from_sequence(params, query->nparams, py_params)) {
+	Py_DECREF(py_params);
+	g_free(params);
+	return NULL;
+    }
+    Py_DECREF(py_params);
+    gtk_signal_emitv(self->obj, signal_id, params);
+    ret = pygtk_ret_as_pyobject(&params[nparams]);
     g_free(params);
-    return NULL;
-  }
-  gtk_signal_emitv(self->obj, signal_id, params);
-  ret = pygtk_ret_as_pyobject(&params[nparams]);
-  g_free(params);
-  if (ret == NULL) {
-      Py_INCREF(Py_None);
-      ret = Py_None;
-  }
-  return ret;
+    if (ret == NULL) {
+	Py_INCREF(Py_None);
+	ret = Py_None;
+    }
+    return ret;
 }
 
 static PyObject *
