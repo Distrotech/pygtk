@@ -1,5 +1,26 @@
 2001-09-22  James Henstridge  <james@daa.com.au>
 
+	* gtk/pygtk.h: remove traces of ExtensionClass.
+
+	* gtk/libglade.override: s/PyExtensionClass/PyTypeObject/.
+
+	* gtk/gtk-types.c (_pygtk_register_boxed_types): get rid of
+	mentions of ExtensionClass.
+
+	* gtk/gdk.override: s/PyExtensionClass/PyTypeObject/.
+
+	* gtk/gtk.override: s/PyExtensionClass/PyTypeObject/.
+
+	* gobjectmodule.c (pygobject_traverse): implement a traverse
+	function for PyGObject.
+	(PyGObject_Type): add GC support.
+	(object_free): use PyObject_GC_Del to delete the memory.
+	(pygobject_dealloc): stop GC tracking the object here.
+	(pygobject_register_class): set a few more type fields here.
+	(pygobject_new): use PyObject_GC_New to allocate the object here.
+	(pygobject_dealloc): readd the 1-1 object/wrapper hack.  It should
+	work as expected since adding GC support.
+
 	* pango.override: s/PyExtensionClass/PyTypeObject/
 
 	* codegen/codegen.py (consttmpl): constructor template returns an

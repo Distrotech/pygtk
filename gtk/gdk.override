@@ -11,17 +11,17 @@ headers
 #undef gdk_window_get_type
 #define gdk_window_get_type gdk_window_object_get_type
 
-static PyExtensionClass *_PyGObject_Type;
+static PyTypeObject *_PyGObject_Type;
 #define PyGObject_Type (*_PyGObject_Type)
 
-static PyExtensionClass *_PyPangoContext_Type;
+static PyTypeObject *_PyPangoContext_Type;
 #define PyPangoContext_Type (*_PyPangoContext_Type)
-static PyExtensionClass *_PyPangoFont_Type;
+static PyTypeObject *_PyPangoFont_Type;
 #define PyPangoFont_Type (*_PyPangoFont_Type)
-static PyExtensionClass *_PyPangoLayout_Type;
+static PyTypeObject *_PyPangoLayout_Type;
 #define PyPangoLayout_Type (*_PyPangoLayout_Type)
 
-extern PyExtensionClass PyGtkWidget_Type;
+extern PyTypeObject PyGtkWidget_Type;
 
 %%
 init
@@ -32,8 +32,8 @@ init
     if (pygobject != NULL) {
 	PyObject *module_dict = PyModule_GetDict(pygobject);
 
-	_PyGObject_Type = (PyExtensionClass *)PyDict_GetItemString(module_dict,
-								   "GObject");
+	_PyGObject_Type = (PyTypeObject *)PyDict_GetItemString(module_dict,
+							       "GObject");
     } else {
 	Py_FatalError("could not import gobject");
 	return;
@@ -43,14 +43,11 @@ init
 	PyObject *module_dict = PyModule_GetDict(pypango);
 
 	_PyPangoContext_Type =
-	    (PyExtensionClass *)PyDict_GetItemString(module_dict,
-						     "Context");
+	    (PyTypeObject *)PyDict_GetItemString(module_dict, "Context");
 	_PyPangoFont_Type =
-	    (PyExtensionClass *)PyDict_GetItemString(module_dict,
-						     "Font");
+	    (PyTypeObject *)PyDict_GetItemString(module_dict, "Font");
 	_PyPangoLayout_Type =
-	    (PyExtensionClass *)PyDict_GetItemString(module_dict,
-						     "Layout");
+	    (PyTypeObject *)PyDict_GetItemString(module_dict, "Layout");
     } else {
 	Py_FatalError("could not import pango");
 	return;

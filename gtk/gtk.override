@@ -8,25 +8,25 @@ headers
 #include "pygtk-private.h"
 #include "pygtktreemodel.h"
 
-static PyExtensionClass *_PyGObject_Type;
+static PyTypeObject *_PyGObject_Type;
 #define PyGObject_Type (*_PyGObject_Type)
 
-static PyExtensionClass *_PyPangoContext_Type;
+static PyTypeObject *_PyPangoContext_Type;
 #define PyPangoContext_Type (*_PyPangoContext_Type)
-static PyExtensionClass *_PyPangoFont_Type;
+static PyTypeObject *_PyPangoFont_Type;
 #define PyPangoFont_Type (*_PyPangoFont_Type)
-static PyExtensionClass *_PyPangoLayout_Type;
+static PyTypeObject *_PyPangoLayout_Type;
 #define PyPangoLayout_Type (*_PyPangoLayout_Type)
 
 /* from the gdk portion ... */
-extern PyExtensionClass PyGdkColormap_Type;
-extern PyExtensionClass PyGdkGC_Type;
-extern PyExtensionClass PyGdkWindow_Type;
-extern PyExtensionClass PyGdkPixmap_Type;
-extern PyExtensionClass PyGdkImage_Type;
-extern PyExtensionClass PyGdkPixbuf_Type;
-extern PyExtensionClass PyGdkPixbufAnimation_Type;
-extern PyExtensionClass PyGdkDragContext_Type;
+extern PyTypeObject PyGdkColormap_Type;
+extern PyTypeObject PyGdkGC_Type;
+extern PyTypeObject PyGdkWindow_Type;
+extern PyTypeObject PyGdkPixmap_Type;
+extern PyTypeObject PyGdkImage_Type;
+extern PyTypeObject PyGdkPixbuf_Type;
+extern PyTypeObject PyGdkPixbufAnimation_Type;
+extern PyTypeObject PyGdkDragContext_Type;
 
 
 %%
@@ -38,8 +38,8 @@ init
     if (pygobject != NULL) {
 	PyObject *module_dict = PyModule_GetDict(pygobject);
 
-	_PyGObject_Type = (PyExtensionClass *)PyDict_GetItemString(module_dict,
-								   "GObject");
+	_PyGObject_Type = (PyTypeObject *)PyDict_GetItemString(module_dict,
+							       "GObject");
     } else {
 	Py_FatalError("could not import gobject");
 	return;
@@ -49,14 +49,11 @@ init
 	PyObject *module_dict = PyModule_GetDict(pypango);
 
 	_PyPangoContext_Type =
-	    (PyExtensionClass *)PyDict_GetItemString(module_dict,
-						     "Context");
+	    (PyTypeObject *)PyDict_GetItemString(module_dict, "Context");
 	_PyPangoFont_Type =
-	    (PyExtensionClass *)PyDict_GetItemString(module_dict,
-						     "Font");
+	    (PyTypeObject *)PyDict_GetItemString(module_dict, "Font");
 	_PyPangoLayout_Type =
-	    (PyExtensionClass *)PyDict_GetItemString(module_dict,
-						     "Layout");
+	    (PyTypeObject *)PyDict_GetItemString(module_dict, "Layout");
     } else {
 	Py_FatalError("could not import pango");
 	return;
