@@ -10,7 +10,7 @@ import string, sys
 from OpenGL.GL import *
 
 import gtk
-import gtkgl
+import gtk.gl
 
 MY_LIST=1
 NUMDOTS = 500
@@ -100,7 +100,7 @@ def main():
 	win.set_title("GL Dots")
 	win.connect("destroy", gtk.mainquit)
 	
-	glarea = gtkgl.GtkGLArea((gtkgl.RGBA, gtkgl.DOUBLEBUFFER))
+	glarea = gtk.gl.GtkGLArea((gtk.gl.RGBA, gtk.gl.DOUBLEBUFFER))
 	glarea.add_events(gtk.GDK.BUTTON_PRESS_MASK)
 	glarea.size(300, 300)
 
@@ -118,7 +118,7 @@ def main():
 	gtk.mainloop()
 	glarea.destroy()
 
-if gtkgl.query():
+if gtk.gl.query():
 	print "Use the mouse buttons to control some of the dots."
 
 	main()

@@ -1,5 +1,5 @@
 import gtk
-import gtkgl
+import gtk.gl
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -52,7 +52,7 @@ def realise(glarea):
 		glDepthFunc(GL_LESS)
 		glEnable(GL_DEPTH_TEST)
 
-if not gtkgl.query():
+if not gtk.gl.query():
 	print "OpenGL not supported.  Bye."
 	raise SystemExit
 
@@ -80,7 +80,8 @@ hscale.show()
 vadj.connect("value_changed", vchanged)
 hadj.connect("value_changed", hchanged)
 
-glarea = gtkgl.GtkGLArea((gtkgl.RGBA, gtkgl.DOUBLEBUFFER, gtkgl.DEPTH_SIZE, 1))
+glarea = gtk.gl.GtkGLArea((gtk.gl.RGBA, gtk.gl.DOUBLEBUFFER,
+			   gtk.gl.DEPTH_SIZE, 1))
 glarea.size(300, 300)
 
 glarea.connect("realize", realise)

@@ -5,7 +5,7 @@
 
 from OpenGL.GL import *
 import gtk
-import gtkgl
+import gtk.gl
 
 import math
 
@@ -245,7 +245,7 @@ def init(glarea):
 	glEnable( GL_NORMALIZE )
 
 
-if not gtkgl.query():
+if not gtk.gl.query():
 	print "OpenGL not supported.  Bye."
 	raise SystemExit
 
@@ -257,7 +257,8 @@ table = gtk.GtkTable(4, 2)
 win.add(table)
 table.show()
 
-glarea = gtkgl.GtkGLArea((gtkgl.RGBA, gtkgl.DEPTH_SIZE, 1, gtkgl.DOUBLEBUFFER))
+glarea = gtk.gl.GtkGLArea((gtk.gl.RGBA, gtk.gl.DEPTH_SIZE, 1,
+			   gtk.gl.DOUBLEBUFFER))
 glarea.size(300, 300)
 
 glarea.connect("realize", init)
