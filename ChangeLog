@@ -1,3 +1,8 @@
+2004-11-15  John Finlay  <finlay@moeraki.com>
+
+	* gobject/pygflags.c (pyg_flags_repr): Print long int value if enum
+	string not found. Fixes #158417. (modifed patch from Tim Evans)
+
 2004-11-07  John Finlay  <finlay@moeraki.com>
 
 	* gtk/gdk.override (_wrap_gdk_event_tp_setattr) Fix #157571 with
