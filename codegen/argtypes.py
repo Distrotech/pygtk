@@ -484,6 +484,8 @@ matcher.register('GdkBitmap*', matcher.get('GdkWindow*'))
 matcher.register('GdkDrawable*', matcher.get('GdkWindow*'))
 matcher.register_boxed('GdkGC', 'PyGdkGC_Type',
 		       'PyGdkGC_Get', 'PyGdkGC_New')
+matcher.register_boxed('GdkVisual', 'PyGdkVisual_Type',
+                       'PyGdkVisual_Get', 'PyGdkVisual_New')
 matcher.register_boxed('GdkColormap', 'PyGdkColormap_Type',
 		       'PyGdkColormap_Get', 'PyGdkColormap_New')
 matcher.register_boxed('GdkDragContext', 'PyGdkDragContext_Type',

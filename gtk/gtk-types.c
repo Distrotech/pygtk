@@ -1,6 +1,7 @@
 /* -*- Mode: C; c-basic-offset: 4 -*- */
 #include <gtk/gtk.h>
 #include "pygtk-private.h"
+#include <structmember.h>
 
 PyObject *
 PyGtkAccelGroup_New(GtkAccelGroup *obj)
@@ -89,6 +90,20 @@ PyGdkGC_New(GdkGC *gc)
 	return NULL;
     self->obj = gc;
     gdk_gc_ref(self->obj);
+    return (PyObject *)self;
+}
+
+PyObject *
+PyGdkVisual_New(GdkVisual *visual)
+{
+    PyGdkVisual_Object *self;
+
+    self = (PyGdkVisual_Object *)PyObject_NEW(PyGdkVisual_Object,
+					      &PyGdkVisual_Type);
+    if (self == NULL)
+	return NULL;
+    self->obj = visual;
+    gdk_visual_ref(self->obj);
     return (PyObject *)self;
 }
 
@@ -1868,6 +1883,85 @@ PyTypeObject PyGdkGC_Type = {
 };
 
 static void
+pygdk_visual_dealloc(PyGdkVisual_Object *self)
+{
+    gdk_visual_unref(self->obj);
+    PyMem_DEL(self);
+}
+
+static struct memberlist pygdk_visual_members[] = {
+    { "type",          T_INT, offsetof(GdkVisual, type),          READONLY },
+    { "depth",         T_INT, offsetof(GdkVisual, depth),         READONLY },
+    { "byte_order",    T_INT, offsetof(GdkVisual, byte_order),    READONLY },
+    { "colormap_size", T_INT, offsetof(GdkVisual, colormap_size), READONLY },
+    { "bits_per_rgb",  T_INT, offsetof(GdkVisual, bits_per_rgb),  READONLY },
+    { "red_mask",      T_INT, offsetof(GdkVisual, red_mask),      READONLY },
+    { "red_shift",     T_INT, offsetof(GdkVisual, red_shift),     READONLY },
+    { "red_prec",      T_INT, offsetof(GdkVisual, red_prec),      READONLY },
+    { "green_mask",    T_INT, offsetof(GdkVisual, green_mask),    READONLY },
+    { "green_shift",   T_INT, offsetof(GdkVisual, green_shift),   READONLY },
+    { "green_prec",    T_INT, offsetof(GdkVisual, green_prec),    READONLY },
+    { "blue_mask",     T_INT, offsetof(GdkVisual, blue_mask),     READONLY },
+    { "blue_shift",    T_INT, offsetof(GdkVisual, blue_shift),    READONLY },
+    { "blue_prec",     T_INT, offsetof(GdkVisual, blue_prec),     READONLY },
+    { NULL, 0, 0, 0 }
+};
+
+static PyObject *
+pygdk_visual_getattr(PyGdkVisual_Object *self, char *attr)
+{
+    /* handle non int attributes first */
+    if (!strcmp(attr, "type"))
+	return PyInt_FromLong(self->obj->type);
+    else if (!strcmp(attr, "byte_order"))
+	return PyInt_FromLong(self->obj->byte_order);
+    else if (!strcmp(attr, "red_mask"))
+	return PyInt_FromLong(self->obj->red_mask);
+    else if (!strcmp(attr, "green_mask"))
+	return PyInt_FromLong(self->obj->green_mask);
+    else if (!strcmp(attr, "blue_mask"))
+	return PyInt_FromLong(self->obj->blue_mask);
+    /* rest are all ints, so PyMember_Get should have not problems */
+    return PyMember_Get((char *)self->obj, pygdk_visual_members, attr);
+}
+
+static int
+pygdk_visual_compare(PyGdkVisual_Object *self, PyGdkVisual_Object *v)
+{
+    if (self->obj == v->obj) return 0;
+    if (self->obj > v->obj) return -1;
+    return 1;
+}
+
+static long
+pygdk_visual_hash(PyGdkVisual_Object *self)
+{
+    return (long)self->obj;
+}
+
+PyTypeObject PyGdkVisual_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,
+    "GdkVisual",
+    sizeof(PyGdkVisual_Object),
+    0,
+    (destructor)pygdk_visual_dealloc,
+    (printfunc)0,
+    (getattrfunc)pygdk_visual_getattr,
+    (setattrfunc)0,
+    (cmpfunc)pygdk_visual_compare,
+    (reprfunc)0,
+    0,
+    0,
+    0,
+    (hashfunc)pygdk_visual_hash,
+    (ternaryfunc)0,
+    (reprfunc)0,
+    0L,0L,0L,0L,
+    NULL
+};
+
+static void
 PyGdkColormap_Dealloc(PyGdkColormap_Object *self)
 {
     gdk_colormap_unref(self->obj);
@@ -2510,6 +2604,7 @@ _pygtk_register_boxed_types(PyObject *moddict)
     register_tp(GdkEvent);
     register_tp(GdkWindow);
     register_tp(GdkGC);
+    register_tp(GdkVisual);
     register_tp(GdkColormap);
     register_tp(GdkDragContext);
     register_tp(GtkSelectionData);

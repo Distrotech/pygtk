@@ -1,3 +1,18 @@
+2000-05-12  James Henstridge  <james@daa.com.au>
+
+	* codegen/argtypes.py: added support for GdkVisual to code generator.
+
+	* gtk/gtkobject-support.c: added support for GdkVisual for marshalling
+	functions.
+
+	* gtk/gtk-types.c, gtk/pygtk.h, gtk/pygtk-private.h: added GdkVisual
+	type.
+
+	* gtk/gtkmodule.c (init_gtk): add the _PyGtk_API variable to the
+	module dictionary, for use with pygtk extensions.
+
+	* gtk/pygtk.h: update public pygtk header file.
+
 2000-05-09  James Henstridge  <james@daa.com.au>
 
 	* gtk/Makefile.am (EXTRA_DIST): added gdk.defs to dist.

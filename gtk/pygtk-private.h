@@ -21,6 +21,7 @@ extern PyTypeObject PyGdkColor_Type;
 extern PyTypeObject PyGdkEvent_Type;
 extern PyTypeObject PyGdkWindow_Type;
 extern PyTypeObject PyGdkGC_Type;
+extern PyTypeObject PyGdkVisual_Type;
 extern PyTypeObject PyGdkColormap_Type;
 extern PyTypeObject PyGdkDragContext_Type;
 extern PyTypeObject PyGtkSelectionData_Type;
@@ -38,6 +39,7 @@ extern PyTypeObject PyGtkCTreeNode_Type;
 #define PyGdkWindow_Check(v) ((v)->ob_type == &PyGdkWindow_Type)
 #define PyGdkBitmap_Check(v) ((v)->ob_type == &PyGdkWindow_Type)
 #define PyGdkGC_Check(v) ((v)->ob_type == &PyGdkGC_Type)
+#define PyGdkVisual_Check(v) ((v)->ob_type == &PyGdkVisual_Type)
 #define PyGdkColormap_Check(v) ((v)->ob_type == &PyGdkColormap_Type)
 #define PyGdkDragContext_Check(v) ((v)->ob_type == &PyGdkDragContext_Type)
 #define PyGtkSelectionData_Check(v) ((v)->ob_type == &PyGtkSelectionData_Type)
@@ -54,6 +56,7 @@ PyObject *PyGdkColor_New(GdkColor *colour);
 PyObject *PyGdkEvent_New(GdkEvent *event);
 PyObject *PyGdkWindow_New(GdkWindow *window);
 PyObject *PyGdkGC_New(GdkGC *gc);
+PyObject *PyGdkVisual_New(GdkVisual *visual);
 PyObject *PyGdkColormap_New(GdkColormap *colourmap);
 PyObject *PyGdkDragContext_New(GdkDragContext *ctx);
 PyObject *PyGtkSelectionData_New(GtkSelectionData *data);
@@ -62,8 +65,8 @@ PyObject *PyGdkCursor_New(GdkCursor *cursor);
 PyObject *PyGtkCTreeNode_New(GtkCTreeNode *node);
 
 /* miscelaneous functions */
-void PyGtk_BlockThreads(void);
-void PyGtk_UnblockThreads(void);
+void pygtk_block_threads(void);
+void pygtk_unblock_threads(void);
 
 void pygtk_destroy_notify(gpointer data);
 void pygtk_callback_marshal(GtkObject *o, gpointer d, guint nargs,

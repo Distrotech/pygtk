@@ -267,7 +267,7 @@ typedef struct {
     toargfunc toarg;
 } PyGtk_BoxFuncs;
 /* keys are GUINT_TO_POINTER(GtkType) */
-static GHashTable *boxed_funcs;
+GHashTable *_pygtk_boxed_funcs = NULL;
 
 void
 pygtk_register_boxed(GtkType boxed_type, fromargfunc fromarg, toargfunc toarg)
@@ -276,10 +276,10 @@ pygtk_register_boxed(GtkType boxed_type, fromargfunc fromarg, toargfunc toarg)
 
     fs->fromarg = fromarg;
     fs->toarg = toarg;
-    g_hash_table_insert(boxed_funcs, GUINT_TO_POINTER(boxed_type), fs);
+    g_hash_table_insert(_pygtk_boxed_funcs, GUINT_TO_POINTER(boxed_type), fs);
 }
 
-#define pygtk_get_boxed(type) (PyGtk_BoxFuncs *)g_hash_table_lookup(boxed_funcs, GUINT_TO_POINTER(type))
+#define pygtk_get_boxed(type) (PyGtk_BoxFuncs *)g_hash_table_lookup(_pygtk_boxed_funcs, GUINT_TO_POINTER(type))
 
 /* create a GtkArg from a PyObject, using the GTK_VALUE_* routines.
  * returns -1 if it couldn't set the argument. */
@@ -423,6 +423,13 @@ pygtk_arg_from_pyobject(GtkArg *arg, PyObject *obj)
 		GTK_VALUE_BOXED(*arg) = NULL;
 	    else
 		return -1;
+	} else if (arg->type == GTK_TYPE_GDK_VISUAL) {
+	    if (PyGdkVisual_Check(obj))
+		GTK_VALUE_BOXED(*arg) = PyGdkVisual_Get(obj);
+	    else if (obj == Py_None)
+		GTK_VALUE_BOXED(*arg) = NULL;
+	    else
+		return -1;
 	} else if (arg->type == GTK_TYPE_GDK_COLORMAP) {
 	    if (PyGdkColormap_Check(obj))
 		GTK_VALUE_BOXED(*arg) = PyGdkColormap_Get(obj);
@@ -557,6 +564,8 @@ pygtk_arg_as_pyobject(GtkArg *arg)
 	    return PyGdkColor_New(GTK_VALUE_BOXED(*arg));
 	else if (arg->type == GTK_TYPE_GDK_WINDOW)
 	    return PyGdkWindow_New(GTK_VALUE_BOXED(*arg));
+	else if (arg->type == GTK_TYPE_GDK_VISUAL)
+	    return PyGdkVisual_New(GTK_VALUE_BOXED(*arg));
 	else if (arg->type == GTK_TYPE_GDK_COLORMAP)
 	    return PyGdkColormap_New(GTK_VALUE_BOXED(*arg));
 	else if (arg->type == GTK_TYPE_GDK_DRAG_CONTEXT)
@@ -731,6 +740,11 @@ pygtk_ret_from_pyobject(GtkArg *ret, PyObject *py_ret)
 		*GTK_RETLOC_BOXED(*ret) = PyGdkWindow_Get(py_ret);
 	    else
 		*GTK_RETLOC_BOXED(*ret) = NULL;
+	} else if (ret->type == GTK_TYPE_GDK_VISUAL) {
+	    if (PyGdkVisual_Check(py_ret))
+		*GTK_RETLOC_BOXED(*ret) = PyGdkVisual_Get(py_ret);
+	    else
+		*GTK_RETLOC_BOXED(*ret) = NULL;
 	} else if (ret->type == GTK_TYPE_GDK_COLORMAP) {
 	    if (PyGdkColormap_Check(py_ret))
 		*GTK_RETLOC_BOXED(*ret) = PyGdkColormap_Get(py_ret);
@@ -829,6 +843,8 @@ pygtk_ret_as_pyobject(GtkArg *arg)
 	    return PyGdkColor_New(*GTK_RETLOC_BOXED(*arg));
 	else if (arg->type == GTK_TYPE_GDK_WINDOW)
 	    return PyGdkWindow_New(*GTK_RETLOC_BOXED(*arg));
+	else if (arg->type == GTK_TYPE_GDK_VISUAL)
+	    return PyGdkVisual_New(*GTK_RETLOC_BOXED(*arg));
 	else if (arg->type == GTK_TYPE_GDK_COLORMAP)
 	    return PyGdkColormap_New(*GTK_RETLOC_BOXED(*arg));
 	else if (arg->type == GTK_TYPE_GDK_DRAG_CONTEXT)
