@@ -1,5 +1,10 @@
 2005-02-23  Cedric Gustin  <cedric.gustin@swing.be>
 
+	* gobject/pygtype.c (add_property_docs): Use G_CONST_RETURN with a
+	gchar* return value.
+
+2005-02-23  Cedric Gustin  <cedric.gustin@swing.be>
+
 	* gobject/pygtype.c (add_property_docs): Do not use
 	g_string_append_printf with a NULL argument, as it crashes on
 	win32. Fixes bug #166546.
