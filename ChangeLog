@@ -1,3 +1,46 @@
+2004-03-27  Johan Dahlin  <johan@gnome.org>
+
+	* gtk/gtk.defs (widget_list_style_properties): This is a function,
+	not a method.
+
+	* pygobject-private.h, pygobject.h, gobjectmodule.c: 
+	Make PyGParamSpec_Type and pyg_param_spec_new part of the public API.
+
+	* gtk/gtkwidget.override (_wrap_gtk_widget_style_get_property) 
+	(_wrap_gtk_widget_class_list_style_properties): Impl. Fixes
+	bug 138104
+
+	* setup.py: Removed installation of libglade and libxml2 DLLs on
+	win32 (these are now part of the dropline installer).
+	patch by Cedric Gustin, fixed bug 136731
+
+	* gtk/gtk.override (_wrap_gtk_main_quit): Override, this does
+	two things differently from the old (auto generated) version,
+	first it checks if gtk_main_level() is non zero and raises a
+	RuntimeError if it's not. It also allows arguments and completely
+	ignores them, this is closer to the old 0.6.x behavior and
+	suitable for usage like this: obj.connect(signal, gtk.main_quit),
+	fixes bug 136705
+
+	* gtk/gtkmodule.c (python_do_pending_calls): Check gtk_main_level
+	before calling gtk_main_quit, since it might be called outside of
+	a mainloop (eg, gtk.main_iteration). Avoids warnings on the console
+	as found in example in bug 138163
+
+2004-03-25  Johan Dahlin  <johan@gnome.org>
+
+	* examples/glade/autoconnect.py: New small example
+
+2004-03-22  Xavier Ordoquy  <xordoquy@wanadoo.fr>
+
+	* gtk/gtk.defs: Removed the _gtk_* functions as the are private
+	and not exported in the module.
+
+2004-03-22  Xavier Ordoquy  <xordoquy@wanadoo.fr>
+
+	* codegen/h2def.py: Added the interface detection (interface -*Iface-
+	inheriting from GTypeInterface)
+
 2004-03-20  Gustavo J. A. M. Carneiro  <gustavo@users.sourceforge.net>
 
 	* gtk/gtkmodule.c (init_gtk): Define constants for the predefined
@@ -9,6 +52,25 @@
 	"gtk.gdk.atom_intern always creates an atom".
 	(headers): Add protype for have_numpy() to avoid later
 	implicit declaration warning.
+
+2004-03-18  Xavier Ordoquy  <xordoquy@wanadoo.fr>
+
+	* codegen/h2def.py: Added the interface detection (class
+	inheriting from GTypeInterface)
+
+2004-03-18  Xavier Ordoquy  <xordoquy@wanadoo.fr>
+
+	* gtk/gtk.defs: Cosmetic changes to match h2def output exactly
+	in order to ease further merges.
+
+2004-03-12  Johan Dahlin  <johan@gnome.org>
+
+	* gtk/gtk.override (_wrap_gtk_accel_group_connect_group): 
+
+2004-03-12  Xavier Ordoquy  <xordoquy@wanadoo.fr>
+
+	Fixes #136811 (h2def ignores some functions)
+	* codegen/h2def.py: skips the extern "C"
 
 2004-03-11  Gustavo J. A. M. Carneiro  <gustavo@users.sourceforge.net>
 

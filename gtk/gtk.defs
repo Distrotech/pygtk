@@ -15,8 +15,8 @@
 )
 
 (define-function gtk_accel_group_new
-  (is-constructor-of GtkAccelGroup)
   (c-name "gtk_accel_group_new")
+  (is-constructor-of "GtkAccelGroup")
   (return-type "GtkAccelGroup*")
 )
 
@@ -160,7 +160,7 @@
 
 (define-function gtk_accel_label_new
   (c-name "gtk_accel_label_new")
-  (is-constructor-of GtkAccelLabel)
+  (is-constructor-of "GtkAccelLabel")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "string")
@@ -301,37 +301,6 @@
   )
 )
 
-(define-function _gtk_accel_map_init
-  (c-name "_gtk_accel_map_init")
-  (return-type "none")
-)
-
-(define-function _gtk_accel_map_add_group
-  (c-name "_gtk_accel_map_add_group")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "accel_path")
-    '("GtkAccelGroup*" "accel_group")
-  )
-)
-
-(define-function _gtk_accel_map_remove_group
-  (c-name "_gtk_accel_map_remove_group")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "accel_path")
-    '("GtkAccelGroup*" "accel_group")
-  )
-)
-
-(define-function _gtk_accel_path_is_valid
-  (c-name "_gtk_accel_path_is_valid")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "accel_path")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkaccessible.h
@@ -358,7 +327,7 @@
 
 (define-function gtk_adjustment_new
   (c-name "gtk_adjustment_new")
-  (is-constructor-of GtkAdjustment)
+  (is-constructor-of "GtkAdjustment")
   (return-type "GtkObject*")
   (parameters
     '("gdouble" "value" (default "0"))
@@ -418,7 +387,7 @@
 
 (define-function gtk_alignment_new
   (c-name "gtk_alignment_new")
-  (is-constructor-of GtkAlignment)
+  (is-constructor-of "GtkAlignment")
   (return-type "GtkWidget*")
   (parameters
     '("gfloat" "xalign" (default "0.0"))
@@ -451,7 +420,7 @@
 
 (define-function gtk_arrow_new
   (c-name "gtk_arrow_new")
-  (is-constructor-of GtkArrow)
+  (is-constructor-of "GtkArrow")
   (return-type "GtkWidget*")
   (parameters
     '("GtkArrowType" "arrow_type")
@@ -480,7 +449,7 @@
 
 (define-function gtk_aspect_frame_new
   (c-name "gtk_aspect_frame_new")
-  (is-constructor-of GtkAspectFrame)
+  (is-constructor-of "GtkAspectFrame")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label" (null-ok) (default "NULL"))
@@ -839,13 +808,13 @@
 
 (define-function gtk_button_new
   (c-name "gtk_button_new")
-  (is-constructor-of GtkButton)
+  (is-constructor-of "GtkButton")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_button_new_with_label
   (c-name "gtk_button_new_with_label")
-  (is-constructor-of GtkButton)
+  (is-constructor-of "GtkButton")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -958,14 +927,7 @@
   (return-type "gboolean")
 )
 
-(define-method _set_depressed
-  (of-object "GtkButton")
-  (c-name "_gtk_button_set_depressed")
-  (return-type "none")
-  (parameters
-    '("gboolean" "depressed")
-  )
-)
+
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkcalendar.h
 
@@ -976,7 +938,7 @@
 
 (define-function gtk_calendar_new
   (c-name "gtk_calendar_new")
-  (is-constructor-of GtkCalendar)
+  (is-constructor-of "GtkCalendar")
   (return-type "GtkWidget*")
 )
 
@@ -1181,7 +1143,7 @@
 
 (define-function gtk_cell_renderer_pixbuf_new
   (c-name "gtk_cell_renderer_pixbuf_new")
-  (is-constructor-of GtkCellRendererPixbuf)
+  (is-constructor-of "GtkCellRendererPixbuf")
   (return-type "GtkCellRenderer*")
 )
 
@@ -1196,7 +1158,7 @@
 
 (define-function gtk_cell_renderer_text_new
   (c-name "gtk_cell_renderer_text_new")
-  (is-constructor-of GtkCellRendererText)
+  (is-constructor-of "GtkCellRendererText")
   (return-type "GtkCellRenderer*")
 )
 
@@ -1220,7 +1182,7 @@
 
 (define-function gtk_cell_renderer_toggle_new
   (c-name "gtk_cell_renderer_toggle_new")
-  (is-constructor-of GtkCellRendererToggle)
+  (is-constructor-of "GtkCellRendererToggle")
   (return-type "GtkCellRenderer*")
 )
 
@@ -1265,13 +1227,13 @@
 
 (define-function gtk_check_button_new
   (c-name "gtk_check_button_new")
-  (is-constructor-of GtkCheckButton)
+  (is-constructor-of "GtkCheckButton")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_check_button_new_with_label
   (c-name "gtk_check_button_new_with_label")
-  (is-constructor-of GtkCheckButton)
+  (is-constructor-of "GtkCheckButton")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -1286,16 +1248,6 @@
   )
 )
 
-(define-method _get_props
-  (of-object "GtkCheckButton")
-  (c-name "_gtk_check_button_get_props")
-  (return-type "none")
-  (parameters
-    '("gint*" "indicator_size")
-    '("gint*" "indicator_spacing")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkcheckmenuitem.h
@@ -1307,13 +1259,13 @@
 
 (define-function gtk_check_menu_item_new
   (c-name "gtk_check_menu_item_new")
-  (is-constructor-of GtkCheckMenuItem)
+  (is-constructor-of "GtkCheckMenuItem")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_check_menu_item_new_with_label
   (c-name "gtk_check_menu_item_new_with_label")
-  (is-constructor-of GtkCheckMenuItem)
+  (is-constructor-of "GtkCheckMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -1322,7 +1274,7 @@
 
 (define-function gtk_check_menu_item_new_with_mnemonic
   (c-name "gtk_check_menu_item_new_with_mnemonic")
-  (is-constructor-of GtkCheckMenuItem)
+  (is-constructor-of "GtkCheckMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -1520,7 +1472,7 @@
 
 (define-function gtk_clist_new
   (c-name "gtk_clist_new")
-  (is-constructor-of GtkCList)
+  (is-constructor-of "GtkCList")
   (return-type "GtkWidget*")
   (parameters
     '("gint" "columns" (default "1"))
@@ -1530,7 +1482,7 @@
 
 (define-function gtk_clist_new_with_titles
   (c-name "gtk_clist_new_with_titles")
-  (is-constructor-of GtkCList)
+  (is-constructor-of "GtkCList")
   (return-type "GtkWidget*")
   (parameters
     '("gint" "columns" (default "1"))
@@ -2191,16 +2143,6 @@
   )
 )
 
-(define-method _create_cell_layout
-  (of-object "GtkCList")
-  (c-name "_gtk_clist_create_cell_layout")
-  (return-type "PangoLayout*")
-  (parameters
-    '("GtkCListRow*" "clist_row")
-    '("gint" "column")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkcolorsel.h
@@ -2212,7 +2154,7 @@
 
 (define-function gtk_color_selection_new
   (c-name "gtk_color_selection_new")
-  (is-constructor-of GtkColorSelection)
+  (is-constructor-of "GtkColorSelection")
   (return-type "GtkWidget*")
 )
 
@@ -2337,7 +2279,6 @@
   )
 )
 
-
 (define-function color_selection_set_change_palette_hook
   (c-name "gtk_color_selection_set_change_palette_hook")
   (return-type "GtkColorSelectionChangePaletteFunc")
@@ -2376,6 +2317,8 @@
   (deprecated "")
 )
 
+
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkcolorseldialog.h
 
 (define-function gtk_color_selection_dialog_get_type
@@ -2385,7 +2328,7 @@
 
 (define-function gtk_color_selection_dialog_new
   (c-name "gtk_color_selection_dialog_new")
-  (is-constructor-of GtkColorSelectionDialog)
+  (is-constructor-of "GtkColorSelectionDialog")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title")
@@ -2403,7 +2346,7 @@
 
 (define-function gtk_combo_new
   (c-name "gtk_combo_new")
-  (is-constructor-of GtkCombo)
+  (is-constructor-of "GtkCombo")
   (return-type "GtkWidget*")
 )
 
@@ -2777,44 +2720,6 @@
   )
 )
 
-(define-method _queue_resize
-  (of-object "GtkContainer")
-  (c-name "_gtk_container_queue_resize")
-  (return-type "none")
-)
-
-(define-method _clear_resize_widgets
-  (of-object "GtkContainer")
-  (c-name "_gtk_container_clear_resize_widgets")
-  (return-type "none")
-)
-
-(define-method _child_composite_name
-  (of-object "GtkContainer")
-  (c-name "_gtk_container_child_composite_name")
-  (return-type "gchar*")
-  (parameters
-    '("GtkWidget*" "child")
-  )
-)
-
-(define-method _dequeue_resize_handler
-  (of-object "GtkContainer")
-  (c-name "_gtk_container_dequeue_resize_handler")
-  (return-type "none")
-)
-
-(define-method _focus_sort
-  (of-object "GtkContainer")
-  (c-name "_gtk_container_focus_sort")
-  (return-type "GList*")
-  (parameters
-    '("GList*" "children")
-    '("GtkDirectionType" "direction")
-    '("GtkWidget*" "old_focus")
-  )
-)
- 
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkctree.h
@@ -2827,7 +2732,7 @@
 
 (define-function gtk_ctree_new_with_titles
   (c-name "gtk_ctree_new_with_titles")
-  (is-constructor-of GtkCTree)
+  (is-constructor-of "GtkCTree")
   (return-type "GtkWidget*")
   (parameters
     '("gint" "columns" (default "1"))
@@ -2839,7 +2744,7 @@
 
 (define-function gtk_ctree_new
   (c-name "gtk_ctree_new")
-  (is-constructor-of GtkCTree)
+  (is-constructor-of "GtkCTree")
   (return-type "GtkWidget*")
   (parameters
     '("gint" "columns" (default "1"))
@@ -3540,7 +3445,7 @@
 
 (define-function gtk_curve_new
   (c-name "gtk_curve_new")
-  (is-constructor-of GtkCurve)
+  (is-constructor-of "GtkCurve")
   (return-type "GtkWidget*")
 )
 
@@ -3615,13 +3520,13 @@
 
 (define-function gtk_dialog_new
   (c-name "gtk_dialog_new")
-  (is-constructor-of GtkDialog)
+  (is-constructor-of "GtkDialog")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_dialog_new_with_buttons
   (c-name "gtk_dialog_new_with_buttons")
-  (is-constructor-of GtkDialog)
+  (is-constructor-of "GtkDialog")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title" (null-ok) (default "NULL"))
@@ -3865,24 +3770,6 @@
   )
 )
 
-(define-method _drag_source_handle_event
-  (of-object "GtkWidget")
-  (c-name "_gtk_drag_source_handle_event")
-  (return-type "none")
-  (parameters
-    '("GdkEvent*" "event")
-  )
-)
-
-(define-method _drag_dest_handle_event
-  (of-object "GtkWidget")
-  (c-name "_gtk_drag_dest_handle_event")
-  (return-type "none")
-  (parameters
-    '("GdkEvent*" "event")
-  )
-)
-
 (define-function drag_set_default_icon
   (c-name "gtk_drag_set_default_icon")
   (return-type "none")
@@ -3896,6 +3783,8 @@
   (deprecated "change the stock pixbuf for GTK_STOCK_DND")
 )
 
+
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkdrawingarea.h
 
 (define-function gtk_drawing_area_get_type
@@ -3905,7 +3794,7 @@
 
 (define-function gtk_drawing_area_new
   (c-name "gtk_drawing_area_new")
-  (is-constructor-of GtkDrawingArea)
+  (is-constructor-of "GtkDrawingArea")
   (return-type "GtkWidget*")
 )
 
@@ -4045,14 +3934,14 @@
 
 (define-function gtk_entry_new
   (c-name "gtk_entry_new")
-  (is-constructor-of GtkEntry)
+  (is-constructor-of "GtkEntry")
   (return-type "GtkWidget*")
 )
 
 ; DEPRECATED, but we use it for a constructor for convenience
 (define-function gtk_entry_new_with_max_length
   (c-name "gtk_entry_new_with_max_length")
-  (is-constructor-of GtkEntry)
+  (is-constructor-of "GtkEntry")
   (return-type "GtkWidget*")
   (parameters
     '("guint16" "max" (default "0"))
@@ -4211,7 +4100,7 @@
 
 (define-function gtk_event_box_new
   (c-name "gtk_event_box_new")
-  (is-constructor-of GtkEventBox)
+  (is-constructor-of "GtkEventBox")
   (return-type "GtkWidget*")
 )
 
@@ -4226,7 +4115,7 @@
 
 (define-function gtk_file_selection_new
   (c-name "gtk_file_selection_new")
-  (is-constructor-of GtkFileSelection)
+  (is-constructor-of "GtkFileSelection")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title" (null-ok) (default "NULL"))
@@ -4301,7 +4190,7 @@
 
 (define-function gtk_fixed_new
   (c-name "gtk_fixed_new")
-  (is-constructor-of GtkFixed)
+  (is-constructor-of "GtkFixed")
   (return-type "GtkWidget*")
 )
 
@@ -4352,7 +4241,7 @@
 
 (define-function gtk_font_selection_new
   (c-name "gtk_font_selection_new")
-  (is-constructor-of GtkFontSelection)
+  (is-constructor-of "GtkFontSelection")
   (return-type "GtkWidget*")
 )
 
@@ -4400,7 +4289,7 @@
 
 (define-function gtk_font_selection_dialog_new
   (c-name "gtk_font_selection_dialog_new")
-  (is-constructor-of GtkFontSelectionDialog)
+  (is-constructor-of "GtkFontSelectionDialog")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title")
@@ -4455,7 +4344,7 @@
 
 (define-function gtk_frame_new
   (c-name "gtk_frame_new")
-  (is-constructor-of GtkFrame)
+  (is-constructor-of "GtkFrame")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label" (null-ok) (default "NULL"))
@@ -4538,7 +4427,7 @@
 
 (define-function gtk_gamma_curve_new
   (c-name "gtk_gamma_curve_new")
-  (is-constructor-of GtkGammaCurve)
+  (is-constructor-of "GtkGammaCurve")
   (return-type "GtkWidget*")
 )
 
@@ -4576,7 +4465,7 @@
 
 (define-function gtk_handle_box_new
   (c-name "gtk_handle_box_new")
-  (is-constructor-of GtkHandleBox)
+  (is-constructor-of "GtkHandleBox")
   (return-type "GtkWidget*")
 )
 
@@ -4636,7 +4525,7 @@
 
 (define-function gtk_hbutton_box_new
   (c-name "gtk_hbutton_box_new")
-  (is-constructor-of GtkHButtonBox)
+  (is-constructor-of "GtkHButtonBox")
   (return-type "GtkWidget*")
 )
 
@@ -4670,6 +4559,8 @@
   (deprecated "")
 )
 
+
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkhbox.h
 
 (define-function gtk_hbox_get_type
@@ -4679,7 +4570,7 @@
 
 (define-function gtk_hbox_new
   (c-name "gtk_hbox_new")
-  (is-constructor-of GtkHBox)
+  (is-constructor-of "GtkHBox")
   (return-type "GtkWidget*")
   (parameters
     '("gboolean" "homogeneous" (default "FALSE"))
@@ -4698,7 +4589,7 @@
 
 (define-function gtk_hpaned_new
   (c-name "gtk_hpaned_new")
-  (is-constructor-of GtkHPaned)
+  (is-constructor-of "GtkHPaned")
   (return-type "GtkWidget*")
 )
 
@@ -4713,7 +4604,7 @@
 
 (define-function gtk_hruler_new
   (c-name "gtk_hruler_new")
-  (is-constructor-of GtkHRuler)
+  (is-constructor-of "GtkHRuler")
   (return-type "GtkWidget*")
 )
 
@@ -4728,7 +4619,7 @@
 
 (define-function gtk_hscale_new
   (c-name "gtk_hscale_new")
-  (is-constructor-of GtkHScale)
+  (is-constructor-of "GtkHScale")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
@@ -4737,12 +4628,12 @@
 
 (define-function gtk_hscale_new_with_range
   (c-name "gtk_hscale_new_with_range")
-  (is-constructor-of GtkHScale)
+  (is-constructor-of "GtkHScale")
   (return-type "GtkWidget*")
   (parameters
     '("gdouble" "min")
     '("gdouble" "max")
-    '("gdouble" "step")    
+    '("gdouble" "step")
   )
 )
 
@@ -4757,7 +4648,7 @@
 
 (define-function gtk_hscrollbar_new
   (c-name "gtk_hscrollbar_new")
-  (is-constructor-of GtkHScrollbar)
+  (is-constructor-of "GtkHScrollbar")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
@@ -4775,9 +4666,10 @@
 
 (define-function gtk_hseparator_new
   (c-name "gtk_hseparator_new")
-  (is-constructor-of GtkHSeparator)
+  (is-constructor-of "GtkHSeparator")
   (return-type "GtkWidget*")
 )
+
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkiconfactory.h
@@ -4789,7 +4681,7 @@
 
 (define-function gtk_icon_factory_new
   (c-name "gtk_icon_factory_new")
-  (is-constructor-of GtkIconFactory)
+  (is-constructor-of "GtkIconFactory")
   (return-type "GtkIconFactory*")
 )
 
@@ -4896,7 +4788,7 @@
 (define-function icon_set_new_from_pixbuf
   (c-name "gtk_icon_set_new_from_pixbuf")
   (return-type "GtkIconSet*")
-  (is-constructor-of GtkIconSet)  
+  (is-constructor-of "GtkIconSet")  
   (parameters
     '("GdkPixbuf*" "pixbuf")
   )
@@ -4960,8 +4852,8 @@
 )
 
 (define-function icon_source_new
-  (is-constructor-of GtkIconSource)
   (c-name "gtk_icon_source_new")
+  (is-constructor-of "GtkIconSource")
   (return-type "GtkIconSource*")
 )
 
@@ -5098,16 +4990,6 @@
   (return-type "GtkIconSize")
 )
 
-(define-function _gtk_icon_set_invalidate_caches
-  (c-name "_gtk_icon_set_invalidate_caches")
-  (return-type "none")
-)
-
-(define-function _gtk_icon_factory_list_ids
-  (c-name "_gtk_icon_factory_list_ids")
-  (return-type "GSList*")
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkimage.h
@@ -5119,13 +5001,13 @@
 
 (define-function gtk_image_new
   (c-name "gtk_image_new")
-  (is-constructor-of GtkImage)
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
 )
 
 (define-function image_new_from_pixmap
   (c-name "gtk_image_new_from_pixmap")
-  (is-constructor-of GtkImage)
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
   (parameters
     '("GdkPixmap*" "pixmap")
@@ -5135,7 +5017,7 @@
 
 (define-function image_new_from_image
   (c-name "gtk_image_new_from_image")
-  (is-constructor-of GtkImage)
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
   (parameters
     '("GdkImage*" "image")
@@ -5145,7 +5027,7 @@
 
 (define-function image_new_from_file
   (c-name "gtk_image_new_from_file")
-  (is-constructor-of GtkImage)
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "filename")
@@ -5154,7 +5036,7 @@
 
 (define-function image_new_from_pixbuf
   (c-name "gtk_image_new_from_pixbuf")
-  (is-constructor-of GtkImage)
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
   (parameters
     '("GdkPixbuf*" "pixbuf")
@@ -5345,13 +5227,13 @@
 
 (define-function gtk_image_menu_item_new
   (c-name "gtk_image_menu_item_new")
-  (is-constructor-of GtkImageMenuItem)
+  (is-constructor-of "GtkImageMenuItem")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_image_menu_item_new_with_label
   (c-name "gtk_image_menu_item_new_with_label")
-  (is-constructor-of GtkImageMenuItem)
+  (is-constructor-of "GtkImageMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -5360,7 +5242,7 @@
 
 (define-function gtk_image_menu_item_new_with_mnemonic
   (c-name "gtk_image_menu_item_new_with_mnemonic")
-  (is-constructor-of GtkImageMenuItem)
+  (is-constructor-of "GtkImageMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -5369,7 +5251,7 @@
 
 (define-function gtk_image_menu_item_new_from_stock
   (c-name "gtk_image_menu_item_new_from_stock")
-  (is-constructor-of GtkImageMenuItem)
+  (is-constructor-of "GtkImageMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -5507,8 +5389,8 @@
 )
 
 (define-function gtk_im_context_simple_new
-  (is-constructor-of GtkIMContextSimple)
   (c-name "gtk_im_context_simple_new")
+  (is-constructor-of "GtkIMContextSimple")
   (return-type "GtkIMContext*")
 )
 
@@ -5527,31 +5409,6 @@
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkimmodule.h
 
-(define-function _gtk_im_module_list
-  (c-name "_gtk_im_module_list")
-  (return-type "none")
-  (parameters
-    '("const-GtkIMContextInfo***" "contexts")
-    '("guint*" "n_contexts")
-  )
-)
-
-(define-function _gtk_im_module_create
-  (c-name "_gtk_im_module_create")
-  (return-type "GtkIMContext*")
-  (parameters
-    '("const-gchar*" "context_id")
-  )
-)
-
-(define-function _gtk_im_module_get_default_context_id
-  (c-name "_gtk_im_module_get_default_context_id")
-  (return-type "const-gchar*")
-  (parameters
-    '("const-gchar*" "lang")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkimmulticontext.h
@@ -5563,7 +5420,7 @@
 
 (define-function gtk_im_multicontext_new
   (c-name "gtk_im_multicontext_new")
-  (is-constructor-of GtkIMMulticontext)
+  (is-constructor-of "GtkIMMulticontext")
   (return-type "GtkIMContext*")
 )
 
@@ -5587,7 +5444,7 @@
 
 (define-function gtk_input_dialog_new
   (c-name "gtk_input_dialog_new")
-  (is-constructor-of GtkInputDialog)
+  (is-constructor-of "GtkInputDialog")
   (return-type "GtkWidget*")
 )
 
@@ -5631,6 +5488,7 @@
 )
 
 
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkitem.h
 
 (define-function gtk_item_get_type
@@ -5667,7 +5525,7 @@
 
 (define-function gtk_item_factory_new
   (c-name "gtk_item_factory_new")
-  (is-constructor-of GtkItemFactory)
+  (is-constructor-of "GtkItemFactory")
   (return-type "GtkItemFactory*")
   (parameters
     '("GType" "container_type")
@@ -5905,7 +5763,7 @@
 
 (define-function gtk_label_new
   (c-name "gtk_label_new")
-  (is-constructor-of GtkLabel)
+  (is-constructor-of "GtkLabel")
   (return-type "GtkWidget*")
   (parameters
     '("const-char*" "str" (null-ok) (default "NULL"))
@@ -5914,7 +5772,7 @@
 
 (define-function gtk_label_new_with_mnemonic
   (c-name "gtk_label_new_with_mnemonic")
-  (is-constructor-of GtkLabel)
+  (is-constructor-of "GtkLabel")
   (return-type "GtkWidget*")
   (parameters
     '("const-char*" "str" (null-ok) (default "NULL"))
@@ -6174,7 +6032,7 @@
 
 (define-function gtk_layout_new
   (c-name "gtk_layout_new")
-  (is-constructor-of GtkLayout)
+  (is-constructor-of "GtkLayout")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "hadjustment" (null-ok) (default "NULL"))
@@ -6280,7 +6138,7 @@
 
 (define-function gtk_list_new
   (c-name "gtk_list_new")
-  (is-constructor-of GtkList)
+  (is-constructor-of "GtkList")
   (return-type "GtkWidget*")
   (deprecated "use GtkListStore/GtkTreeView")
 )
@@ -6498,6 +6356,7 @@
 )
 
 
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtklistitem.h
 
 (define-function gtk_list_item_get_type
@@ -6507,13 +6366,13 @@
 
 (define-function gtk_list_item_new
   (c-name "gtk_list_item_new")
-  (is-constructor-of GtkListItem)
+  (is-constructor-of "GtkListItem")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_list_item_new_with_label
   (c-name "gtk_list_item_new_with_label")
-  (is-constructor-of GtkListItem)
+  (is-constructor-of "GtkListItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -6543,7 +6402,7 @@
 
 (define-function gtk_list_store_new
   (c-name "gtk_list_store_new")
-  (is-constructor-of GtkListStore)
+  (is-constructor-of "GtkListStore")
   (return-type "GtkListStore*")
   (parameters
     '("gint" "n_columns")
@@ -6553,7 +6412,7 @@
 
 (define-function gtk_list_store_newv
   (c-name "gtk_list_store_newv")
-  (is-constructor-of GtkListStore)
+  (is-constructor-of "GtkListStore")
   (return-type "GtkListStore*")
   (parameters
     '("gint" "n_columns")
@@ -6716,7 +6575,6 @@
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkmain.h
-
 
 (define-function check_version
   (c-name "gtk_check_version")
@@ -7045,7 +6903,7 @@
 (define-function get_current_event_state
   (c-name "gtk_get_current_event_state")
   (return-type "gboolean")
-  (parameters 
+  (parameters
     '("GdkModifierType*" "state")
   )
 )
@@ -7067,16 +6925,7 @@
   )
 )
 
-(define-function _gtk_boolean_handled_accumulator
-  (c-name "_gtk_boolean_handled_accumulator")
-  (return-type "gboolean")
-  (parameters
-    '("GSignalInvocationHint*" "ihint")
-    '("GValue*" "return_accu")
-    '("const-GValue*" "handler_return")
-    '("gpointer" "dummy")
-  )
-)
+
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkmenu.h
 
@@ -7087,7 +6936,7 @@
 
 (define-function gtk_menu_new
   (c-name "gtk_menu_new")
-  (is-constructor-of GtkMenu)
+  (is-constructor-of "GtkMenu")
   (return-type "GtkWidget*")
 )
 
@@ -7228,6 +7077,7 @@
 )
 
 
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkmenubar.h
 
 (define-function gtk_menu_bar_get_type
@@ -7237,7 +7087,7 @@
 
 (define-function gtk_menu_bar_new
   (c-name "gtk_menu_bar_new")
-  (is-constructor-of GtkMenuBar)
+  (is-constructor-of "GtkMenuBar")
   (return-type "GtkWidget*")
 )
 
@@ -7258,7 +7108,7 @@
 
 (define-function gtk_menu_item_new_with_label
   (c-name "gtk_menu_item_new_with_label")
-  (is-constructor-of GtkMenuItem)
+  (is-constructor-of "GtkMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -7267,7 +7117,7 @@
 
 (define-function gtk_menu_item_new_with_mnemonic
   (c-name "gtk_menu_item_new_with_mnemonic")
-  (is-constructor-of GtkMenuItem)
+  (is-constructor-of "GtkMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -7352,25 +7202,6 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "accel_path")
-  )
-)
-
-(define-method _refresh_accel_path
-  (of-object "GtkMenuItem")
-  (c-name "_gtk_menu_item_refresh_accel_path")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "prefix")
-    '("GtkAccelGroup*" "accel_group")
-    '("gboolean" "group_changed")
-  )
-)
-
-(define-function _gtk_menu_item_is_selectable
-  (c-name "_gtk_menu_item_is_selectable")
-  (return-type "gboolean")
-  (parameters
-    '("GtkWidget*" "menu_item")
   )
 )
 
@@ -7469,7 +7300,7 @@
 
 (define-function gtk_message_dialog_new
   (c-name "gtk_message_dialog_new")
-  (is-constructor-of GtkMessageDialog)
+  (is-constructor-of "GtkMessageDialog")
   (return-type "GtkWidget*")
   (parameters
     '("GtkWindow*" "parent" (null-ok) (default "NULL"))
@@ -7541,7 +7372,7 @@
 
 (define-function gtk_notebook_new
   (c-name "gtk_notebook_new")
-  (is-constructor-of GtkNotebook)
+  (is-constructor-of "GtkNotebook")
   (return-type "GtkWidget*")
 )
 
@@ -7970,7 +7801,7 @@
 
 (define-function gtk_option_menu_new
   (c-name "gtk_option_menu_new")
-  (is-constructor-of GtkOptionMenu)
+  (is-constructor-of "GtkOptionMenu")
   (return-type "GtkWidget*")
 )
 
@@ -8096,7 +7927,7 @@
 
 (define-function gtk_pixmap_new
   (c-name "gtk_pixmap_new")
-  (is-constructor-of GtkPixmap)
+  (is-constructor-of "GtkPixmap")
   (return-type "GtkWidget*")
   (parameters
     '("GdkPixmap*" "pixmap")
@@ -8154,7 +7985,7 @@
 
 (define-function gtk_plug_new
   (c-name "gtk_plug_new")
-  (is-constructor-of GtkPlug)
+  (is-constructor-of "GtkPlug")
   (return-type "GtkWidget*")
   (parameters
     '("GdkNativeWindow" "socket_id")
@@ -8186,24 +8017,6 @@
   (return-type "GdkNativeWindow")
 )
 
-(define-method _add_to_socket
-  (of-object "GtkPlug")
-  (c-name "_gtk_plug_add_to_socket")
-  (return-type "none")
-  (parameters
-    '("GtkSocket*" "socket")
-  )
-)
-
-(define-method _remove_from_socket
-  (of-object "GtkPlug")
-  (c-name "_gtk_plug_remove_from_socket")
-  (return-type "none")
-  (parameters
-    '("GtkSocket*" "socket")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkpreview.h
@@ -8221,7 +8034,7 @@
 
 (define-function gtk_preview_new
   (c-name "gtk_preview_new")
-  (is-constructor-of GtkPreview)
+  (is-constructor-of "GtkPreview")
   (return-type "GtkWidget*")
   (parameters
     '("GtkPreviewType" "type")
@@ -8497,7 +8310,7 @@
 
 (define-function gtk_progress_bar_new
   (c-name "gtk_progress_bar_new")
-  (is-constructor-of GtkProgressBar)
+  (is-constructor-of "GtkProgressBar")
   (return-type "GtkWidget*")
 )
 
@@ -8569,7 +8382,7 @@
 
 (define-function gtk_progress_bar_new_with_adjustment
   (c-name "gtk_progress_bar_new_with_adjustment")
-  (is-constructor-of GtkProgressBar)
+  (is-constructor-of "GtkProgressBar")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
@@ -8638,7 +8451,7 @@
 
 (define-function gtk_radio_button_new
   (c-name "gtk_radio_button_new")
-  (is-constructor-of GtkRadioButton)
+  (is-constructor-of "GtkRadioButton")
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -8646,7 +8459,7 @@
 )
 
 (define-function radio_button_new_from_widget
-  (is-constructor-of GtkRadioButton)
+  (is-constructor-of "GtkRadioButton")
   (c-name "gtk_radio_button_new_from_widget")
   (return-type "GtkWidget*")
   (parameters
@@ -8656,7 +8469,7 @@
 
 (define-function radio_button_new_with_label
   (c-name "gtk_radio_button_new_with_label")
-  (is-constructor-of GtkRadioButton)
+  (is-constructor-of "GtkRadioButton")
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -8665,8 +8478,8 @@
 )
 
 (define-function radio_button_new_with_label_from_widget
-  (is-constructor-of GtkRadioButton)
   (c-name "gtk_radio_button_new_with_label_from_widget")
+  (is-constructor-of "GtkRadioButton")
   (return-type "GtkWidget*")
   (parameters
     '("GtkRadioButton" "*group")
@@ -8676,7 +8489,7 @@
 
 (define-function radio_button_new_with_mnemonic
   (c-name "gtk_radio_button_new_with_mnemonic")
-  (is-constructor-of GtkRadioButton)
+  (is-constructor-of "GtkRadioButton")
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -8685,8 +8498,8 @@
 )
 
 (define-function radio_button_new_with_mnemonic_from_widget
-  (is-constructor-of GtkRadioButton)
   (c-name "gtk_radio_button_new_with_mnemonic_from_widget")
+  (is-constructor-of "GtkRadioButton")
   (return-type "GtkWidget*")
   (parameters
     '("GtkRadioButton" "*group")
@@ -8727,7 +8540,7 @@
 
 (define-function gtk_radio_menu_item_new
   (c-name "gtk_radio_menu_item_new")
-  (is-constructor-of GtkRadioMenuItem)
+  (is-constructor-of "GtkRadioMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -8736,7 +8549,7 @@
 
 (define-function gtk_radio_menu_item_new_with_label
   (c-name "gtk_radio_menu_item_new_with_label")
-  (is-constructor-of GtkRadioMenuItem)
+  (is-constructor-of "GtkRadioMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -8746,7 +8559,7 @@
 
 (define-function gtk_radio_menu_item_new_with_mnemonic
   (c-name "gtk_radio_menu_item_new_with_mnemonic")
-  (is-constructor-of GtkRadioMenuItem)
+  (is-constructor-of "GtkRadioMenuItem")
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -8775,6 +8588,8 @@
   (return-type "GSList*")
   (deprecated "use GtkRadioMenuItem.get_group")
 )
+
+
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkrange.h
 
@@ -8866,11 +8681,6 @@
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkrc.h
-
-(define-function _gtk_rc_init
-  (c-name "_gtk_rc_init")
-  (return-type "none")
-)
 
 (define-function rc_add_default_file
   (c-name "gtk_rc_add_default_file")
@@ -8988,7 +8798,7 @@
 
 (define-function gtk_rc_style_new
   (c-name "gtk_rc_style_new")
-  (is-constructor-of GtkRCStyle)
+  (is-constructor-of "GtkRCStyle")
   (return-type "GtkRcStyle*")
 )
 
@@ -9068,24 +8878,6 @@
   (parameters
     '("GScanner*" "scanner")
     '("GtkPathPriorityType*" "priority")
-  )
-)
-
-(define-method _lookup_rc_property
-  (of-object "GtkRcStyle")
-  (c-name "_gtk_rc_style_lookup_rc_property")
-  (return-type "const-GtkRcProperty*")
-  (parameters
-    '("GQuark" "type_name")
-    '("GQuark" "property_name")
-  )
-)
-
-(define-function _gtk_rc_context_get_default_font_name
-  (c-name "_gtk_rc_context_get_default_font_name")
-  (return-type "const-gchar*")
-  (parameters
-    '("GtkSettings*" "settings")
   )
 )
 
@@ -9203,25 +8995,6 @@
   (return-type "GtkPositionType")
 )
 
-(define-method _get_value_size
-  (of-object "GtkScale")
-  (c-name "_gtk_scale_get_value_size")
-  (return-type "none")
-  (parameters
-    '("gint*" "width")
-    '("gint*" "height")
-  )
-)
-
-(define-method _format_value
-  (of-object "GtkScale")
-  (c-name "_gtk_scale_format_value")
-  (return-type "gchar*")
-  (parameters
-    '("gdouble" "value")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkscrollbar.h
@@ -9242,7 +9015,7 @@
 
 (define-function gtk_scrolled_window_new
   (c-name "gtk_scrolled_window_new")
-  (is-constructor-of GtkScrolledWindow)
+  (is-constructor-of "GtkScrolledWindow")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "hadjustment" (null-ok) (default "NULL"))
@@ -9559,7 +9332,7 @@
 
 (define-function gtk_separator_menu_item_new
   (c-name "gtk_separator_menu_item_new")
-  (is-constructor-of GtkSeparatorMenuItem)
+  (is-constructor-of "GtkSeparatorMenuItem")
   (return-type "GtkWidget*")
 )
 
@@ -9697,32 +9470,6 @@
   )
 )
 
-(define-function _gtk_settings_handle_event
-  (c-name "_gtk_settings_handle_event")
-  (return-type "none")
-  (parameters
-    '("GdkEventSetting*" "event")
-  )
-)
-
-(define-function _gtk_rc_property_parser_from_type
-  (c-name "_gtk_rc_property_parser_from_type")
-  (return-type "GtkRcPropertyParser")
-  (parameters
-    '("GType" "type")
-  )
-)
-
-(define-function _gtk_settings_parse_convert
-  (c-name "_gtk_settings_parse_convert")
-  (return-type "gboolean")
-  (parameters
-    '("GtkRcPropertyParser" "parser")
-    '("const-GValue*" "src_value")
-    '("GParamSpec*" "pspec")
-    '("GValue*" "dest_value")
-  )
-)
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtksizegroup.h
@@ -9734,7 +9481,7 @@
 
 (define-function size_group_new
   (c-name "gtk_size_group_new")
-  (is-constructor-of GtkSizeGroup)
+  (is-constructor-of "GtkSizeGroup")
   (return-type "GtkSizeGroup*")
   (parameters
     '("GtkSizeGroupMode" "mode")
@@ -9774,45 +9521,19 @@
   )
 )
 
-(define-function _gtk_size_group_get_child_requisition
-  (c-name "_gtk_size_group_get_child_requisition")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "widget")
-    '("GtkRequisition*" "requisition")
-  )
-)
-
-(define-function _gtk_size_group_compute_requisition
-  (c-name "_gtk_size_group_compute_requisition")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "widget")
-    '("GtkRequisition*" "requisition")
-  )
-)
-
-(define-function _gtk_size_group_queue_resize
-  (c-name "_gtk_size_group_queue_resize")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "widget")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtksocket.h
 
-(define-function gtk_socket_new
-  (c-name "gtk_socket_new")
-  (is-constructor-of GtkSocket)
-  (return-type "GtkWidget*")
-)
-
 (define-function gtk_socket_get_type
   (c-name "gtk_socket_get_type")
   (return-type "GType")
+)
+
+(define-function gtk_socket_new
+  (c-name "gtk_socket_new")
+  (is-constructor-of "GtkSocket")
+  (return-type "GtkWidget*")
 )
 
 (define-method add_id
@@ -9862,7 +9583,7 @@
 
 (define-function gtk_spin_button_new
   (c-name "gtk_spin_button_new")
-  (is-constructor-of GtkSpinButton)
+  (is-constructor-of "GtkSpinButton")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
@@ -9873,7 +9594,7 @@
 
 (define-function gtk_spin_button_new_with_range
   (c-name "gtk_spin_button_new_with_range")
-  (is-constructor-of GtkSpinButton)
+  (is-constructor-of "GtkSpinButton")
   (return-type "GtkWidget*")
   (parameters
     '("gdouble" "min")
@@ -10060,7 +9781,7 @@
 
 (define-function gtk_statusbar_new
   (c-name "gtk_statusbar_new")
-  (is-constructor-of GtkStatusbar)
+  (is-constructor-of "GtkStatusbar")
   (return-type "GtkWidget*")
 )
 
@@ -10177,7 +9898,7 @@
 
 (define-function gtk_style_new
   (c-name "gtk_style_new")
-  (is-constructor-of GtkStyle)
+  (is-constructor-of "GtkStyle")
   (return-type "GtkStyle*")
 )
 
@@ -10983,18 +10704,6 @@
   (return-type "none")
 )
 
-
-(define-method _peek_property_value
-  (of-object "GtkStyle")
-  (c-name "_gtk_style_peek_property_value")
-  (return-type "const-GValue*")
-  (parameters
-    '("GType" "widget_type")
-    '("GParamSpec*" "pspec")
-    '("GtkRcPropertyParser" "parser")
-  )
-)
-
 (define-method apply_default_pixmap
   (of-object "GtkStyle")
   (c-name "gtk_style_apply_default_pixmap")
@@ -11042,27 +10751,6 @@
   (deprecated "")
 )
 
-(define-function _gtk_get_insertion_cursor_gc
-  (c-name "_gtk_get_insertion_cursor_gc")
-  (return-type "GdkGC*")
-  (parameters
-    '("GtkWidget*" "widget")
-    '("gboolean" "is_primary")
-  )
-)
-
-(define-function _gtk_draw_insertion_cursor
-  (c-name "_gtk_draw_insertion_cursor")
-  (return-type "none")
-  (parameters
-    '("GdkDrawable*" "drawable")
-    '("GdkGC*" "gc")
-    '("GdkRectangle*" "location")
-    '("GtkTextDirection" "direction")
-    '("gboolean" "draw_arrow")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktable.h
@@ -11074,7 +10762,7 @@
 
 (define-function gtk_table_new
   (c-name "gtk_table_new")
-  (is-constructor-of GtkTable)
+  (is-constructor-of "GtkTable")
   (return-type "GtkWidget*")
   (parameters
     '("guint" "rows" (default "1"))
@@ -11113,7 +10801,6 @@
 (define-method attach_defaults
   (of-object "GtkTable")
   (c-name "gtk_table_attach_defaults")
-  (deprecated "use attach instead")
   (return-type "none")
   (parameters
     '("GtkWidget*" "widget")
@@ -11122,6 +10809,7 @@
     '("guint" "top_attach")
     '("guint" "bottom_attach")
   )
+  (deprecated "use attach instead")
 )
 
 (define-method set_row_spacing
@@ -11218,7 +10906,7 @@
 
 (define-function gtk_tearoff_menu_item_new
   (c-name "gtk_tearoff_menu_item_new")
-  (is-constructor-of GtkTearoffMenuItem)
+  (is-constructor-of "GtkTearoffMenuItem")
   (return-type "GtkWidget*")
 )
 
@@ -11233,7 +10921,7 @@
 
 (define-function gtk_text_buffer_new
   (c-name "gtk_text_buffer_new")
-  (is-constructor-of GtkTextBuffer)
+  (is-constructor-of "GtkTextBuffer")
   (return-type "GtkTextBuffer*")
   (parameters
     '("GtkTextTagTable*" "table" (null-ok) (default "NULL"))
@@ -11762,37 +11450,6 @@
   (return-type "none")
 )
 
-(define-method _spew
-  (of-object "GtkTextBuffer")
-  (c-name "_gtk_text_buffer_spew")
-  (return-type "none")
-)
-
-(define-method _get_btree
-  (of-object "GtkTextBuffer")
-  (c-name "_gtk_text_buffer_get_btree")
-  (return-type "GtkTextBTree*")
-)
-
-(define-method _get_line_log_attrs
-  (of-object "GtkTextBuffer")
-  (c-name "_gtk_text_buffer_get_line_log_attrs")
-  (return-type "const-PangoLogAttr*")
-  (parameters
-    '("const-GtkTextIter*" "anywhere_in_line")
-    '("gint*" "char_len")
-  )
-)
-
-(define-method _notify_will_remove_tag
-  (of-object "GtkTextBuffer")
-  (c-name "_gtk_text_buffer_notify_will_remove_tag")
-  (return-type "none")
-  (parameters
-    '("GtkTextTag*" "tag")
-  )
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktextchild.h
@@ -11804,7 +11461,7 @@
 
 (define-function gtk_text_child_anchor_new
   (c-name "gtk_text_child_anchor_new")
-  (is-constructor-of GtkTextChildAnchor)
+  (is-constructor-of "GtkTextChildAnchor")
   (return-type "GtkTextChildAnchor*")
 )
 
@@ -12430,8 +12087,10 @@
 )
 
 
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktextlayout.h
 ;; gtktextlayout.h is semi-private, no need to bind it
+
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktextmark.h
@@ -12491,7 +12150,7 @@
 
 (define-function gtk_text_tag_new
   (c-name "gtk_text_tag_new")
-  (is-constructor-of GtkTextTag)
+  (is-constructor-of "GtkTextTag")
   (return-type "GtkTextTag*")
   (parameters
     '("const-gchar*" "name" (null-ok) (default "NULL"))
@@ -12574,7 +12233,7 @@
 
 (define-function gtk_text_tag_table_new
   (c-name "gtk_text_tag_table_new")
-  (is-constructor-of GtkTextTagTable)
+  (is-constructor-of "GtkTextTagTable")
   (return-type "GtkTextTagTable*")
 )
 
@@ -12632,13 +12291,13 @@
 
 (define-function gtk_text_view_new
   (c-name "gtk_text_view_new")
-  (is-constructor-of GtkTextView)
+  (is-constructor-of "GtkTextView")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_text_view_new_with_buffer
   (c-name "gtk_text_view_new_with_buffer")
-  (is-constructor-of GtkTextView)
+  (is-constructor-of "GtkTextView")
   (return-type "GtkWidget*")
   (parameters
     '("GtkTextBuffer*" "buffer" (null-ok) (default "NULL"))
@@ -13095,7 +12754,7 @@
 
 (define-function gtk_tips_query_new
   (c-name "gtk_tips_query_new")
-  (is-constructor-of GtkTipsQuery)
+  (is-constructor-of "GtkTipsQuery")
   (return-type "GtkWidget*")
   (deprecated "")
 )
@@ -13146,13 +12805,13 @@
 
 (define-function gtk_toggle_button_new
   (c-name "gtk_toggle_button_new")
-  (is-constructor-of GtkToggleButton)
+  (is-constructor-of "GtkToggleButton")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_toggle_button_new_with_label
   (c-name "gtk_toggle_button_new_with_label")
-  (is-constructor-of GtkToggleButton)
+  (is-constructor-of "GtkToggleButton")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -13161,7 +12820,7 @@
 
 (define-function gtk_toggle_button_new_with_mnemonic
   (c-name "gtk_toggle_button_new_with_mnemonic")
-  (is-constructor-of GtkToggleButton)
+  (is-constructor-of "GtkToggleButton")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -13240,7 +12899,7 @@
 
 (define-function gtk_toolbar_new
   (c-name "gtk_toolbar_new")
-  (is-constructor-of GtkToolbar)
+  (is-constructor-of "GtkToolbar")
   (return-type "GtkWidget*")
 )
 
@@ -13497,7 +13156,7 @@
 
 (define-function gtk_tooltips_new
   (c-name "gtk_tooltips_new")
-  (is-constructor-of GtkTooltips)
+  (is-constructor-of "GtkTooltips")
   (return-type "GtkTooltips*")
 )
 
@@ -13546,14 +13205,6 @@
   (of-object "GtkTooltips")
   (c-name "gtk_tooltips_force_window")
   (return-type "none")
-)
-
-(define-function _gtk_tooltips_toggle_keyboard_mode
-  (c-name "_gtk_tooltips_toggle_keyboard_mode")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "widget")
-  )
 )
 
 
@@ -13637,6 +13288,7 @@
     '("GtkTreePath**" "path")
   )
 )
+
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktreemodel.h
@@ -13761,7 +13413,7 @@
 
 (define-function gtk_tree_row_reference_new
   (c-name "gtk_tree_row_reference_new")
-  (is-constructor-of GtkTreeRowReference)
+  (is-constructor-of "GtkTreeRowReference")
   (return-type "GtkTreeRowReference*")
   (parameters
     '("GtkTreeModel*" "model")
@@ -13771,7 +13423,7 @@
 
 (define-function gtk_tree_row_reference_new_proxy
   (c-name "gtk_tree_row_reference_new_proxy")
-  (is-constructor-of GtkTreeRowReference)
+  (is-constructor-of "GtkTreeRowReference")
   (return-type "GtkTreeRowReference*")
   (parameters
     '("GObject*" "proxy")
@@ -14107,7 +13759,7 @@
 
 (define-function gtk_tree_model_sort_new_with_model
   (c-name "gtk_tree_model_sort_new_with_model")
-  (is-constructor-of GtkTreeModelSort)
+  (is-constructor-of "GtkTreeModelSort")
   (return-type "GtkTreeModel*")
   (parameters
     '("GtkTreeModel*" "child_model")
@@ -14414,6 +14066,7 @@
 )
 
 
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktreestore.h
 
 (define-function gtk_tree_store_get_type
@@ -14423,7 +14076,7 @@
 
 (define-function gtk_tree_store_new
   (c-name "gtk_tree_store_new")
-  (is-constructor-of GtkTreeStore)
+  (is-constructor-of "GtkTreeStore")
   (return-type "GtkTreeStore*")
   (parameters
     '("gint" "n_columns")
@@ -14433,7 +14086,7 @@
 
 (define-function gtk_tree_store_newv
   (c-name "gtk_tree_store_newv")
-  (is-constructor-of GtkTreeStore)
+  (is-constructor-of "GtkTreeStore")
   (return-type "GtkTreeStore*")
   (parameters
     '("gint" "n_columns")
@@ -14629,13 +14282,13 @@
 
 (define-function gtk_tree_view_new
   (c-name "gtk_tree_view_new")
-  (is-constructor-of GtkTreeView)
+  (is-constructor-of "GtkTreeView")
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_tree_view_new_with_model
   (c-name "gtk_tree_view_new_with_model")
-  (is-constructor-of GtkTreeView)
+  (is-constructor-of "GtkTreeView")
   (return-type "GtkWidget*")
   (parameters
     '("GtkTreeModel*" "model" (null-ok) (default "NULL"))
@@ -15192,6 +14845,8 @@
   )
 )
 
+
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktreeviewcolumn.h
 
 (define-function gtk_tree_view_column_get_type
@@ -15201,13 +14856,13 @@
 
 (define-function gtk_tree_view_column_new
   (c-name "gtk_tree_view_column_new")
-  (is-constructor-of GtkTreeViewColumn)
+  (is-constructor-of "GtkTreeViewColumn")
   (return-type "GtkObject*")
 )
 
 (define-function gtk_tree_view_column_new_with_attributes
   (c-name "gtk_tree_view_column_new_with_attributes")
-  (is-constructor-of GtkTreeViewColumn)
+  (is-constructor-of "GtkTreeViewColumn")
   (return-type "GtkObject*")
   (parameters
     '("gchar*" "title")
@@ -15334,7 +14989,6 @@
   (c-name "gtk_tree_view_column_get_resizable")
   (return-type "gboolean")
 )
-
 
 (define-method set_sizing
   (of-object "GtkTreeViewColumn")
@@ -15594,7 +15248,7 @@
 
 (define-function gtk_vbutton_box_new
   (c-name "gtk_vbutton_box_new")
-  (is-constructor-of GtkVButtonBox)
+  (is-constructor-of "GtkVButtonBox")
   (return-type "GtkWidget*")
 )
 
@@ -15628,6 +15282,8 @@
   (deprecated "")
 )
 
+
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkvbox.h
 
 (define-function gtk_vbox_get_type
@@ -15637,7 +15293,7 @@
 
 (define-function gtk_vbox_new
   (c-name "gtk_vbox_new")
-  (is-constructor-of GtkVBox)
+  (is-constructor-of "GtkVBox")
   (return-type "GtkWidget*")
   (parameters
     '("gboolean" "homogeneous" (default "FALSE"))
@@ -15656,7 +15312,7 @@
 
 (define-function gtk_viewport_new
   (c-name "gtk_viewport_new")
-  (is-constructor-of GtkViewport)
+  (is-constructor-of "GtkViewport")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "hadjustment" (null-ok) (default "NULL"))
@@ -15720,7 +15376,7 @@
 
 (define-function gtk_vpaned_new
   (c-name "gtk_vpaned_new")
-  (is-constructor-of GtkVPaned)
+  (is-constructor-of "GtkVPaned")
   (return-type "GtkWidget*")
 )
 
@@ -15735,7 +15391,7 @@
 
 (define-function gtk_vruler_new
   (c-name "gtk_vruler_new")
-  (is-constructor-of GtkVRuler)
+  (is-constructor-of "GtkVRuler")
   (return-type "GtkWidget*")
 )
 
@@ -15750,7 +15406,7 @@
 
 (define-function gtk_vscale_new
   (c-name "gtk_vscale_new")
-  (is-constructor-of GtkVScale)
+  (is-constructor-of "GtkVScale")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
@@ -15759,12 +15415,12 @@
 
 (define-function gtk_vscale_new_with_range
   (c-name "gtk_vscale_new_with_range")
-  (is-constructor-of GtkVScale)
+  (is-constructor-of "GtkVScale")
   (return-type "GtkWidget*")
   (parameters
     '("gdouble" "min")
     '("gdouble" "max")
-    '("gdouble" "step")    
+    '("gdouble" "step")
   )
 )
 
@@ -15779,7 +15435,7 @@
 
 (define-function gtk_vscrollbar_new
   (c-name "gtk_vscrollbar_new")
-  (is-constructor-of GtkVScrollbar)
+  (is-constructor-of "GtkVScrollbar")
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
@@ -15797,7 +15453,7 @@
 
 (define-function gtk_vseparator_new
   (c-name "gtk_vseparator_new")
-  (is-constructor-of GtkVSeparator)
+  (is-constructor-of "GtkVSeparator")
   (return-type "GtkWidget*")
 )
 
@@ -15812,7 +15468,7 @@
 
 (define-function gtk_widget_new
   (c-name "gtk_widget_new")
-  (is-constructor-of GtkWidget)
+  (is-constructor-of "GtkWidget")
   (return-type "GtkWidget*")
   (parameters
     '("GType" "type")
@@ -16031,12 +15687,6 @@
     '("const-gchar*" "accel_path")
     '("GtkAccelGroup*" "accel_group")
   )
-)
-
-(define-method _get_accel_path
-  (of-object "GtkWidget")
-  (c-name "_gtk_widget_get_accel_path")
-  (return-type "const-gchar*")
 )
 
 (define-method list_accel_closures
@@ -16278,7 +15928,7 @@
     '("gint" "height")
   )
 )
-  
+
 (define-method get_size_request
   (of-object "GtkWidget")
   (c-name "gtk_widget_get_size_request")
@@ -16807,29 +16457,6 @@
   (return-type "none")
 )
 
-(define-method _get_aux_info
-  (of-object "GtkWidget")
-  (c-name "_gtk_widget_get_aux_info")
-  (return-type "GtkWidgetAuxInfo*")
-  (parameters
-    '("gboolean" "create")
-  )
-)
-
-(define-method _propagate_hierarchy_changed
-  (of-object "GtkWidget")
-  (c-name "_gtk_widget_propagate_hierarchy_changed")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "previous_toplevel")
-  )
-)
-
-(define-function _gtk_widget_peek_colormap
-  (c-name "_gtk_widget_peek_colormap")
-  (return-type "GdkColormap*")
-)
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkwindow.h
@@ -16841,7 +16468,7 @@
 
 (define-function gtk_window_new
   (c-name "gtk_window_new")
-  (is-constructor-of GtkWindow)
+  (is-constructor-of "GtkWindow")
   (return-type "GtkWidget*")
   (parameters
     '("GtkWindowType" "type" (default "GTK_WINDOW_TOPLEVEL"))
@@ -17436,7 +17063,7 @@
 
 (define-function window_group_new
   (c-name "gtk_window_group_new")
-  (is-constructor-of GtkWindowGroup)
+  (is-constructor-of "GtkWindowGroup")
   (return-type "GtkWindowGroup*")
 )
 
@@ -17458,15 +17085,6 @@
   )
 )
 
-(define-method _internal_set_focus
-  (of-object "GtkWindow")
-  (c-name "_gtk_window_internal_set_focus")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "focus")
-  )
-)
-
 (define-method remove_embedded_xid
   (of-object "GtkWindow")
   (c-name "gtk_window_remove_embedded_xid")
@@ -17482,62 +17100,5 @@
   (return-type "none")
   (parameters
     '("guint" "xid")
-  )
-)
-
-(define-method _reposition
-  (of-object "GtkWindow")
-  (c-name "_gtk_window_reposition")
-  (return-type "none")
-  (parameters
-    '("gint" "x")
-    '("gint" "y")
-  )
-)
-
-(define-method _constrain_size
-  (of-object "GtkWindow")
-  (c-name "_gtk_window_constrain_size")
-  (return-type "none")
-  (parameters
-    '("gint" "width")
-    '("gint" "height")
-    '("gint*" "new_width")
-    '("gint*" "new_height")
-  )
-)
-
-(define-method _get_group
-  (of-object "GtkWindow")
-  (c-name "_gtk_window_get_group")
-  (return-type "GtkWindowGroup*")
-)
-
-(define-method _activate_key
-  (of-object "GtkWindow")
-  (c-name "_gtk_window_activate_key")
-  (return-type "gboolean")
-  (parameters
-    '("GdkEventKey*" "event")
-  )
-)
-
-(define-method _keys_foreach
-  (of-object "GtkWindow")
-  (c-name "_gtk_window_keys_foreach")
-  (return-type "none")
-  (parameters
-    '("GtkWindowKeysForeachFunc" "func")
-    '("gpointer" "func_data")
-  )
-)
-
-(define-method _query_nonaccels
-  (of-object "GtkWindow")
-  (c-name "_gtk_window_query_nonaccels")
-  (return-type "gboolean")
-  (parameters
-    '("guint" "accel_key")
-    '("GdkModifierType" "accel_mods")
   )
 )

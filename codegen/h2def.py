@@ -114,6 +114,36 @@ def find_obj_defs(buf, objdefs=[]):
             objdefs.append(t)
         pos = m.end()
 
+    # now find all structures that look like they might represent a class inherited from GTypeInterface:
+    pat = re.compile("struct _(" + obj_name_pat + ")Class\s*{\s*" +
+                     "GTypeInterface\s+", re.MULTILINE)
+    pos = 0
+    while pos < len(buf):
+        m = pat.search(buf, pos)
+        if not m: break
+        t = (m.group(1), '')
+        t2 = (m.group(1)+'Class', 'GTypeInterface')
+        # if we find an object structure together with a corresponding
+        # class structure, then we have probably found a GtkObject subclass.
+        if t2 in maybeobjdefs:
+            objdefs.append(t)
+        pos = m.end()
+
+    # now find all structures that look like they might represent an Iface inherited from GTypeInterface:
+    pat = re.compile("struct _(" + obj_name_pat + ")Iface\s*{\s*" +
+                     "GTypeInterface\s+", re.MULTILINE)
+    pos = 0
+    while pos < len(buf):
+        m = pat.search(buf, pos)
+        if not m: break
+        t = (m.group(1), '')
+        t2 = (m.group(1)+'Iface', 'GTypeInterface')
+        # if we find an object structure together with a corresponding
+        # class structure, then we have probably found a GtkObject subclass.
+        if t2 in maybeobjdefs:
+            objdefs.append(t)
+        pos = m.end()
+
 def sort_obj_defs(objdefs):
     objdefs.sort()  # not strictly needed, but looks nice
     pos = 0
@@ -250,6 +280,10 @@ def clean_func(buf):
 
     #strip DECLS macros
     pat = re.compile(r"""G_BEGIN_DECLS|BEGIN_LIBGTOP_DECLS""", re.MULTILINE) 
+    buf=pat.sub('',buf)
+
+    #extern "C"
+    pat = re.compile(r"""^\s*(extern)\s+\"C\"\s+{""", re.MULTILINE) 
     buf=pat.sub('',buf)
 
     #multiple whitespace
@@ -436,5 +470,5 @@ if __name__ == '__main__':
         write_obj_defs(objdefs,None)
         write_enum_defs(enums,None)
 
-        for filename in args:
+	for filename in args:
             write_def(filename,None)
