@@ -3138,6 +3138,7 @@ _wrap_gdk_window_new(PyGObject *self, PyObject *args, PyObject *kwargs)
 			"could not create GdkWindow object");
 	return -1;
     }
+    g_object_ref(self->obj);
     pygobject_register_wrapper((PyObject *)self);
     return 0;
 }
