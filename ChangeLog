@@ -1,3 +1,18 @@
+2005-06-19  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
+
+	* gtk/gtkmodule.c (init_gtk): Add an introspection function
+	descriptor 'fill' to PyGdkPixbuf_Type, as a test.
+
+	* gtk/gdk.defs: Comment out method GdkPixbuf.fill, to experiment
+	with replacing it with an introspection equivalent.
+
+	* gobject/pygiargument.c, gobject/pygifunction.c: New descriptor
+	and function types that use introspection information.  Some code
+	borrowed from pybank.
+
+	* pygobject.h, pygobject-private.h: New API functions
+	pyg_ifunction_new and pyg_ifunction_descr_new.
+
 2005-06-17  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
 
 	* examples/pango/pangocairo-simple.py (main): Demonstrate how to

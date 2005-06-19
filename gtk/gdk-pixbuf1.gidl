@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<api version="1.0">
+  <namespace name="GdkPixbuf">
+    <object name="GdkPixbuf" parent="GLib.GObject" type-name="GdkPixbuf" get-type="gdk_pixbuf_get_type">
+      <method name="fill" symbol="gdk_pixbuf_fill">
+        <return-type type="void" />
+        <parameters>
+          <parameter name="pixbuf" type="GdkPixbuf*" transfer="none" direction="in" />
+          <parameter name="pixel" type="guint32" direction="in" />
+        </parameters>
+      </method>
+    </object>
+  </namespace>
+</api>

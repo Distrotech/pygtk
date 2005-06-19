@@ -30,6 +30,7 @@
 #include <pygobject.h>
 #include "pygtk-private.h"
 #include <pyerrors.h>
+#include <girepository.h>
 
 #ifdef HAVE_PYCAIRO
 # include <pycairo.h>
@@ -48,6 +49,7 @@ extern PyMethodDef pygdk_functions[];
 PyObject *PyGtkDeprecationWarning;
 PyObject *PyGtkWarning;
 
+extern PyTypeObject PyGdkPixbuf_Type;
 
 static struct _PyGtk_FunctionStruct functions = {
     VERSION,
@@ -283,6 +285,22 @@ init_gtk(void)
     PyDict_SetItemString(d, "Warning", PyGtkWarning);
     g_log_set_handler("Gtk", G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING,
                       _pygtk_log_func, NULL);
+
+
+    {                           /* testing... */
+        GIRepository *irepo = g_irepository_get_default();
+        GIBaseInfo *iobj;
+        GIFunctionInfo *info;
+        gchar *metadata;
+        if (!g_file_get_contents("gdk-pixbuf1.gmeta", &metadata, NULL, NULL))
+            g_error("could not find gdk-pixbuf1.gmeta");
+        g_irepository_register(irepo, metadata);
+/*         g_free(metadata); */
+        iobj = g_irepository_find_by_name(irepo, "GdkPixbuf", "GdkPixbuf");
+        info = g_object_info_find_method((GIObjectInfo *) iobj, "fill");
+        PyDict_SetItemString(PyGdkPixbuf_Type.tp_dict, "fill",
+                             pyg_ifunction_descr_new((GIFunctionInfo *) info));
+    }
     
     gtk_timeout_add(100, python_do_pending_calls, NULL);
 }
