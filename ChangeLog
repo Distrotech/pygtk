@@ -1,3 +1,14 @@
+2005-06-24  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
+
+	* configure.in: Use pkg-config to check for glib/gobject; Check
+	also for gobject-introspection.  This requires patches in bug
+	#308708.
+
+	* pygobject-2.0.pc.in (Requires): Add gobject-introspection.
+
+	* everywhere: Remove gobject-introspection CFLAGS and libs from
+	makefiles, since they moved to configure.
+
 2005-06-19  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
 
 	* gtk/gtkmodule.c (init_gtk): Add an introspection function
@@ -13,6 +24,7 @@
 	* pygobject.h, pygobject-private.h: New API functions
 	pyg_ifunction_new and pyg_ifunction_descr_new.
 
+=== pygkt-introspection branch point ===
 2005-06-17  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
 
 	* examples/pango/pangocairo-simple.py (main): Demonstrate how to

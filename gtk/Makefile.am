@@ -18,7 +18,7 @@ EXTRA_DIST += makefile.msc gtk-fake-win32.c
 pkgincludedir = $(includedir)/pygtk-$(PLATFORM_VERSION)/pygtk
 pkginclude_HEADERS = pygtk.h
 
-INCLUDES = -I$(top_srcdir)/gobject $(PYTHON_INCLUDES)   -I$(top_srcdir)/../gobject-introspection/src
+INCLUDES = -I$(top_srcdir)/gobject $(PYTHON_INCLUDES)
 COMMONDEFS = $(srcdir)/gtk-types.defs $(srcdir)/gdk-types.defs \
   $(top_srcdir)/atk-types.defs $(top_srcdir)/pango-types.defs
 
@@ -42,7 +42,7 @@ endif
 
 _gtk_la_CFLAGS = $(GTK_CFLAGS)
 _gtk_la_LDFLAGS = $(common_ldflags) -export-symbols-regex init_gtk
-_gtk_la_LIBADD = $(GTK_LIBS) -L$(top_srcdir)/../gobject-introspection/src -lirepository
+_gtk_la_LIBADD = $(GTK_LIBS)
 _gtk_la_SOURCES = \
   pygtk.h \
   pygtk-private.h \

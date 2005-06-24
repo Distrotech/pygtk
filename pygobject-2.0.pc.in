@@ -14,6 +14,6 @@ codegendir=${datadir}/pygtk/2.0/codegen
 
 Name: PyGObject
 Description: Python bindings for GObject
-Requires: gobject-2.0
+Requires: gobject-2.0 gobject-introspection
 Version: @VERSION@
 Cflags: -I${pygtkincludedir}

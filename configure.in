@@ -9,6 +9,7 @@ m4_define(pygtk_version, pygtk_major_version.pygtk_minor_version.pygtk_micro_ver
 
 dnl versions of packages we require ...
 m4_define(glib_required_version,     2.6.0)
+m4_define(gobject_introspection_required_version, 0.1)
 m4_define(pango_required_version,    1.8.0)
 m4_define(atk_required_version,      1.8.0)
 m4_define(gtk_required_version,      2.6.0)
@@ -92,7 +93,10 @@ dnl get rid of the -export-dynamic stuff from the configure flags ...
 export_dynamic=`(./libtool --config; echo eval echo \\$export_dynamic_flag_spec) | sh`
 
 dnl glib
-AM_PATH_GLIB_2_0(glib_required_version,,[AC_MSG_ERROR(maybe you want the pygtk-2-4 branch?)],gobject $extra_mods)
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= glib_required_version
+                         gobject-2.0  >= glib_required_version
+                         gobject-introspection >= gobject_introspection_required_version
+                         $extra_mods])
 if test -n "$export_dynamic"; then
   GLIB_LIBS=`echo $GLIB_LIBS | sed -e "s/$export_dynamic//"`
 fi
@@ -128,12 +132,14 @@ fi
 
 dnl gtk+; first try to find gtk+ and pycairo, if that fails look for gtk+ alone
 PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.7,
+                        gobject-introspection >= gobject_introspection_required_version,
                         pycairo >= pycairo_required_version],
         [build_gtk=true
          have_pycairo=true],
         dnl no pycairo
         [have_pycairo=false
-         PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= gtk_required_version],
+         PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= gtk_required_version,
+                                 gobject-introspection >= gobject_introspection_required_version],
 	          build_gtk=true, [build_gtk=false])]
                  )
 AM_CONDITIONAL(BUILD_GTK, $build_gtk)
@@ -150,7 +156,8 @@ fi
 
 
 dnl libglade
-PKG_CHECK_MODULES(LIBGLADE, [libglade-2.0 >= libglade_required_version],
+PKG_CHECK_MODULES(LIBGLADE, [libglade-2.0 >= libglade_required_version,
+                             gobject-introspection >= gobject_introspection_required_version],
 	build_libglade=true, build_libglade=false)
 AC_SUBST(LIBGLADE_CFLAGS)
 AC_SUBST(LIBGLADE_LIBS)

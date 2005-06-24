@@ -29,7 +29,7 @@ INCLUDES = \
 	$(GLIB_CFLAGS) \
 	$(PANGO_CFLAGS) \
 	$(ATK_CFLAGS) \
-	-I$(top_srcdir)/gobject  -I$(top_srcdir)/../gobject-introspection/src
+	-I$(top_srcdir)/gobject
 
 COMMONDEFS = \
 	atk-types.defs \
