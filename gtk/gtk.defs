@@ -16213,7 +16213,7 @@
   (return-type "none")
   (parameters
     '("GtkStateType" "state")
-    '("GdkColor*" "color" (null-ok)))
+    '("GdkColor*" "color" (null-ok))
   )
 )
 
@@ -16223,7 +16223,7 @@
   (return-type "none")
   (parameters
     '("GtkStateType" "state")
-    '("GdkColor*" "color" (null-ok)))
+    '("GdkColor*" "color" (null-ok))
   )
 )
 
@@ -16233,7 +16233,7 @@
   (return-type "none")
   (parameters
     '("GtkStateType" "state")
-    '("GdkColor*" "color" (null-ok)))
+    '("GdkColor*" "color" (null-ok))
   )
 )
 
