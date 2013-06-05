@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Pygtk by Distrotech</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Pygtk</h1>
+          <h2>Mirror of git://git.gnome.org/pygtk</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/Distrotech/pygtk/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/Distrotech/pygtk/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/Distrotech/pygtk" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="pygtk" class="anchor" href="#pygtk"><span class="octicon octicon-link"></span></a>PyGTK</h1>
+
+<p>Original authors: James Henstridge <a href="mailto:james@daa.com.au">james@daa.com.au</a>
+                  Johan Dahlin <a href="mailto:johan@gnome.org">johan@gnome.org</a></p>
+
+<p>Past maintainers: Gustavo J A M Carneiro <a href="mailto:gjc@gnome.org">gjc@gnome.org</a>
+                  Paul Pogonyshev <a href="mailto:pogonyshev@gmx.net">pogonyshev@gmx.net</a>
+                  Gian Mario Tagliaretti <a href="mailto:gianmt@gnome.org">gianmt@gnome.org</a></p>
+
+<p>Maintainers:      John Stowers <a href="mailto:john.stowers@gmail.com">john.stowers@gmail.com</a>
+                  Dieter Verfaillie <a href="mailto:dieterv@optionexplicit.be">dieterv@optionexplicit.be</a></p>
+
+<p>This archive contains modules that allow you to use GTK+-2 in Python
+programs.  At present, it is a complete set of bindings up to and including
+the gtk+-2.24 API.</p>
+
+<p>If you have any enhancements or bug reports, please file them in
+bugzilla at:
+  <a href="http://bugzilla.gnome.org/enter_bug.cgi?product=pygtk">http://bugzilla.gnome.org/enter_bug.cgi?product=pygtk</a></p>
+
+<p>If you have a patch, file the bug first and then use the "create new
+attachment" link on the bug's info page.  My preferred format for
+patches is unified diff format (ie. diff -u).  Please don't send me
+diffs which don't have any context, as these make it very difficult to
+see what the patch does.</p>
+
+<h1>
+<a name="new-versions" class="anchor" href="#new-versions"><span class="octicon octicon-link"></span></a>New Versions</h1>
+
+<p>New versions of this package can be found at:
+  <a href="http://ftp.gnome.org/pub/GNOME/sources/pygtk/">http://ftp.gnome.org/pub/GNOME/sources/pygtk/</a></p>
+
+<h1>
+<a name="mailing-list" class="anchor" href="#mailing-list"><span class="octicon octicon-link"></span></a>Mailing list</h1>
+
+<p>There is a mailing list for pygtk.  You can subscribe to it through
+the web interface:
+  <a href="http://www.daa.com.au/mailman/listinfo/pygtk">http://www.daa.com.au/mailman/listinfo/pygtk</a></p>
+
+<h1>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h1>
+
+<ul>
+<li>C compiler (GCC, MSVC and mingw supported)</li>
+<li>Python 2.3.5 or higher</li>
+<li>PyGObject 2.21.3 or higher</li>
+<li>Pycairo 1.0.2 or higher</li>
+<li>Glib 2.8.0 or higher</li>
+<li>GTK+ 2.8.0 or higher (optional) or
+GTK+ 2.10.0 or higher for 2.10 API
+GTK+ 2.12.0 or higher for 2.12 API
+GTK+ 2.14.0 or higher for 2.14 API
+GTK+ 2.16.0 or higher for 2.16 API
+GTK+ 2.18.0 or higher for 2.18 API
+GTK+ 2.20.0 or higher for 2.20 API
+GTK+ 2.22.0 or higher for 2.22 API
+GTK+ 2.24.0 or higher for 2.24 API</li>
+<li>libglade 2.5.0 or higher (optional)</li>
+<li>pycairo 1.0.2 or higher (optional)</li>
+<li>numpy (optional)</li>
+</ul><p>This release is supporting the following GTK+ releases:</p>
+
+<p>2.8.x
+  2.10.x
+  2.12.x
+  2.14.x
+  2.16.x
+  2.18.x
+  2.20.x
+  2.22.x
+  2.24.x</p>
+
+<p>To include support for the 2.10 API you'll need GTK+ 2.10.0 etc.</p>
+
+<h1>
+<a name="copyright-information" class="anchor" href="#copyright-information"><span class="octicon octicon-link"></span></a>Copyright Information</h1>
+
+<p>This software is covered by the GNU Lesser General Public Licence
+(version 2.1, or if you choose, a later version).  Basically just don't
+say you wrote bits you didn't.</p>
+
+<h1>
+<a name="compilation" class="anchor" href="#compilation"><span class="octicon octicon-link"></span></a>Compilation</h1>
+
+<p>PyGTK uses the standard autotools for the build infrastructure.  To
+build, it should be as simple as running:</p>
+
+<pre><code>$ ./configure --prefix=&lt;prefix where python is installed&gt;
+$ make
+$ make install
+</code></pre>
+
+<p>To build the reference documentation, supply the argument
+"--enable-docs" to configure.</p>
+
+<p>If your Python interpreter isn't in the path, or is not called
+"python", you can set the PYTHON environment variable to the full path
+of the interpreter:</p>
+
+<pre><code>$ PYTHON=/prefix/bin/python
+$ export PYTHON
+</code></pre>
+
+<p>If configure can't find GTK+, you may need to set the PKG_CONFIG_PATH
+environment variable to help it find the libraries.</p>
+
+<p>The "make install" target will generate normal and optimised bytecode
+for all the .py files.</p>
+
+<p>Note. If you're installing to another prefix than the one where python
+is installed you'll need to set the PYTHONPATH variable to the
+$prefix/lib/pythonX.Y/site-packages directory created by
+the PyGTK installation.</p>
+
+<h1>
+<a name="tests" class="anchor" href="#tests"><span class="octicon octicon-link"></span></a>Tests</h1>
+
+<p>After having compiled and installed pygtk, you may want to test them.
+There are a number of example programs available in the examples/
+subdirectory.</p>
+
+<h1>
+<a name="getting-help" class="anchor" href="#getting-help"><span class="octicon octicon-link"></span></a>Getting Help</h1>
+
+<p>If you have questions about programming with PyGTK, you might want to
+send a message to the mailing list (information on subscribing is
+above).  Alternatively, your question may be answered in the FAQ:</p>
+
+<pre><code>http://www.async.com.br/faq/pygtk/?req=index
+</code></pre>
+        </section>
+
+        <footer>
+          Pygtk is maintained by <a href="https://github.com/Distrotech">Distrotech</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
